@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111111">
+  <title>A Love Written in Silence | World of BlessGlow</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .reading-room {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 25px;
+    }
+
+    .book-intro {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .book-intro h1 {
+      color: #d4af37;
+    }
+
+    .free-badge {
+      display: inline-block;
+      padding: 8px 15px;
+      border: 1px solid #d4af37;
+      color: #d4af37;
+      border-radius: 20px;
+      margin: 10px 0;
+    }
+
+    .chapter-panel {
+      background: #1b1b1b;
+      border: 1px solid #3a3324;
+      border-radius: 12px;
+      padding: 25px;
+      line-height: 1.9;
+    }
+
+    .chapter-panel h2 {
+      color: #d4af37;
+      text-align: center;
+    }
+
+    .chapter-text {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .reader-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .reader-controls button,
+    .reader-controls a {
+      background: #d4af37;
+      color: #111;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .reader-controls button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .chapter-select {
+      display: block;
+      width: 100%;
+      margin: 20px 0;
+      padding: 12px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #d4af37;
+      border-radius: 6px;
+    }
+
+    .reader-note {
+      color: #bbb;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 500px) {
+      .reading-room {
+        padding: 15px;
+      }
+
+      .chapter-panel {
+        padding: 18px;
+      }
+
+      .reader-controls button,
+      .reader-controls a {
+        padding: 10px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="reading-room">
+    <div class="book-intro">
+      <p>WORLD OF BLESSGLOW</p>
+      <h1>A Love Written in Silence</h1>
+      <p>Some feelings are never spoken. Some love stories are never forgotten.</p>
+      <p>By Blessing Effiong</p>
+      <span class="free-badge">FREE DURING LAUNCH</span>
+      <p><a href="books.html">← Back to Books</a></p>
+    </div>
+
+    <section class="chapter-panel">
+      <label for="chapterSelect">Choose a chapter</label>
+      <select id="chapterSelect" class="chapter-select"></select>
+
+      <h2 id="chapterTitle">Welcome to the Reading Room</h2>
+
+      <div id="chapterText" class="chapter-text">
+        Welcome to A Love Written in Silence.
+
+        Your reading journey begins here. The chapter text will appear
+        once we connect your manuscript to this page.
+      </div>
+
+      <div class="reader-controls">
+        <button id="previousButton" disabled>← Previous</button>
+        <button id="nextButton">Next →</button>
+      </div>
+
+      <p class="reader-note" id="readingProgress">
+        Your reading progress will be saved on this device.
+      </p>
+    </section>
+  </main>
+
+  <script>
+    const chapterSelect = document.getElementById("chapterSelect");
+    const chapterTitle = document.getElementById("chapterTitle");
+    const chapterText = document.getElementById("chapterText");
+    const previousButton = document.getElementById("previousButton");
+    const nextButton = document.getElementById("nextButton");
+    const readingProgress = document.getElementById("readingProgress");
+
+    const totalChapters = 50;
+    const storageKey = "blessglow-love-reading-progress";
+
+    let currentChapter = Number(localStorage.getItem(storageKey)) || 1;
+    currentChapter = Math.min(Math.max(currentChapter, 1), totalChapters);
+
+    for (let i = 1; i <= totalChapters; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = "Chapter " + i;
+      chapterSelect.appendChild(option);
+    }
+
+    function showChapter() {
+      chapterSelect.value = currentChapter;
+      chapterTitle.textContent =
+        currentChapter === 1
+          ? "Chapter 1 — The Boy at the Library"
+          : "Chapter " + currentChapter;
+
+      chapterText.textContent =
+        currentChapter === 1
+          ? "The story text will be added here after we connect the manuscript."
+          : "Chapter " + currentChapter +
+            " will appear here after we add the manuscript chapters.";
+
+      previousButton.disabled = currentChapter === 1;
+      nextButton.disabled = currentChapter === totalChapters;
+
+      localStorage.setItem(storageKey, currentChapter);
+      readingProgress.textContent =
+        "Chapter " + currentChapter + " of " + totalChapters +
+        " · Your progress is saved on this device.";
+    }
+
+    previousButton.addEventListener("click", () => {
+      if (currentChapter > 1) {
+        currentChapter--;
+        showChapter();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (currentChapter < totalChapters) {
+        currentChapter++;
+        showChapter();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    chapterSelect.addEventListener("change", () => {
+      currentChapter = Number(chapterSelect.value);
+      showChapter();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    showChapter();
+  </script>
+</body>
+        </html>
