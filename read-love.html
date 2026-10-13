@@ -167,30 +167,18 @@
 
   </main>
 
-  <!-- Load the actual manuscript before initializing the reader. -->
   <script src="love-chapters.js"></script>
 
   <script>
   (function () {
     "use strict";
 
-    const chapterTitle =
-      document.getElementById("chapterTitle");
-
-    const chapterText =
-      document.getElementById("chapterText");
-
-    const chapterSelect =
-      document.getElementById("chapterSelect");
-
-    const prevButton =
-      document.getElementById("previousButton");
-
-    const nextButton =
-      document.getElementById("nextButton");
-
-    const progressElement =
-      document.getElementById("readingProgress");
+    const chapterTitle = document.getElementById("chapterTitle");
+    const chapterText = document.getElementById("chapterText");
+    const chapterSelect = document.getElementById("chapterSelect");
+    const prevButton = document.getElementById("previousButton");
+    const nextButton = document.getElementById("nextButton");
+    const progressElement = document.getElementById("readingProgress");
 
     const STORAGE_KEY =
       "blessglow-love-reader-section-progress-v2";
@@ -220,10 +208,7 @@
     const sections = [];
 
     function addSection(type, title, content, number) {
-      if (
-        typeof content !== "string" ||
-        !content.trim()
-      ) {
+      if (typeof content !== "string" || !content.trim()) {
         return;
       }
 
@@ -235,117 +220,82 @@
       });
     }
 
-    // -----------------------------------------
-    // OPENING PAGES
-    // -----------------------------------------
+    // =========================================
+    // 📖 OPENING PAGES
+    // =========================================
 
     function buildFrontMatter() {
-      const frontMatter =
-        String(book.frontMatter || "")
-          .replace(/\r\n/g, "\n")
-          .trim();
+      const frontMatter = String(book.frontMatter || "")
+        .replace(/\r\n/g, "\n")
+        .trim();
 
-      if (!frontMatter) {
-        return;
-      }
+      if (!frontMatter) return;
 
       const parts = frontMatter.split(
         /\f(?=(?:Copyright\b|Dedication\b|Introduction\b|🎵\s*A Reading Playlist|📖\s*Table of Contents))/i
       );
 
       parts.forEach(function (part) {
-        const content =
-          part.replace(/\f/g, "\n").trim();
+        const content = part.replace(/\f/g, "\n").trim();
 
-        if (!content) {
-          return;
-        }
+        if (!content) return;
 
         if (/^Copyright\b/i.test(content)) {
-          addSection(
-            "front",
-            "Copyright & Disclaimer",
-            content
-          );
+          addSection("front", "© Copyright & Disclaimer", content);
           return;
         }
 
         if (/^Dedication\b/i.test(content)) {
-          addSection(
-            "front",
-            "Dedication",
-            content
-          );
+          addSection("front", "💛 Dedication", content);
           return;
         }
 
         if (/^Introduction\b/i.test(content)) {
-          addSection(
-            "front",
-            "Introduction",
-            content
-          );
+          addSection("front", "📖 Introduction", content);
           return;
         }
 
         if (/^🎵\s*A Reading Playlist/i.test(content)) {
-          const tipMatch =
-            /\n\s*Reading Tip\s*\n/i.exec(content);
+          const tipMatch = /\n\s*Reading Tip\s*\n/i.exec(content);
 
           if (tipMatch) {
             addSection(
               "front",
-              "Reading Playlist",
+              "🎵 Reading Playlist",
               content.slice(0, tipMatch.index)
             );
 
             addSection(
               "front",
-              "Reading Tip",
+              "💡 Reading Tip",
               content.slice(tipMatch.index)
             );
           } else {
-            addSection(
-              "front",
-              "Reading Playlist",
-              content
-            );
+            addSection("front", "🎵 Reading Playlist", content);
           }
 
           return;
         }
 
         if (/^📖\s*Table of Contents/i.test(content)) {
-          addSection(
-            "front",
-            "Table of Contents",
-            content
-          );
+          addSection("front", "📖 Table of Contents", content);
           return;
         }
 
-        addSection(
-          "front",
-          "Title Page",
-          content
-        );
+        addSection("front", "🌸 Title Page", content);
       });
     }
 
-    // -----------------------------------------
-    // STORY CHAPTERS
-    // -----------------------------------------
+    // =========================================
+    // 📚 STORY CHAPTERS
+    // =========================================
 
     function buildChapters() {
       book.chapters.forEach(function (chapter, index) {
         const number = chapter.number || index + 1;
+        const content = String(chapter.content || "").trim();
 
-        const content =
-          String(chapter.content || "").trim();
-
-        if (!content) {
-          return;
-        }
+        if (!content) return;
 
         const lines = content
           .split(/\r?\n/)
@@ -354,16 +304,9 @@
           })
           .filter(Boolean);
 
-        let storyTitle = "";
+        let storyTitle = lines.length > 1 ? lines[1] : "";
 
-        if (lines.length > 1) {
-          storyTitle = lines[1];
-        }
-
-        if (
-          storyTitle &&
-          /^chapter\s+\d+/i.test(storyTitle)
-        ) {
+        if (storyTitle && /^chapter\s+\d+/i.test(storyTitle)) {
           storyTitle = "";
         }
 
@@ -381,35 +324,30 @@
       });
     }
 
-    // -----------------------------------------
-    // CLOSING PAGES
-    // -----------------------------------------
+    // =========================================
+    // 🌸 CLOSING PAGES
+    // =========================================
 
     function buildBackMatter() {
-      const backMatter =
-        String(book.backMatter || "")
-          .replace(/\r\n/g, "\n")
-          .replace(/\f/g, "\n")
-          .trim();
+      const backMatter = String(book.backMatter || "")
+        .replace(/\r\n/g, "\n")
+        .replace(/\f/g, "\n")
+        .trim();
 
-      if (!backMatter) {
-        return;
-      }
+      if (!backMatter) return;
 
       const lines = backMatter.split("\n");
 
+      // Recognize headings with or without emojis.
       const headingPattern =
-        /^(Acknowledgements|Acknowledgments|About the Author|Thank You for Reading)$/i;
+        /^[\s\p{Extended_Pictographic}\uFE0F\u200D]*(Acknowledgements|Acknowledgments|About the Author|Thank You for Reading)\s*[:—-]?\s*$/iu;
 
       let currentTitle = "";
       let currentLines = [];
       let otherLines = [];
 
       function saveCurrentSection() {
-        if (
-          currentTitle &&
-          currentLines.length
-        ) {
+        if (currentTitle && currentLines.length) {
           addSection(
             "back",
             currentTitle,
@@ -422,13 +360,12 @@
       }
 
       function saveOtherMaterial() {
-        const content =
-          otherLines.join("\n").trim();
+        const content = otherLines.join("\n").trim();
 
         if (content) {
           addSection(
             "back",
-            "Closing Material",
+            "✨ Closing Material",
             content
           );
         }
@@ -438,13 +375,26 @@
 
       lines.forEach(function (line) {
         const trimmed = line.trim();
+        const match = trimmed.match(headingPattern);
 
-        if (headingPattern.test(trimmed)) {
+        if (match) {
           saveOtherMaterial();
           saveCurrentSection();
 
-          currentTitle = trimmed;
-          currentLines = [line];
+          const heading = match[1].toLowerCase();
+
+          if (
+            heading === "acknowledgements" ||
+            heading === "acknowledgments"
+          ) {
+            currentTitle = "🌸 Acknowledgements";
+          } else if (heading === "about the author") {
+            currentTitle = "🌸 About the Author";
+          } else {
+            currentTitle = "💌 Thank You for Reading";
+          }
+
+          currentLines = [trimmed];
         } else if (currentTitle) {
           currentLines.push(line);
         } else {
@@ -456,46 +406,44 @@
       saveCurrentSection();
     }
 
-    // Build sections in book order.
+    // =========================================
+    // 📖 BUILD THE COMPLETE READER
+    // =========================================
+
     buildFrontMatter();
     buildChapters();
     buildBackMatter();
 
     if (!sections.length) {
       showError(
-        "No manuscript sections were found. Please check the data in love-chapters.js."
+        "No manuscript sections were found. Please check love-chapters.js."
       );
       return;
     }
 
-    // -----------------------------------------
-    // DROPDOWN
-    // -----------------------------------------
+    // =========================================
+    // SECTION SELECTOR
+    // =========================================
 
     chapterSelect.innerHTML = "";
 
     sections.forEach(function (section, index) {
-      const option =
-        document.createElement("option");
+      const option = document.createElement("option");
 
       option.value = String(index);
 
       if (section.type === "chapter") {
         option.textContent = section.title;
-      } else if (section.type === "front") {
-        option.textContent =
-          "📖 " + section.title;
       } else {
-        option.textContent =
-          "✨ " + section.title;
+        option.textContent = section.title;
       }
 
       chapterSelect.appendChild(option);
     });
 
-    // -----------------------------------------
-    // SAVED POSITION
-    // -----------------------------------------
+    // =========================================
+    // 💾 SAVE READING PROGRESS
+    // =========================================
 
     let currentIndex = 0;
 
@@ -515,31 +463,21 @@
       currentIndex = 0;
     }
 
-    // -----------------------------------------
+    // =========================================
     // DISPLAY SELECTED SECTION
-    // -----------------------------------------
+    // =========================================
 
     function showSection() {
       const section = sections[currentIndex];
 
-      if (!section) {
-        return;
-      }
+      if (!section) return;
 
-      chapterSelect.value =
-        String(currentIndex);
+      chapterSelect.value = String(currentIndex);
+      chapterTitle.textContent = section.heading || section.title;
+      chapterText.textContent = section.content;
 
-      chapterTitle.textContent =
-        section.heading || section.title;
-
-      chapterText.textContent =
-        section.content;
-
-      prevButton.disabled =
-        currentIndex === 0;
-
-      nextButton.disabled =
-        currentIndex === sections.length - 1;
+      prevButton.disabled = currentIndex === 0;
+      nextButton.disabled = currentIndex === sections.length - 1;
 
       progressElement.textContent =
         "Section " +
@@ -549,57 +487,43 @@
         " · Your progress is saved on this device.";
 
       try {
-        localStorage.setItem(
-          STORAGE_KEY,
-          String(currentIndex)
-        );
+        localStorage.setItem(STORAGE_KEY, String(currentIndex));
       } catch (error) {
-        // The reader can still work without saved progress.
+        // Reading still works if local storage is unavailable.
       }
     }
 
-    // -----------------------------------------
-    // NAVIGATION
-    // -----------------------------------------
+    // =========================================
+    // NAVIGATION BUTTONS
+    // =========================================
 
-    prevButton.addEventListener(
-      "click",
-      function () {
-        if (currentIndex > 0) {
-          currentIndex--;
-          showSection();
-        }
+    prevButton.addEventListener("click", function () {
+      if (currentIndex > 0) {
+        currentIndex--;
+        showSection();
       }
-    );
+    });
 
-    nextButton.addEventListener(
-      "click",
-      function () {
-        if (currentIndex < sections.length - 1) {
-          currentIndex++;
-          showSection();
-        }
+    nextButton.addEventListener("click", function () {
+      if (currentIndex < sections.length - 1) {
+        currentIndex++;
+        showSection();
       }
-    );
+    });
 
-    chapterSelect.addEventListener(
-      "change",
-      function () {
-        const selectedIndex =
-          Number(chapterSelect.value);
+    chapterSelect.addEventListener("change", function () {
+      const selectedIndex = Number(chapterSelect.value);
 
-        if (
-          Number.isInteger(selectedIndex) &&
-          selectedIndex >= 0 &&
-          selectedIndex < sections.length
-        ) {
-          currentIndex = selectedIndex;
-          showSection();
-        }
+      if (
+        Number.isInteger(selectedIndex) &&
+        selectedIndex >= 0 &&
+        selectedIndex < sections.length
+      ) {
+        currentIndex = selectedIndex;
+        showSection();
       }
-    );
+    });
 
-    // Show the opening section when the page loads.
     showSection();
 
   })();
