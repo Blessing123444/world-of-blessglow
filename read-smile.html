@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Behind Her Smile | World of BlessGlow</title>
+  <title>Behind Her Smile: The Girl They Framed | World of BlessGlow</title>
 
   <meta name="description"
-        content="Read Behind Her Smile: The Girl They Framed by Blessing Effiong.">
+        content="Read Behind Her Smile: The Girl They Framed, a novel by Blessing Effiong.">
 
   <style>
     :root {
@@ -34,11 +34,11 @@
     header {
       padding: 20px;
       text-align: center;
-      border-bottom: 1px solid var(--border);
       background: #151118;
+      border-bottom: 1px solid var(--border);
     }
 
-    header a {
+    a {
       color: var(--gold);
       text-decoration: none;
     }
@@ -53,49 +53,51 @@
     .back-link {
       display: inline-block;
       margin-top: 12px;
-      font-size: 14px;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
     }
 
     .hero {
       max-width: 850px;
-      margin: 35px auto 20px;
+      margin: 35px auto 15px;
       padding: 25px 20px;
       text-align: center;
     }
 
     .hero h1 {
-      margin-bottom: 8px;
+      margin: 0;
       color: var(--gold);
-      font-size: clamp(30px, 6vw, 46px);
+      font-size: clamp(30px, 7vw, 46px);
       line-height: 1.25;
     }
 
     .subtitle {
-      margin-top: 0;
-      font-size: 18px;
+      margin: 12px 0;
+      font-size: clamp(18px, 4vw, 23px);
     }
 
     .author {
       color: var(--muted);
+      font-size: 15px;
       font-style: italic;
     }
 
     .reader {
       max-width: 850px;
       margin: 0 auto 50px;
-      padding: 24px;
+      padding: 20px;
     }
 
     .controls {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.5fr 1fr;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
       color: var(--muted);
       font-family: Arial, sans-serif;
       font-size: 13px;
@@ -113,14 +115,13 @@
     }
 
     .progress-area {
-      margin: 15px 0 24px;
+      margin: 15px 0 22px;
+      color: var(--muted);
       font-family: Arial, sans-serif;
       font-size: 12px;
-      color: var(--muted);
     }
 
     .progress-track {
-      width: 100%;
       height: 5px;
       margin-top: 8px;
       overflow: hidden;
@@ -132,7 +133,7 @@
       width: 0;
       height: 100%;
       background: var(--gold);
-      transition: width 0.2s;
+      transition: width 0.25s;
     }
 
     .chapter-card {
@@ -145,9 +146,10 @@
 
     .chapter-card h2 {
       margin-top: 0;
+      margin-bottom: 25px;
       color: var(--gold);
       font-size: 27px;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .chapter-text {
@@ -156,14 +158,10 @@
       font-size: 17px;
     }
 
-    .chapter-text p {
-      margin: 0 0 1.2em;
-    }
-
     .navigation {
       display: flex;
-      gap: 12px;
       justify-content: space-between;
+      gap: 12px;
       margin-top: 22px;
     }
 
@@ -178,14 +176,22 @@
       cursor: pointer;
     }
 
+    button.secondary {
+      background: transparent;
+      color: var(--gold);
+    }
+
     button:disabled {
       opacity: 0.35;
       cursor: not-allowed;
     }
 
-    .secondary {
-      background: transparent;
-      color: var(--gold);
+    .status {
+      margin-top: 18px;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      text-align: center;
     }
 
     .message {
@@ -204,27 +210,30 @@
       padding: 25px 15px;
       border-top: 1px solid var(--border);
       color: var(--muted);
-      text-align: center;
       font-family: Arial, sans-serif;
       font-size: 13px;
+      text-align: center;
     }
 
-    footer a {
-      color: var(--gold);
-      text-decoration: none;
+    footer p {
+      margin: 6px 0;
     }
 
     @media (max-width: 520px) {
       .reader {
-        padding: 15px;
+        padding: 14px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
       }
 
       .chapter-card {
         padding: 18px;
       }
 
-      .chapter-text {
-        font-size: 16px;
+      .chapter-card h2 {
+        font-size: 24px;
       }
 
       .navigation button {
@@ -237,257 +246,319 @@
 
 <body>
 
-  <header>
-    <div class="brand">World of BlessGlow</div>
-    <a class="back-link" href="books.html">← Back to Books</a>
-  </header>
+<header>
+  <div class="brand">World of BlessGlow</div>
+  <a class="back-link" href="books.html">← Back to Books</a>
+</header>
 
-  <section class="hero">
-    <h1 id="book-title">Behind Her Smile</h1>
-    <p class="subtitle">The Girl They Framed</p>
-    <p class="author">A novel by Blessing Effiong</p>
-  </section>
+<section class="hero">
+  <h1>BEHIND HER SMILE</h1>
+  <p class="subtitle">The Girl They Framed</p>
+  <p class="author">A novel by Blessing Effiong</p>
+</section>
 
-  <main class="reader">
+<main class="reader">
 
-    <div id="loading" class="message">
-      <h2>Opening your book...</h2>
-      <p>Please wait while the story loads.</p>
-    </div>
+  <div id="loading" class="message">
+    <h2>Opening your book...</h2>
+    <p>Please wait while the story loads.</p>
+  </div>
 
-    <div id="reader-interface" hidden>
+  <div id="error" class="message" hidden>
+    <h2>We couldn't open the book.</h2>
+    <p id="error-details"></p>
+    <p>Please check the JavaScript file and try again.</p>
+  </div>
 
-      <div class="controls">
-        <div>
-          <label for="chapter-select">Choose a section</label>
-          <select id="chapter-select"></select>
-        </div>
+  <div id="reader-interface" hidden>
 
-        <div>
-          <label for="font-select">Reading text size</label>
-          <select id="font-select">
-            <option value="15">Small</option>
-            <option value="17" selected>Medium</option>
-            <option value="19">Large</option>
-            <option value="21">Extra large</option>
-          </select>
-        </div>
+    <div class="controls">
+
+      <div>
+        <label for="section-select">Choose a Section</label>
+        <select id="section-select"></select>
       </div>
 
-      <div class="progress-area">
-        <div id="progress-label">Section 1</div>
-        <div class="progress-track">
-          <div id="progress-bar" class="progress-bar"></div>
-        </div>
+      <div>
+        <label for="font-select">Reading Text Size</label>
+        <select id="font-select">
+          <option value="15">Small</option>
+          <option value="17" selected>Medium</option>
+          <option value="19">Large</option>
+          <option value="22">Very Large</option>
+        </select>
       </div>
-
-      <article class="chapter-card">
-        <h2 id="section-title"></h2>
-        <div id="chapter-content" class="chapter-text"></div>
-      </article>
-
-      <div class="navigation">
-        <button id="previous-button" class="secondary" type="button">
-          ← Previous
-        </button>
-
-        <button id="next-button" type="button">
-          Next →
-        </button>
-      </div>
-
-      <p id="save-status"
-         style="text-align:center;color:#c1b5c4;font-size:12px">
-        Your reading position is saved on this device.
-      </p>
 
     </div>
 
-    <div id="error-message" class="message" hidden>
-      <h2>We couldn't open the book.</h2>
-      <p id="error-details">
-        Please check that smile-chapters.js is in the same folder
-        as read-smile.html.
-      </p>
-      <p>
-        If the problem continues, check that both files have been
-        committed to the main branch of your GitHub repository.
-      </p>
+    <div class="progress-area">
+      <span id="progress-label">Section 1</span>
+
+      <div class="progress-track">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
     </div>
 
-  </main>
+    <article class="chapter-card">
+      <h2 id="section-title"></h2>
+      <div id="section-content" class="chapter-text"></div>
+    </article>
 
-  <footer>
-    <p>World of BlessGlow</p>
-    <p>Stories. Worlds. Imagination.</p>
-    <p>
-      <a href="books.html">Books</a> ·
-      <a href="index.html">Home</a>
+    <div class="navigation">
+      <button id="previous" class="secondary" type="button">
+        ← Previous
+      </button>
+
+      <button id="next" type="button">
+        Next →
+      </button>
+    </div>
+
+    <p id="save-status" class="status">
+      Your reading position is saved on this device.
     </p>
-    <p>© 2026 Blessing Effiong. All rights reserved.</p>
-  </footer>
 
-  <script src="smile-chapters.js"></script>
+  </div>
 
-  <script>
-    (() => {
-      "use strict";
+</main>
 
-      const loading = document.getElementById("loading");
-      const interfaceBox = document.getElementById("reader-interface");
-      const errorBox = document.getElementById("error-message");
-      const errorDetails = document.getElementById("error-details");
+<footer>
+  <p>World of BlessGlow</p>
+  <p>Stories. Worlds. Imagination.</p>
+  <p>
+    <a href="index.html">Home</a> ·
+    <a href="books.html">Books</a>
+  </p>
+  <p>© 2026 Blessing Effiong. All rights reserved.</p>
+</footer>
 
-      const titleElement = document.getElementById("book-title");
-      const chapterSelect = document.getElementById("chapter-select");
-      const fontSelect = document.getElementById("font-select");
-      const sectionTitle = document.getElementById("section-title");
-      const chapterContent = document.getElementById("chapter-content");
-      const progressLabel = document.getElementById("progress-label");
-      const progressBar = document.getElementById("progress-bar");
-      const previousButton = document.getElementById("previous-button");
-      const nextButton = document.getElementById("next-button");
-      const saveStatus = document.getElementById("save-status");
+<script src="smile-chapters.js"></script>
 
-      function showError(message) {
-        loading.hidden = true;
-        interfaceBox.hidden = true;
-        errorBox.hidden = false;
-        errorDetails.textContent = message;
+<script>
+(() => {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+
+  const loading = $("loading");
+  const errorBox = $("error");
+  const errorDetails = $("error-details");
+  const reader = $("reader-interface");
+
+  function showError(message) {
+    loading.hidden = true;
+    reader.hidden = true;
+    errorBox.hidden = false;
+    errorDetails.textContent = message;
+  }
+
+  const book = window.SMILE_BOOK;
+
+  if (!book || !Array.isArray(book.chapters)) {
+    showError(
+      "The book data could not be read. Make sure smile-chapters.js " +
+      "is actual JavaScript and is in the same folder as read-smile.html."
+    );
+    return;
+  }
+
+  const sections = [];
+
+  function addSection(title, content) {
+    if (typeof content === "string" && content.trim()) {
+      sections.push({
+        title,
+        content: content.trim()
+      });
+    }
+  }
+
+  /*
+   * Split the original front matter into separate pages.
+   * The headings below are matched without changing the manuscript text.
+   */
+  function splitFrontMatter(text) {
+    if (typeof text !== "string" || !text.trim()) return;
+
+    const headings = [
+      ["Copyright", /Copyright Page/i],
+      ["Disclaimer", /\bDisclaimer\b/i],
+      ["Dedication", /\bDedication\b/i],
+      ["Table of Contents", /Table of content(?:s)?/i]
+    ];
+
+    const matches = [];
+
+    headings.forEach(([name, regex]) => {
+      const match = regex.exec(text);
+
+      if (match) {
+        matches.push({
+          name,
+          start: match.index,
+          headingEnd: match.index + match[0].length
+        });
       }
+    });
 
-      const book = window.SMILE_BOOK;
+    matches.sort((a, b) => a.start - b.start);
 
-      if (!book || !Array.isArray(book.chapters) || !book.chapters.length) {
-        showError(
-          "The book data could not be loaded. Check that smile-chapters.js " +
-          "contains window.SMILE_BOOK and that it is in the same folder."
+    const firstHeading = matches.length ? matches[0].start : text.length;
+    const opening = text.slice(0, firstHeading).trim();
+
+    if (opening) {
+      addSection("🌸 Opening Pages", opening);
+    }
+
+    matches.forEach((match, index) => {
+      const end = index + 1 < matches.length
+        ? matches[index + 1].start
+        : text.length;
+
+      let content = text.slice(match.headingEnd, end).trim();
+
+      if (content) {
+        addSection(
+          match.name === "Copyright" ? "© Copyright" :
+          match.name === "Disclaimer" ? "⚠️ Disclaimer" :
+          match.name === "Dedication" ? "💌 Dedication" :
+          "📑 Table of Contents",
+          content
         );
-        return;
       }
+    });
+  }
 
-      titleElement.textContent =
-        book.title || "Behind Her Smile: The Girl They Framed";
+  splitFrontMatter(book.frontMatter);
 
-      const sections = [];
+  addSection("🌸 Prologue", book.prologue);
 
-      function addSection(label, content, kind) {
-        if (typeof content === "string" && content.trim()) {
-          sections.push({
-            label,
-            content,
-            kind
-          });
-        }
-      }
+  book.chapters.forEach((chapter, index) => {
+    const number = chapter.number || index + 1;
+    const title = chapter.title || ("Chapter " + number);
 
-      addSection("Opening Pages", book.frontMatter, "front");
-      addSection("Prologue", book.prologue, "prologue");
+    addSection(
+      "📖 Chapter " + number + " — " + title,
+      chapter.content
+    );
+  });
 
-      book.chapters.forEach((chapter, index) => {
-        const number = chapter.number || index + 1;
-        const title = chapter.title || ("Chapter " + number);
+  addSection("🌙 Epilogue", book.epilogue);
+  addSection("✨ Acknowledgements", book.acknowledgments);
+  addSection("🌸 About the Author", book.aboutAuthor);
+  addSection("💙 Thank You for Reading", book.thankYou);
 
-        sections.push({
-          label: "Chapter " + number + " — " + title,
-          content: chapter.content || "",
-          kind: "chapter"
-        });
-      });
+  /*
+   * Some versions of the data file may store the closing pages together
+   * in backMatter. Use it only if separate closing sections are unavailable.
+   */
+  if (
+    !book.acknowledgments &&
+    !book.aboutAuthor &&
+    !book.thankYou
+  ) {
+    addSection("✨ Closing Pages", book.backMatter);
+  }
 
-      addSection("Epilogue", book.epilogue, "epilogue");
-      addSection("Acknowledgements & About the Author", book.backMatter, "back");
+  if (!sections.length) {
+    showError("The book data loaded, but no readable sections were found.");
+    return;
+  }
 
-      if (!sections.length) {
-        showError("No readable sections were found in the book data.");
-        return;
-      }
+  const select = $("section-select");
+  const titleElement = $("section-title");
+  const contentElement = $("section-content");
+  const fontSelect = $("font-select");
+  const previous = $("previous");
+  const next = $("next");
+  const progressLabel = $("progress-label");
+  const progressBar = $("progress-bar");
+  const saveStatus = $("save-status");
 
-      const storageKey = "blessglow-behind-her-smile-progress";
-      let currentIndex = 0;
+  const storageKey = "blessglow-behind-her-smile-progress";
 
-      try {
-        const saved = Number(localStorage.getItem(storageKey));
-        if (Number.isInteger(saved) && saved >= 0 && saved < sections.length) {
-          currentIndex = saved;
-        }
-      } catch (error) {
-        // The reader still works if browser storage is unavailable.
-      }
+  let current = 0;
 
-      sections.forEach((section, index) => {
-        const option = document.createElement("option");
-        option.value = String(index);
-        option.textContent = section.label;
-        chapterSelect.appendChild(option);
-      });
+  try {
+    const saved = Number(localStorage.getItem(storageKey));
 
-      function renderSection(index) {
-        if (index < 0 || index >= sections.length) return;
+    if (
+      Number.isInteger(saved) &&
+      saved >= 0 &&
+      saved < sections.length
+    ) {
+      current = saved;
+    }
+  } catch (_) {
+    // Reading remains available if local storage is disabled.
+  }
 
-        currentIndex = index;
+  sections.forEach((section, index) => {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = section.title;
+    select.appendChild(option);
+  });
 
-        const section = sections[index];
-        chapterSelect.value = String(index);
-        sectionTitle.textContent = section.label;
+  function render(index) {
+    if (index < 0 || index >= sections.length) return;
 
-        chapterContent.replaceChildren();
+    current = index;
 
-        /*
-          The manuscript is displayed as plain text.
-          Using textContent prevents manuscript text from being treated as HTML.
-        */
-        chapterContent.textContent = section.content;
+    const section = sections[index];
 
-        chapterContent.style.fontSize = fontSelect.value + "px";
+    select.value = String(index);
+    titleElement.textContent = section.title;
+    contentElement.textContent = section.content;
+    contentElement.style.fontSize = fontSelect.value + "px";
 
-        progressLabel.textContent =
-          "Section " + (index + 1) + " of " + sections.length;
+    progressLabel.textContent =
+      "Section " + (index + 1) + " of " + sections.length;
 
-        progressBar.style.width =
-          ((index + 1) / sections.length * 100) + "%";
+    progressBar.style.width =
+      ((index + 1) / sections.length * 100) + "%";
 
-        previousButton.disabled = index === 0;
-        nextButton.disabled = index === sections.length - 1;
+    previous.disabled = index === 0;
+    next.disabled = index === sections.length - 1;
 
-        try {
-          localStorage.setItem(storageKey, String(index));
-          saveStatus.textContent =
-            "Reading position saved on this device.";
-        } catch (error) {
-          saveStatus.textContent =
-            "You can continue reading, but progress could not be saved.";
-        }
+    try {
+      localStorage.setItem(storageKey, String(index));
+      saveStatus.textContent =
+        "Your reading position is saved on this device.";
+    } catch (_) {
+      saveStatus.textContent =
+        "Reading works, but progress could not be saved.";
+    }
 
-        window.scrollTo({
-          top: document.querySelector(".reader").offsetTop,
-          behavior: "smooth"
-        });
-      }
+    window.scrollTo({
+      top: document.querySelector(".reader").offsetTop,
+      behavior: "smooth"
+    });
+  }
 
-      chapterSelect.addEventListener("change", () => {
-        renderSection(Number(chapterSelect.value));
-      });
+  select.addEventListener("change", () => {
+    render(Number(select.value));
+  });
 
-      fontSelect.addEventListener("change", () => {
-        chapterContent.style.fontSize = fontSelect.value + "px";
-      });
+  fontSelect.addEventListener("change", () => {
+    contentElement.style.fontSize = fontSelect.value + "px";
+  });
 
-      previousButton.addEventListener("click", () => {
-        renderSection(currentIndex - 1);
-      });
+  previous.addEventListener("click", () => {
+    render(current - 1);
+  });
 
-      nextButton.addEventListener("click", () => {
-        renderSection(currentIndex + 1);
-      });
+  next.addEventListener("click", () => {
+    render(current + 1);
+  });
 
-      loading.hidden = true;
-      errorBox.hidden = true;
-      interfaceBox.hidden = false;
+  loading.hidden = true;
+  errorBox.hidden = true;
+  reader.hidden = false;
 
-      renderSection(currentIndex);
-    })();
-  </script>
+  render(current);
+})();
+</script>
 
 </body>
-  </html>
+</html>
