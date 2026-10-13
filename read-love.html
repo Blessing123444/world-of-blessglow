@@ -147,98 +147,390 @@
 
 <script>
 (function () {
+  "use strict";
+
   const book = window.LOVE_BOOK;
 
-  const chapterSelect = document.getElementById("chapterSelect");
   const chapterTitle = document.getElementById("chapterTitle");
   const chapterText = document.getElementById("chapterText");
-  const previousButton = document.getElementById("previousButton");
-  const nextButton = document.getElementById("nextButton");
-  const readingProgress = document.getElementById("readingProgress");
+  const chapterSelect = document.getElementById("chapterSelect");
+  const prevButton = document.getElementById("prevChapter");
+  const nextButton = document.getElementById("nextChapter");
 
-  if (!book || !Array.isArray(book.chapters) || book.chapters.length === 0) {
-    chapterTitle.textContent = "Story temporarily unavailable";
+  const progressElement =
+    document.getElementById("readingProgress");
+
+  const STORAGE_KEY =
+    "blessglow-love-reader-section-progress-v2";
+
+  if (!book || !Array.isArray(book.chapters)) {
+    chapterTitle.textContent = "Book unavailable";
     chapterText.textContent =
-      "We couldn't load the manuscript. Please try again later.";
-    previousButton.disabled = true;
-    nextButton.disabled = true;
+      "The book could not be loaded. Please refresh the page.";
     return;
   }
 
-  const chapters = book.chapters;
-  const totalChapters = chapters.length;
-  const storageKey = "blessglow-love-reading-progress";
+  const sections = [];
 
-  let currentChapter = Number(localStorage.getItem(storageKey)) || 1;
+  function addSection(type, title, content, number) {
+    if (!content || !String(content).trim()) {
+      return;
+    }
 
-  currentChapter = Math.min(
-    Math.max(currentChapter, 1),
-    totalChapters
-  );
+    sections.push({
+      type: type,
+      title: title,
+      content: String(content).trim(),
+      number: number || null
+    });
+  }
 
-  chapters.forEach(function (chapter, index) {
+  // FRONT MATTER
+  // Split the opening pages without changing the manuscript.
+
+  function buildFrontMatter() {
+    const frontMatter = String(book.frontMatter || "")
+      .replace(/\r\n/g, "\n")
+      .trim();
+
+    if (!frontMatter) {
+      return;
+    }
+
+    const parts = frontMatter.split(
+      /\f(?=(?:Copyright\b|Dedication\b|Introduction\b|🎵\s*A Reading Playlist|📖\s*Table of Contents))/i
+    );
+
+    parts.forEach(function (part) {
+      part = part.trim();
+
+      if (!part) {
+        return;
+      }
+
+      // Remove page-break characters left inside a section.
+      const cleanedPart = part.replace(/\f/g, "\n").trim();
+
+      if (/^Copyright\b/i.test(cleanedPart)) {
+        addSection(
+          "front",
+          "Copyright & Disclaimer",
+          cleanedPart
+        );
+        return;
+      }
+
+      if (/^Dedication\b/i.test(cleanedPart)) {
+        addSection(
+          "front",
+          "Dedication",
+          cleanedPart
+        );
+        return;
+      }
+
+      if (/^Introduction\b/i.test(cleanedPart)) {
+        addSection(
+          "front",
+          "Introduction",
+          cleanedPart
+        );
+        return;
+      }
+
+      if (/^🎵\s*A Reading Playlist/i.test(cleanedPart)) {
+        const tipMatch = cleanedPart.match(
+          /\n\s*Reading Tip\s*\n/i
+        );
+
+        if (tipMatch && tipMatch.index !== undefined) {
+          const playlist = cleanedPart
+            .slice(0, tipMatch.index)
+            .trim();
+
+          const tipContent = cleanedPart
+            .slice(tipMatch.index)
+            .trim();
+
+          addSection(
+            "front",
+            "Reading Playlist",
+            playlist
+          );
+
+          addSection(
+            "front",
+            "Reading Tip",
+            tipContent
+          );
+        } else {
+          addSection(
+            "front",
+            "Reading Playlist",
+            cleanedPart
+          );
+        }
+
+        return;
+      }
+
+      if (/^📖\s*Table of Contents/i.test(cleanedPart)) {
+        addSection(
+          "front",
+          "Table of Contents",
+          cleanedPart
+        );
+        return;
+      }
+
+      // The first section is the title page.
+      addSection(
+        "front",
+        "Title Page",
+        cleanedPart
+      );
+    });
+  }
+
+  // STORY CHAPTERS
+  // Keep every chapter exactly as it is in love-chapters.js.
+
+  function buildChapters() {
+    book.chapters.forEach(function (chapter, index) {
+      const number = chapter.number || index + 1;
+      const content = String(chapter.content || "").trim();
+
+      if (!content) {
+        return;
+      }
+
+      const lines = content
+        .split(/\r?\n/)
+        .map(function (line) {
+          return line.trim();
+        })
+        .filter(Boolean);
+
+      let storyTitle = "";
+
+      if (lines.length > 1) {
+        storyTitle = lines[1];
+      }
+
+      // Avoid using the chapter heading itself as its title.
+      if (
+        storyTitle &&
+        /^chapter\s+\d+/i.test(storyTitle)
+      ) {
+        storyTitle = "";
+      }
+
+      const label = storyTitle
+        ? "Chapter " + number + " — " + storyTitle
+        : "Chapter " + number;
+
+      sections.push({
+        type: "chapter",
+        title: label,
+        heading: "Chapter " + number,
+        content: content,
+        number: number
+      });
+    });
+  }
+
+  // BACK MATTER
+  // Give each closing section its own entry when its heading exists.
+
+  function buildBackMatter() {
+    const backMatter = String(book.backMatter || "")
+      .replace(/\r\n/g, "\n")
+      .replace(/\f/g, "\n")
+      .trim();
+
+    if (!backMatter) {
+      return;
+    }
+
+    const lines = backMatter.split("\n");
+
+    const headingPattern =
+      /^(Acknowledgements|Acknowledgments|About the Author|About the Author\b.*|Thank You for Reading)$/i;
+
+    let currentTitle = "";
+    let currentLines = [];
+    let otherLines = [];
+
+    function saveCurrentSection() {
+      if (currentTitle && currentLines.length) {
+        addSection(
+          "back",
+          currentTitle,
+          currentLines.join("\n")
+        );
+      }
+
+      currentTitle = "";
+      currentLines = [];
+    }
+
+    function saveOtherMaterial() {
+      const text = otherLines.join("\n").trim();
+
+      if (text) {
+        addSection(
+          "back",
+          "Closing Material",
+          text
+        );
+      }
+
+      otherLines = [];
+    }
+
+    lines.forEach(function (line) {
+      const trimmed = line.trim();
+      const isHeading = headingPattern.test(trimmed);
+
+      if (isHeading) {
+        saveOtherMaterial();
+        saveCurrentSection();
+
+        currentTitle = trimmed;
+        currentLines = [line];
+      } else if (currentTitle) {
+        currentLines.push(line);
+      } else {
+        otherLines.push(line);
+      }
+    });
+
+    saveOtherMaterial();
+    saveCurrentSection();
+  }
+
+  buildFrontMatter();
+  buildChapters();
+  buildBackMatter();
+
+  if (!sections.length) {
+    chapterTitle.textContent = "Book unavailable";
+    chapterText.textContent =
+      "No reading sections were found.";
+    return;
+  }
+
+  // CREATE THE DROPDOWN
+
+  chapterSelect.innerHTML = "";
+
+  sections.forEach(function (section, index) {
     const option = document.createElement("option");
-    option.value = index + 1;
-    option.textContent = "Chapter " + (index + 1);
+
+    option.value = String(index);
+
+    if (section.type === "chapter") {
+      option.textContent = section.title;
+    } else if (section.type === "front") {
+      option.textContent = "📖 " + section.title;
+    } else {
+      option.textContent = "✨ " + section.title;
+    }
+
     chapterSelect.appendChild(option);
   });
 
-  function showChapter() {
-    const chapter = chapters[currentChapter - 1];
+  // RESTORE SAVED READING POSITION
 
-    chapterSelect.value = currentChapter;
+  let currentIndex = 0;
 
-    chapterTitle.textContent =
-      "Chapter " + currentChapter;
+  try {
+    const savedIndex = Number(
+      localStorage.getItem(STORAGE_KEY)
+    );
 
-    let content = chapter.content || "";
-
-    if (currentChapter === 1 && book.frontMatter) {
-      content = book.frontMatter + "\n\n" + content;
+    if (
+      Number.isInteger(savedIndex) &&
+      savedIndex >= 0 &&
+      savedIndex < sections.length
+    ) {
+      currentIndex = savedIndex;
     }
-
-    if (currentChapter === totalChapters && book.backMatter) {
-      content += "\n\n" + book.backMatter;
-    }
-
-    chapterText.textContent = content;
-
-    previousButton.disabled = currentChapter === 1;
-    nextButton.disabled = currentChapter === totalChapters;
-
-    localStorage.setItem(storageKey, currentChapter);
-
-    readingProgress.textContent =
-      "Chapter " + currentChapter + " of " + totalChapters +
-      " · Your progress is saved on this device.";
+  } catch (error) {
+    currentIndex = 0;
   }
 
-  previousButton.addEventListener("click", function () {
-    if (currentChapter > 1) {
-      currentChapter--;
-      showChapter();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  // DISPLAY THE SELECTED SECTION
+
+  function showSection() {
+    const section = sections[currentIndex];
+
+    if (!section) {
+      return;
+    }
+
+    chapterSelect.value = String(currentIndex);
+
+    chapterTitle.textContent =
+      section.heading || section.title;
+
+    chapterText.textContent = section.content;
+
+    prevButton.disabled = currentIndex === 0;
+    nextButton.disabled =
+      currentIndex === sections.length - 1;
+
+    if (progressElement) {
+      progressElement.textContent =
+        "Section " +
+        (currentIndex + 1) +
+        " of " +
+        sections.length +
+        " · Your progress is saved on this device.";
+    }
+
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        String(currentIndex)
+      );
+    } catch (error) {
+      // Reading still works if storage is unavailable.
+    }
+  }
+
+  // NAVIGATION
+
+  prevButton.addEventListener("click", function () {
+    if (currentIndex > 0) {
+      currentIndex--;
+      showSection();
     }
   });
 
   nextButton.addEventListener("click", function () {
-    if (currentChapter < totalChapters) {
-      currentChapter++;
-      showChapter();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (currentIndex < sections.length - 1) {
+      currentIndex++;
+      showSection();
     }
   });
 
   chapterSelect.addEventListener("change", function () {
-    currentChapter = Number(chapterSelect.value);
-    showChapter();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const selectedIndex = Number(chapterSelect.value);
+
+    if (
+      Number.isInteger(selectedIndex) &&
+      selectedIndex >= 0 &&
+      selectedIndex < sections.length
+    ) {
+      currentIndex = selectedIndex;
+      showSection();
+    }
   });
 
-  showChapter();
+  showSection();
 })();
-</script>
-
+                      </script>
   
 </body>
         </html>
