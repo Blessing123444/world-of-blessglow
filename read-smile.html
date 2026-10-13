@@ -1,486 +1,552 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#211914">
 
-  <title>Behind Her Smile: The Girl They Framed | World of BlessGlow</title>
+<title>Behind Her Smile — World of BlessGlow</title>
 
-  <meta name="description"
-        content="Read Behind Her Smile: The Girl They Framed, a novel by Blessing Effiong.">
+<style>
+:root {
+  --bg: #f7f1e8;
+  --paper: #fffdf8;
+  --ink: #2c2521;
+  --muted: #766b62;
+  --gold: #b58b46;
+  --dark: #211914;
+  --line: #e7dbca;
+}
 
-  <style>
-    :root {
-      --gold: #d6ad60;
-      --background: #100e12;
-      --panel: #1b171e;
-      --text: #f7f0e7;
-      --muted: #c1b5c4;
-      --border: #403342;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.8;
+}
 
-    body {
-      margin: 0;
-      background: var(--background);
-      color: var(--text);
-      font-family: Georgia, "Times New Roman", serif;
-      line-height: 1.9;
-    }
+.top {
+  background: var(--dark);
+  color: #fff7e9;
+  padding: 26px 16px;
+  text-align: center;
+}
 
-    header {
-      padding: 20px;
-      text-align: center;
-      background: #151118;
-      border-bottom: 1px solid var(--border);
-    }
+.brand {
+  font: 600 12px/1.5 Arial, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #e4c58a;
+}
 
-    a {
-      color: var(--gold);
-      text-decoration: none;
-    }
+.top h1 {
+  font-size: clamp(28px, 6vw, 42px);
+  line-height: 1.2;
+  margin: 14px auto 8px;
+  max-width: 760px;
+}
 
-    .brand {
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
+.subtitle {
+  font: 14px/1.7 Arial, sans-serif;
+  color: #e8ded0;
+}
 
-    .back-link {
-      display: inline-block;
-      margin-top: 12px;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-    }
+.author {
+  margin-top: 8px;
+  font: italic 13px/1.6 Georgia, serif;
+  color: #e4c58a;
+}
 
-    .hero {
-      max-width: 850px;
-      margin: 35px auto 15px;
-      padding: 25px 20px;
-      text-align: center;
-    }
+.wrap {
+  width: 100%;
+  max-width: 850px;
+  margin: 22px auto;
+  padding: 0 14px 40px;
+}
 
-    .hero h1 {
-      margin: 0;
-      color: var(--gold);
-      font-size: clamp(30px, 7vw, 46px);
-      line-height: 1.25;
-    }
+.controls,
+.reader {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 5px 20px #3b28100b;
+}
 
-    .subtitle {
-      margin: 12px 0;
-      font-size: clamp(18px, 4vw, 23px);
-    }
+.controls {
+  padding: 16px;
+  margin-bottom: 16px;
+}
 
-    .author {
-      color: var(--muted);
-      font-size: 15px;
-      font-style: italic;
-    }
+/* Keep both dropdowns side by side */
+.control-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
 
-    .reader {
-      max-width: 850px;
-      margin: 0 auto 50px;
-      padding: 20px;
-    }
+.control-item {
+  min-width: 0;
+}
 
-    .controls {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+.control-item label {
+  display: block;
+  font: 600 12px/1.5 Arial, sans-serif;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
 
-    label {
-      display: block;
-      margin-bottom: 7px;
-      color: var(--muted);
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-    }
+select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 11px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: 13px Arial, sans-serif;
+}
 
-    select {
-      width: 100%;
-      min-height: 46px;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--panel);
-      color: var(--text);
-      font-size: 14px;
-    }
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
 
-    .progress-area {
-      margin: 15px 0 22px;
-      color: var(--muted);
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-    }
+.buttons button {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 8px;
+  background: var(--dark);
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
 
-    .progress-track {
-      height: 5px;
-      margin-top: 8px;
-      overflow: hidden;
-      border-radius: 10px;
-      background: #342b37;
-    }
+.buttons button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 
-    .progress-bar {
-      width: 0;
-      height: 100%;
-      background: var(--gold);
-      transition: width 0.25s;
-    }
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+  font: 12px Arial, sans-serif;
+  color: var(--muted);
+}
 
-    .chapter-card {
-      min-height: 350px;
-      padding: 25px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--panel);
-    }
+.bar {
+  height: 5px;
+  margin-top: 8px;
+  background: #eee5d8;
+  border-radius: 9px;
+  overflow: hidden;
+}
 
-    .chapter-card h2 {
-      margin-top: 0;
-      margin-bottom: 25px;
-      color: var(--gold);
-      font-size: 27px;
-      line-height: 1.45;
-    }
+.bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--gold);
+  transition: width 0.2s;
+}
 
-    .chapter-text {
-      overflow-wrap: anywhere;
-      white-space: pre-wrap;
-      font-size: 17px;
-    }
+.reader {
+  padding: clamp(20px, 5vw, 44px);
+  min-height: 300px;
+}
 
-    .navigation {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: 22px;
-    }
+.section-label {
+  font: 600 11px Arial, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
 
-    button {
-      min-height: 46px;
-      padding: 11px 20px;
-      border: 1px solid var(--gold);
-      border-radius: 8px;
-      background: var(--gold);
-      color: #181118;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.reader h2 {
+  font-size: clamp(25px, 5vw, 34px);
+  line-height: 1.3;
+  margin: 8px 0 24px;
+}
 
-    button.secondary {
-      background: transparent;
-      color: var(--gold);
-    }
+.story {
+  font-size: 18px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+  transition: font-size 0.15s;
+}
 
-    button:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
+.story p {
+  margin: 0 0 1.2em;
+  white-space: pre-wrap;
+}
 
-    .status {
-      margin-top: 18px;
-      color: var(--muted);
-      font-family: Arial, sans-serif;
-      font-size: 12px;
-      text-align: center;
-    }
+.story .quote {
+  font-style: italic;
+  color: #79623f;
+  text-align: center;
+  margin: 28px 0;
+}
 
-    .message {
-      padding: 25px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--panel);
-      text-align: center;
-    }
+.footer {
+  text-align: center;
+  color: var(--muted);
+  font: 12px/1.8 Arial, sans-serif;
+  padding: 22px 12px;
+}
 
-    .message h2 {
-      color: var(--gold);
-    }
+.footer a {
+  color: inherit;
+}
 
-    footer {
-      padding: 25px 15px;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-      text-align: center;
-    }
+.error {
+  color: #8c2c2c;
+  font-family: Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
 
-    footer p {
-      margin: 6px 0;
-    }
+.hidden {
+  display: none !important;
+}
 
-    @media (max-width: 520px) {
-      .reader {
-        padding: 14px;
-      }
+@media (max-width: 360px) {
+  .controls {
+    padding: 11px;
+  }
 
-      .controls {
-        grid-template-columns: 1fr;
-      }
+  .control-grid {
+    gap: 7px;
+  }
 
-      .chapter-card {
-        padding: 18px;
-      }
+  .control-item label {
+    font-size: 11px;
+  }
 
-      .chapter-card h2 {
-        font-size: 24px;
-      }
+  select {
+    padding: 10px 5px;
+    font-size: 12px;
+  }
 
-      .navigation button {
-        padding: 10px;
-        font-size: 13px;
-      }
-    }
-  </style>
+  .buttons button {
+    font-size: 12px;
+  }
+
+  .reader {
+    padding: 17px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-<header>
+<header class="top">
   <div class="brand">World of BlessGlow</div>
-  <a class="back-link" href="books.html">← Back to Books</a>
+
+  <h1>Behind Her Smile</h1>
+
+  <div class="subtitle">The Girl They Framed</div>
+
+  <div class="author">A novel by Blessing Effiong</div>
 </header>
 
-<section class="hero">
-  <h1>BEHIND HER SMILE</h1>
-  <p class="subtitle">The Girl They Framed</p>
-  <p class="author">A novel by Blessing Effiong</p>
-</section>
+<main class="wrap">
 
-<main class="reader">
+  <section class="controls" aria-label="Reader controls">
 
-  <div id="loading" class="message">
-    <h2>Opening your book...</h2>
-    <p>Please wait while the story loads.</p>
-  </div>
+    <div class="control-grid">
 
-  <div id="error" class="message" hidden>
-    <h2>We couldn't open the book.</h2>
-    <p id="error-details"></p>
-    <p>Please check the JavaScript file and try again.</p>
-  </div>
-
-  <div id="reader-interface" hidden>
-
-    <div class="controls">
-
-      <div>
-        <label for="section-select">Choose a Section</label>
-        <select id="section-select"></select>
+      <div class="control-item">
+        <label for="chapterSelect">Choose a Section</label>
+        <select id="chapterSelect">
+          <option>Loading book...</option>
+        </select>
       </div>
 
-      <div>
-        <label for="font-select">Reading Text Size</label>
-        <select id="font-select">
-          <option value="15">Small</option>
-          <option value="17" selected>Medium</option>
-          <option value="19">Large</option>
-          <option value="22">Very Large</option>
+      <div class="control-item">
+        <label for="fontSizeSelect">Reading Text Size</label>
+        <select id="fontSizeSelect">
+          <option value="16px">Small</option>
+          <option value="18px" selected>Medium</option>
+          <option value="20px">Large</option>
+          <option value="23px">Very Large</option>
         </select>
       </div>
 
     </div>
 
-    <div class="progress-area">
-      <span id="progress-label">Section 1</span>
-
-      <div class="progress-track">
-        <div id="progress-bar" class="progress-bar"></div>
-      </div>
+    <div class="buttons">
+      <button id="prevBtn" type="button">← Previous</button>
+      <button id="nextBtn" type="button">Next →</button>
     </div>
 
-    <article class="chapter-card">
-      <h2 id="section-title"></h2>
-      <div id="section-content" class="chapter-text"></div>
-    </article>
-
-    <div class="navigation">
-      <button id="previous" class="secondary" type="button">
-        ← Previous
-      </button>
-
-      <button id="next" type="button">
-        Next →
-      </button>
+    <div class="progress-row">
+      <span id="progressText">Loading progress...</span>
+      <span id="positionText"></span>
     </div>
 
-    <p id="save-status" class="status">
-      Your reading position is saved on this device.
-    </p>
+    <div class="bar">
+      <span id="progressBar"></span>
+    </div>
 
+  </section>
+
+  <article class="reader">
+
+    <div class="section-label" id="sectionLabel">Reading</div>
+
+    <h2 id="sectionTitle">Loading your book...</h2>
+
+    <div class="story" id="storyContent" aria-live="polite"></div>
+
+    <p id="errorMessage" class="error hidden"></p>
+
+  </article>
+
+  <div class="footer">
+    © <span id="year"></span> Blessing Effiong · World of BlessGlow
+    <br>
+    <a href="books.html">← Back to Books</a>
   </div>
 
 </main>
 
-<footer>
-  <p>World of BlessGlow</p>
-  <p>Stories. Worlds. Imagination.</p>
-  <p>
-    <a href="index.html">Home</a> ·
-    <a href="books.html">Books</a>
-  </p>
-  <p>© 2026 Blessing Effiong. All rights reserved.</p>
-</footer>
-
+<!-- Keep this filename exactly as it is -->
 <script src="smile-chapters.js"></script>
 
 <script>
-(() => {
-  "use strict";
+(function () {
+  const book = window.SMILE_BOOK;
 
-  const $ = id => document.getElementById(id);
+  const select = document.getElementById("chapterSelect");
+  const fontSelect = document.getElementById("fontSizeSelect");
+  const titleEl = document.getElementById("sectionTitle");
+  const labelEl = document.getElementById("sectionLabel");
+  const contentEl = document.getElementById("storyContent");
+  const errorEl = document.getElementById("errorMessage");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const progressText = document.getElementById("progressText");
+  const positionText = document.getElementById("positionText");
+  const progressBar = document.getElementById("progressBar");
 
-  const loading = $("loading");
-  const errorBox = $("error");
-  const errorDetails = $("error-details");
-  const reader = $("reader-interface");
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+  const sectionStorageKey = "blessglow-read-smile-section";
+  const fontStorageKey = "blessglow-read-smile-font";
 
   function showError(message) {
-    loading.hidden = true;
-    reader.hidden = true;
-    errorBox.hidden = false;
-    errorDetails.textContent = message;
+    select.innerHTML = '<option value="">Book unavailable</option>';
+    titleEl.textContent = "The book could not be loaded";
+    errorEl.classList.remove("hidden");
+    errorEl.textContent = message;
+    contentEl.textContent = "";
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    progressText.textContent = "";
+    positionText.textContent = "";
+    progressBar.style.width = "0%";
   }
-
-  const book = window.SMILE_BOOK;
 
   if (!book || !Array.isArray(book.chapters)) {
     showError(
-      "The book data could not be read. Make sure smile-chapters.js " +
-      "is actual JavaScript and is in the same folder as read-smile.html."
+      "Please check that smile-chapters.js is in the same folder " +
+      "as read-smile.html and contains window.SMILE_BOOK with a chapters array."
     );
     return;
   }
 
   const sections = [];
 
-  function addSection(title, content) {
-    if (typeof content === "string" && content.trim()) {
+  function addSection(key, label, title, content, type) {
+    if (
+      content !== undefined &&
+      content !== null &&
+      String(content).trim() !== ""
+    ) {
       sections.push({
-        title,
-        content: content.trim()
+        key: key,
+        label: label,
+        title: title,
+        content: String(content),
+        type: type
       });
     }
   }
 
   /*
-   * Split the original front matter into separate pages.
-   * The headings below are matched without changing the manuscript text.
+   * Opening pages.
+   * If the data file contains separate front-matter fields,
+   * show them individually. Otherwise, show frontMatter as one section.
    */
-  function splitFrontMatter(text) {
-    if (typeof text !== "string" || !text.trim()) return;
+  const separateOpeningFields = [
+    ["copyright", "Copyright"],
+    ["disclaimer", "Disclaimer"],
+    ["dedication", "Dedication"],
+    ["tableOfContents", "Table of Contents"]
+  ];
 
-    const headings = [
-      ["Copyright", /Copyright Page/i],
-      ["Disclaimer", /\bDisclaimer\b/i],
-      ["Dedication", /\bDedication\b/i],
-      ["Table of Contents", /Table of content(?:s)?/i]
-    ];
+  let hasSeparateOpening = false;
 
-    const matches = [];
+  separateOpeningFields.forEach(function (item) {
+    const key = item[0];
+    const label = item[1];
 
-    headings.forEach(([name, regex]) => {
-      const match = regex.exec(text);
+    if (book[key]) {
+      addSection(
+        "opening-" + key,
+        label,
+        label,
+        book[key],
+        "Opening Pages"
+      );
 
-      if (match) {
-        matches.push({
-          name,
-          start: match.index,
-          headingEnd: match.index + match[0].length
-        });
-      }
-    });
-
-    matches.sort((a, b) => a.start - b.start);
-
-    const firstHeading = matches.length ? matches[0].start : text.length;
-    const opening = text.slice(0, firstHeading).trim();
-
-    if (opening) {
-      addSection("🌸 Opening Pages", opening);
+      hasSeparateOpening = true;
     }
+  });
 
-    matches.forEach((match, index) => {
-      const end = index + 1 < matches.length
-        ? matches[index + 1].start
-        : text.length;
-
-      let content = text.slice(match.headingEnd, end).trim();
-
-      if (content) {
-        addSection(
-          match.name === "Copyright" ? "© Copyright" :
-          match.name === "Disclaimer" ? "⚠️ Disclaimer" :
-          match.name === "Dedication" ? "💌 Dedication" :
-          "📑 Table of Contents",
-          content
-        );
-      }
-    });
+  if (book.frontMatter) {
+    addSection(
+      "front",
+      "Opening Pages",
+      "Opening Pages",
+      book.frontMatter,
+      "Opening Pages"
+    );
   }
 
-  splitFrontMatter(book.frontMatter);
+  if (book.openingQuote) {
+    addSection(
+      "opening-quote",
+      "Opening Quote",
+      "Opening Quote",
+      book.openingQuote,
+      "Opening Quote"
+    );
+  }
 
-  addSection("🌸 Prologue", book.prologue);
+  addSection(
+    "prologue",
+    "Prologue",
+    "Prologue",
+    book.prologue,
+    "Prologue"
+  );
 
-  book.chapters.forEach((chapter, index) => {
-    const number = chapter.number || index + 1;
-    const title = chapter.title || ("Chapter " + number);
+  book.chapters.forEach(function (chapter, index) {
+    const number =
+      chapter.number !== undefined ? chapter.number : index + 1;
+
+    const chapterTitle = chapter.title
+      ? "Chapter " + number + " — " + chapter.title
+      : "Chapter " + number;
 
     addSection(
-      "📖 Chapter " + number + " — " + title,
-      chapter.content
+      "chapter-" + index,
+      chapterTitle,
+      chapterTitle,
+      chapter.content || chapter.text || "",
+      "Chapter " + number
     );
   });
 
-  addSection("🌙 Epilogue", book.epilogue);
-  addSection("✨ Acknowledgements", book.acknowledgments);
-  addSection("🌸 About the Author", book.aboutAuthor);
-  addSection("💙 Thank You for Reading", book.thankYou);
+  addSection(
+    "epilogue",
+    "Epilogue",
+    "Epilogue",
+    book.epilogue,
+    "Epilogue"
+  );
+
+  addSection(
+    "final-quote",
+    "Final Quote",
+    "Final Quote",
+    book.finalQuote,
+    "Final Quote"
+  );
 
   /*
-   * Some versions of the data file may store the closing pages together
-   * in backMatter. Use it only if separate closing sections are unavailable.
+   * Closing pages are separate whenever the data file
+   * provides them as separate fields.
+   */
+  const closingFields = [
+    ["acknowledgments", "✨ Acknowledgments"],
+    ["acknowledgements", "✨ Acknowledgements"],
+    ["aboutAuthor", "👩🏽‍💻 About the Author"],
+    ["thankYou", "💙 Thank You"],
+    ["copyrightNotice", "Copyright"],
+    ["closingDisclaimer", "Disclaimer"]
+  ];
+
+  const addedClosingKeys = new Set();
+
+  closingFields.forEach(function (item) {
+    const key = item[0];
+    const label = item[1];
+
+    if (book[key] && !addedClosingKeys.has(key)) {
+      addSection(
+        "closing-" + key,
+        label,
+        label,
+        book[key],
+        "Closing Pages"
+      );
+
+      addedClosingKeys.add(key);
+    }
+  });
+
+  /*
+   * If the data file contains only a combined backMatter field,
+   * display it rather than losing the content.
    */
   if (
+    book.backMatter &&
     !book.acknowledgments &&
+    !book.acknowledgements &&
     !book.aboutAuthor &&
     !book.thankYou
   ) {
-    addSection("✨ Closing Pages", book.backMatter);
+    addSection(
+      "back",
+      "Closing Pages",
+      "Closing Pages",
+      book.backMatter,
+      "Closing Pages"
+    );
   }
 
-  if (!sections.length) {
-    showError("The book data loaded, but no readable sections were found.");
+  if (sections.length === 0) {
+    showError("No readable sections were found in the book data.");
     return;
   }
 
-  const select = $("section-select");
-  const titleElement = $("section-title");
-  const contentElement = $("section-content");
-  const fontSelect = $("font-select");
-  const previous = $("previous");
-  const next = $("next");
-  const progressLabel = $("progress-label");
-  const progressBar = $("progress-bar");
-  const saveStatus = $("save-status");
+  select.innerHTML = "";
 
-  const storageKey = "blessglow-behind-her-smile-progress";
+  sections.forEach(function (section, index) {
+    const option = document.createElement("option");
+    option.value = String(index);
+    option.textContent = section.label;
+    select.appendChild(option);
+  });
 
   let current = 0;
 
   try {
-    const saved = Number(localStorage.getItem(storageKey));
+    const saved = Number(localStorage.getItem(sectionStorageKey));
 
     if (
       Number.isInteger(saved) &&
@@ -489,74 +555,130 @@
     ) {
       current = saved;
     }
-  } catch (_) {
-    // Reading remains available if local storage is disabled.
+  } catch (error) {
+    // Reading still works if browser storage is unavailable.
   }
 
-  sections.forEach((section, index) => {
-    const option = document.createElement("option");
-    option.value = String(index);
-    option.textContent = section.title;
-    select.appendChild(option);
-  });
+  try {
+    const savedFont = localStorage.getItem(fontStorageKey);
+    const validSizes = ["16px", "18px", "20px", "23px"];
 
-  function render(index) {
-    if (index < 0 || index >= sections.length) return;
+    if (validSizes.includes(savedFont)) {
+      fontSelect.value = savedFont;
+    }
+  } catch (error) {
+    // Use the default font size.
+  }
 
-    current = index;
+  contentEl.style.fontSize = fontSelect.value;
 
-    const section = sections[index];
+  function renderContent(text) {
+    contentEl.innerHTML = "";
 
-    select.value = String(index);
-    titleElement.textContent = section.title;
-    contentElement.textContent = section.content;
-    contentElement.style.fontSize = fontSelect.value + "px";
+    const blocks = String(text)
+      .replace(/\r/g, "")
+      .split(/\n\s*\n/);
 
-    progressLabel.textContent =
-      "Section " + (index + 1) + " of " + sections.length;
+    blocks.forEach(function (block) {
+      const paragraphText = block.trim();
 
-    progressBar.style.width =
-      ((index + 1) / sections.length * 100) + "%";
+      if (!paragraphText) {
+        return;
+      }
 
-    previous.disabled = index === 0;
-    next.disabled = index === sections.length - 1;
+      const paragraph = document.createElement("p");
+      paragraph.textContent = paragraphText;
+
+      if (
+        /^(📖\s*)?(Opening Quote|Final Quote)$/i.test(paragraphText) ||
+        (/^["“].*["”]$/.test(paragraphText) &&
+          paragraphText.length < 400)
+      ) {
+        paragraph.className = "quote";
+      }
+
+      contentEl.appendChild(paragraph);
+    });
+
+    /*
+     * Preserve the content even when the section contains
+     * text without blank lines.
+     */
+    if (!contentEl.children.length && String(text).trim()) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = String(text).trim();
+      contentEl.appendChild(paragraph);
+    }
+  }
+
+  function render() {
+    const section = sections[current];
+
+    if (!section) {
+      return;
+    }
+
+    select.value = String(current);
+    labelEl.textContent = section.type;
+    titleEl.textContent = section.title;
+
+    renderContent(section.content);
+
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === sections.length - 1;
+
+    progressText.textContent =
+      "Section " + (current + 1) + " of " + sections.length;
+
+    const percentage = Math.round(
+      ((current + 1) / sections.length) * 100
+    );
+
+    positionText.textContent = percentage + "%";
+    progressBar.style.width = percentage + "%";
 
     try {
-      localStorage.setItem(storageKey, String(index));
-      saveStatus.textContent =
-        "Your reading position is saved on this device.";
-    } catch (_) {
-      saveStatus.textContent =
-        "Reading works, but progress could not be saved.";
+      localStorage.setItem(sectionStorageKey, String(current));
+    } catch (error) {
+      // The reader remains usable without saved progress.
     }
 
     window.scrollTo({
-      top: document.querySelector(".reader").offsetTop,
+      top: 0,
       behavior: "smooth"
     });
   }
 
-  select.addEventListener("change", () => {
-    render(Number(select.value));
+  select.addEventListener("change", function () {
+    current = Number(select.value);
+    render();
   });
 
-  fontSelect.addEventListener("change", () => {
-    contentElement.style.fontSize = fontSelect.value + "px";
+  prevBtn.addEventListener("click", function () {
+    if (current > 0) {
+      current--;
+      render();
+    }
   });
 
-  previous.addEventListener("click", () => {
-    render(current - 1);
+  nextBtn.addEventListener("click", function () {
+    if (current < sections.length - 1) {
+      current++;
+      render();
+    }
   });
 
-  next.addEventListener("click", () => {
-    render(current + 1);
+  fontSelect.addEventListener("change", function () {
+    contentEl.style.fontSize = fontSelect.value;
+
+    try {
+      localStorage.setItem(fontStorageKey, fontSelect.value);
+    } catch (error) {
+      // Font size still changes for the current visit.
+    }
   });
 
-  loading.hidden = true;
-  errorBox.hidden = true;
-  reader.hidden = false;
-
-  render(current);
+  render();
 })();
 </script>
 
