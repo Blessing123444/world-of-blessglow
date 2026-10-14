@@ -130,6 +130,41 @@
       color: #bbb;
       text-align: center;
       font-size: 14px;
+      margin: 18px 0 10px;
+    }
+
+    /* Reading progress bar */
+    .reading-progress-track {
+      width: 100%;
+      height: 8px;
+      margin: 0 auto 5px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #333;
+      border: 1px solid #4a4029;
+    }
+
+    .reading-progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 20px;
+      background: #d4af37;
+      transition: width 0.3s ease;
+    }
+
+    .progress-caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      color: #bbb;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .progress-caption span:last-child {
+      color: #d4af37;
+      white-space: nowrap;
     }
 
     @media (max-width: 500px) {
@@ -164,6 +199,10 @@
 
       .chapter-text {
         line-height: 1.85;
+      }
+
+      .progress-caption {
+        font-size: 11px;
       }
     }
   </style>
@@ -227,11 +266,11 @@
       </div>
 
       <div class="reader-controls">
-        <button id="previousButton" disabled>
+        <button id="previousButton" type="button" disabled>
           ← Previous
         </button>
 
-        <button id="nextButton" disabled>
+        <button id="nextButton" type="button" disabled>
           Next →
         </button>
       </div>
@@ -239,6 +278,26 @@
       <p class="reader-note" id="readingProgress">
         Preparing your reading experience...
       </p>
+
+      <div
+        class="reading-progress-track"
+        id="readingProgressBar"
+        role="progressbar"
+        aria-label="Book reading progress"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      >
+        <div
+          class="reading-progress-fill"
+          id="readingProgressFill"
+        ></div>
+      </div>
+
+      <div class="progress-caption">
+        <span>Keep going — your story awaits.</span>
+        <span id="progressPercentage">0% complete</span>
+      </div>
 
     </section>
 
@@ -257,6 +316,9 @@
     const prevButton = document.getElementById("previousButton");
     const nextButton = document.getElementById("nextButton");
     const progressElement = document.getElementById("readingProgress");
+    const progressBar = document.getElementById("readingProgressBar");
+    const progressFill = document.getElementById("readingProgressFill");
+    const progressPercentage = document.getElementById("progressPercentage");
 
     const STORAGE_KEY =
       "blessglow-love-reader-section-progress-v2";
@@ -269,6 +331,7 @@
     function showError(message) {
       chapterTitle.textContent = "Manuscript unavailable";
       chapterText.textContent = message;
+
       chapterSelect.innerHTML =
         '<option value="">Unable to load manuscript</option>';
 
@@ -277,6 +340,10 @@
 
       progressElement.textContent =
         "Please check the manuscript connection.";
+
+      progressFill.style.width = "0%";
+      progressBar.setAttribute("aria-valuenow", "0");
+      progressPercentage.textContent = "0% complete";
     }
 
     // Restore the reader's preferred text size.
@@ -288,7 +355,7 @@
         textSizeSelect.value = savedSize;
       }
     } catch (error) {
-      // The reader remains usable if storage is unavailable.
+      // Text resizing remains available if storage is unavailable.
     }
 
     function applyTextSize() {
@@ -330,7 +397,6 @@
     }
 
     // OPENING PAGES
-
     function buildFrontMatter() {
       const frontMatter = String(book.frontMatter || "")
         .replace(/\r\n/g, "\n")
@@ -394,7 +460,6 @@
     }
 
     // STORY CHAPTERS
-
     function buildChapters() {
       book.chapters.forEach(function (chapter, index) {
         const number = chapter.number || index + 1;
@@ -430,7 +495,6 @@
     }
 
     // CLOSING PAGES
-
     function buildBackMatter() {
       const backMatter = String(book.backMatter || "")
         .replace(/\r\n/g, "\n")
@@ -508,8 +572,7 @@
       saveCurrentSection();
     }
 
-    // BUILD THE COMPLETE READER
-
+    // BUILD ALL AVAILABLE SECTIONS
     buildFrontMatter();
     buildChapters();
     buildBackMatter();
@@ -521,8 +584,7 @@
       return;
     }
 
-    // SECTION SELECTOR
-
+    // CREATE THE SECTION SELECTOR
     chapterSelect.innerHTML = "";
 
     sections.forEach(function (section, index) {
@@ -534,8 +596,7 @@
       chapterSelect.appendChild(option);
     });
 
-    // RESTORE SAVED READING PROGRESS
-
+    // RESTORE SAVED READING POSITION
     let currentIndex = 0;
 
     try {
@@ -554,8 +615,7 @@
       currentIndex = 0;
     }
 
-    // DISPLAY SELECTED SECTION
-
+    // DISPLAY THE SELECTED SECTION AND UPDATE THE BAR
     function showSection() {
       const section = sections[currentIndex];
 
@@ -568,6 +628,10 @@
       prevButton.disabled = currentIndex === 0;
       nextButton.disabled = currentIndex === sections.length - 1;
 
+      const percentage = Math.round(
+        ((currentIndex + 1) / sections.length) * 100
+      );
+
       progressElement.textContent =
         "Section " +
         (currentIndex + 1) +
@@ -575,18 +639,21 @@
         sections.length +
         " · Your progress is saved on this device.";
 
+      progressFill.style.width = percentage + "%";
+      progressBar.setAttribute("aria-valuenow", String(percentage));
+      progressPercentage.textContent = percentage + "% complete";
+
       try {
         localStorage.setItem(
           STORAGE_KEY,
           String(currentIndex)
         );
       } catch (error) {
-        // Reading still works if storage is unavailable.
+        // The reader still works if storage is unavailable.
       }
     }
 
-    // NAVIGATION BUTTONS
-
+    // PREVIOUS BUTTON
     prevButton.addEventListener("click", function () {
       if (currentIndex > 0) {
         currentIndex--;
@@ -594,6 +661,7 @@
       }
     });
 
+    // NEXT BUTTON
     nextButton.addEventListener("click", function () {
       if (currentIndex < sections.length - 1) {
         currentIndex++;
@@ -601,6 +669,7 @@
       }
     });
 
+    // SECTION SELECTOR
     chapterSelect.addEventListener("change", function () {
       const selectedIndex = Number(chapterSelect.value);
 
@@ -614,6 +683,7 @@
       }
     });
 
+    // INITIALIZE THE READER
     showSection();
 
   })();
