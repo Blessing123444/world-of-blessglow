@@ -154,7 +154,7 @@
 
     .progress-caption {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       gap: 10px;
       color: #bbb;
@@ -162,7 +162,7 @@
       margin-top: 8px;
     }
 
-    .progress-caption span:last-child {
+    .progress-caption span {
       color: #d4af37;
       white-space: nowrap;
     }
@@ -294,8 +294,8 @@
         ></div>
       </div>
 
+      <!-- Only the percentage remains; the slogan has been removed. -->
       <div class="progress-caption">
-        <span>Keep going — your story awaits.</span>
         <span id="progressPercentage">0% complete</span>
       </div>
 
@@ -690,4 +690,4 @@
   </script>
 
 </body>
-</html>
+  </html>
