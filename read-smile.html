@@ -88,11 +88,16 @@
       padding: 20px;
     }
 
+    /* Keep both controls side by side */
     .controls {
       display: grid;
-      grid-template-columns: 1.5fr 1fr;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
       gap: 12px;
       margin-bottom: 20px;
+    }
+
+    .controls > div {
+      min-width: 0;
     }
 
     label {
@@ -105,6 +110,7 @@
 
     select {
       width: 100%;
+      min-width: 0;
       min-height: 46px;
       padding: 10px;
       border: 1px solid var(--border);
@@ -219,13 +225,25 @@
       margin: 6px 0;
     }
 
+    /* Mobile layout */
     @media (max-width: 520px) {
       .reader {
         padding: 14px;
       }
 
       .controls {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .controls label {
+        font-size: 12px;
+      }
+
+      .controls select {
+        min-height: 44px;
+        padding: 8px 5px;
+        font-size: 12px;
       }
 
       .chapter-card {
@@ -374,8 +392,7 @@
   }
 
   /*
-   * Split the original front matter into separate pages.
-   * The headings below are matched without changing the manuscript text.
+   * Split front matter into separate pages where possible.
    */
   function splitFrontMatter(text) {
     if (typeof text !== "string" || !text.trim()) return;
@@ -403,7 +420,10 @@
 
     matches.sort((a, b) => a.start - b.start);
 
-    const firstHeading = matches.length ? matches[0].start : text.length;
+    const firstHeading = matches.length
+      ? matches[0].start
+      : text.length;
+
     const opening = text.slice(0, firstHeading).trim();
 
     if (opening) {
@@ -415,7 +435,7 @@
         ? matches[index + 1].start
         : text.length;
 
-      let content = text.slice(match.headingEnd, end).trim();
+      const content = text.slice(match.headingEnd, end).trim();
 
       if (content) {
         addSection(
@@ -449,8 +469,7 @@
   addSection("💙 Thank You for Reading", book.thankYou);
 
   /*
-   * Some versions of the data file may store the closing pages together
-   * in backMatter. Use it only if separate closing sections are unavailable.
+   * Use combined closing pages only if separate pages are unavailable.
    */
   if (
     !book.acknowledgments &&
@@ -461,7 +480,9 @@
   }
 
   if (!sections.length) {
-    showError("The book data loaded, but no readable sections were found.");
+    showError(
+      "The book data loaded, but no readable sections were found."
+    );
     return;
   }
 
@@ -490,13 +511,15 @@
       current = saved;
     }
   } catch (_) {
-    // Reading remains available if local storage is disabled.
+    // Reading still works if local storage is disabled.
   }
 
   sections.forEach((section, index) => {
     const option = document.createElement("option");
+
     option.value = String(index);
     option.textContent = section.title;
+
     select.appendChild(option);
   });
 
@@ -523,6 +546,7 @@
 
     try {
       localStorage.setItem(storageKey, String(index));
+
       saveStatus.textContent =
         "Your reading position is saved on this device.";
     } catch (_) {
