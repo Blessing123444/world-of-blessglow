@@ -12,7 +12,7 @@
   <style>
     .reading-room {
       max-width: 850px;
-      margin: 40px auto;
+      margin: 40px auto 0;
       padding: 25px;
     }
 
@@ -25,6 +25,7 @@
       color: #d4af37;
     }
 
+    /* FREE DURING LAUNCH NOTICE */
     .launch-notice {
       max-width: 420px;
       margin: 20px auto;
@@ -49,7 +50,7 @@
       font-size: 14px;
     }
 
-    /* Reading settings */
+    /* READING SETTINGS */
     .reader-settings {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -80,7 +81,7 @@
       font-size: 14px;
     }
 
-    /* Progress area ABOVE the story */
+    /* READING PROGRESS */
     .reader-progress {
       margin: 0 0 25px;
     }
@@ -110,7 +111,7 @@
       transition: width 0.3s ease;
     }
 
-    /* Story card */
+    /* STORY CARD */
     .chapter-panel {
       background: #1b1b1b;
       border: 1px solid #3a3324;
@@ -134,7 +135,7 @@
       transition: font-size 0.15s ease;
     }
 
-    /* Previous and Next buttons */
+    /* PREVIOUS AND NEXT BUTTONS */
     .reader-controls {
       display: flex;
       justify-content: space-between;
@@ -160,7 +161,7 @@
       cursor: not-allowed;
     }
 
-    /* Saved-position message at the BOTTOM */
+    /* SAVED READING POSITION */
     .reading-position-note {
       color: #bbb;
       text-align: center;
@@ -169,8 +170,9 @@
       margin: 28px 0 10px;
     }
 
-    /* Website footer — matching Read Smile */
+    /* WEBSITE FOOTER */
     .site-footer {
+      margin-top: 0;
       padding: 25px 15px;
       border-top: 1px solid #3a3324;
       color: #bbb;
@@ -188,10 +190,11 @@
       text-decoration: none;
     }
 
+    /* MOBILE LAYOUT */
     @media (max-width: 500px) {
       .reading-room {
         padding: 15px;
-        margin: 20px auto;
+        margin: 20px auto 0;
       }
 
       .reader-settings {
@@ -290,7 +293,7 @@
 
     </div>
 
-    <!-- PROGRESS COUNTER AND BAR ABOVE THE STORY -->
+    <!-- READING PROGRESS -->
     <div class="reader-progress">
 
       <p class="reader-note" id="readingProgress">
@@ -325,7 +328,7 @@
 
     </section>
 
-    <!-- NAVIGATION BUTTONS BELOW THE STORY CARD -->
+    <!-- NAVIGATION BUTTONS -->
     <div class="reader-controls">
 
       <button id="previousButton" type="button" disabled>
@@ -338,7 +341,7 @@
 
     </div>
 
-    <!-- SAVED READING POSITION AT THE BOTTOM -->
+    <!-- SAVED READING POSITION -->
     <p class="reading-position-note">
       Your reading position is saved on this device.
     </p>
@@ -356,8 +359,10 @@
     <p>© 2026 Blessing Effiong. All rights reserved.</p>
   </footer>
 
+  <!-- MANUSCRIPT DATA -->
   <script src="love-chapters.js"></script>
 
+  <!-- READER FUNCTIONALITY -->
   <script>
   (function () {
     "use strict";
@@ -686,14 +691,12 @@
         ((currentIndex + 1) / sections.length) * 100
       );
 
-      /* Counter only: no saved-progress message here. */
       progressElement.textContent =
         "Section " +
         (currentIndex + 1) +
         " of " +
         sections.length;
 
-      /* Gold progress bar */
       progressFill.style.width = percentage + "%";
 
       progressBar.setAttribute(
@@ -701,7 +704,7 @@
         String(percentage)
       );
 
-      /* Save the current reading position */
+      /* SAVE THE CURRENT READING POSITION */
       try {
         localStorage.setItem(
           STORAGE_KEY,
@@ -749,4 +752,4 @@
   </script>
 
 </body>
-  </html>
+</html>
