@@ -18,20 +18,65 @@
 
     .book-intro {
       text-align: center;
-      margin-bottom: 35px;
+      margin-bottom: 30px;
     }
 
     .book-intro h1 {
       color: #d4af37;
     }
 
-    .free-badge {
-      display: inline-block;
-      padding: 8px 15px;
+    .launch-notice {
+      max-width: 420px;
+      margin: 20px auto;
+      padding: 13px 16px;
       border: 1px solid #d4af37;
+      border-radius: 10px;
+      background: rgba(212, 175, 55, 0.07);
+      text-align: center;
+    }
+
+    .launch-notice strong {
+      display: block;
       color: #d4af37;
-      border-radius: 20px;
-      margin: 10px 0;
+      font-size: 13px;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .launch-notice p {
+      color: #ddd;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .reader-settings {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .setting-group {
+      min-width: 0;
+    }
+
+    .setting-group label {
+      display: block;
+      color: #d4af37;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .setting-select {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      padding: 12px 10px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #d4af37;
+      border-radius: 6px;
+      font-size: 14px;
     }
 
     .chapter-panel {
@@ -45,12 +90,16 @@
     .chapter-panel h2 {
       color: #d4af37;
       text-align: center;
+      line-height: 1.4;
     }
 
     .chapter-text {
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       min-height: 180px;
+      font-size: 18px;
+      line-height: 1.9;
+      transition: font-size 0.15s ease;
     }
 
     .reader-controls {
@@ -77,17 +126,6 @@
       cursor: not-allowed;
     }
 
-    .chapter-select {
-      display: block;
-      width: 100%;
-      margin: 20px 0;
-      padding: 12px;
-      background: #111;
-      color: #fff;
-      border: 1px solid #d4af37;
-      border-radius: 6px;
-    }
-
     .reader-note {
       color: #bbb;
       text-align: center;
@@ -97,16 +135,35 @@
     @media (max-width: 500px) {
       .reading-room {
         padding: 15px;
+        margin: 20px auto;
       }
 
       .chapter-panel {
         padding: 18px;
       }
 
+      .reader-settings {
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .setting-group label {
+        font-size: 12px;
+      }
+
+      .setting-select {
+        padding: 11px 6px;
+        font-size: 13px;
+      }
+
       .reader-controls button,
       .reader-controls a {
         padding: 10px;
         font-size: 13px;
+      }
+
+      .chapter-text {
+        line-height: 1.85;
       }
     }
   </style>
@@ -128,26 +185,46 @@
 
       <p>By Blessing Effiong</p>
 
-      <span class="free-badge">FREE DURING LAUNCH</span>
-
       <p>
         <a href="books.html">← Back to Books</a>
       </p>
     </div>
 
+    <div class="launch-notice">
+      <strong>FREE DURING LAUNCH</strong>
+      <p>Enjoy this story free during our launch period.</p>
+    </div>
+
+    <div class="reader-settings">
+
+      <div class="setting-group">
+        <label for="chapterSelect">Choose a Section</label>
+
+        <select id="chapterSelect" class="setting-select">
+          <option value="">Loading manuscript...</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <label for="textSizeSelect">Reading Text Size</label>
+
+        <select id="textSizeSelect" class="setting-select">
+          <option value="16">Small</option>
+          <option value="18" selected>Medium</option>
+          <option value="21">Large</option>
+          <option value="24">Extra Large</option>
+        </select>
+      </div>
+
+    </div>
+
     <section class="chapter-panel">
-
-      <label for="chapterSelect">
-        Choose a section or chapter
-      </label>
-
-      <select id="chapterSelect" class="chapter-select">
-        <option value="">Loading manuscript...</option>
-      </select>
 
       <h2 id="chapterTitle">Loading your book...</h2>
 
-      <div id="chapterText" class="chapter-text">Please wait while your manuscript loads.</div>
+      <div id="chapterText" class="chapter-text">
+        Please wait while your manuscript loads.
+      </div>
 
       <div class="reader-controls">
         <button id="previousButton" disabled>
@@ -176,12 +253,16 @@
     const chapterTitle = document.getElementById("chapterTitle");
     const chapterText = document.getElementById("chapterText");
     const chapterSelect = document.getElementById("chapterSelect");
+    const textSizeSelect = document.getElementById("textSizeSelect");
     const prevButton = document.getElementById("previousButton");
     const nextButton = document.getElementById("nextButton");
     const progressElement = document.getElementById("readingProgress");
 
     const STORAGE_KEY =
       "blessglow-love-reader-section-progress-v2";
+
+    const TEXT_SIZE_KEY =
+      "blessglow-love-reader-text-size-v1";
 
     const book = window.LOVE_BOOK;
 
@@ -197,6 +278,34 @@
       progressElement.textContent =
         "Please check the manuscript connection.";
     }
+
+    // Restore the reader's preferred text size.
+    try {
+      const savedSize = localStorage.getItem(TEXT_SIZE_KEY);
+      const allowedSizes = ["16", "18", "21", "24"];
+
+      if (allowedSizes.includes(savedSize)) {
+        textSizeSelect.value = savedSize;
+      }
+    } catch (error) {
+      // The reader remains usable if storage is unavailable.
+    }
+
+    function applyTextSize() {
+      chapterText.style.fontSize = textSizeSelect.value + "px";
+
+      try {
+        localStorage.setItem(
+          TEXT_SIZE_KEY,
+          textSizeSelect.value
+        );
+      } catch (error) {
+        // Text resizing still works without storage.
+      }
+    }
+
+    textSizeSelect.addEventListener("change", applyTextSize);
+    applyTextSize();
 
     if (!book || !Array.isArray(book.chapters)) {
       showError(
@@ -220,9 +329,7 @@
       });
     }
 
-    // =========================================
-    // 📖 OPENING PAGES
-    // =========================================
+    // OPENING PAGES
 
     function buildFrontMatter() {
       const frontMatter = String(book.frontMatter || "")
@@ -286,9 +393,7 @@
       });
     }
 
-    // =========================================
-    // 📚 STORY CHAPTERS
-    // =========================================
+    // STORY CHAPTERS
 
     function buildChapters() {
       book.chapters.forEach(function (chapter, index) {
@@ -324,9 +429,7 @@
       });
     }
 
-    // =========================================
-    // 🌸 CLOSING PAGES
-    // =========================================
+    // CLOSING PAGES
 
     function buildBackMatter() {
       const backMatter = String(book.backMatter || "")
@@ -338,7 +441,6 @@
 
       const lines = backMatter.split("\n");
 
-      // Recognize headings with or without emojis.
       const headingPattern =
         /^[\s\p{Extended_Pictographic}\uFE0F\u200D]*(Acknowledgements|Acknowledgments|About the Author|Thank You for Reading)\s*[:—-]?\s*$/iu;
 
@@ -406,9 +508,7 @@
       saveCurrentSection();
     }
 
-    // =========================================
-    // 📖 BUILD THE COMPLETE READER
-    // =========================================
+    // BUILD THE COMPLETE READER
 
     buildFrontMatter();
     buildChapters();
@@ -421,9 +521,7 @@
       return;
     }
 
-    // =========================================
     // SECTION SELECTOR
-    // =========================================
 
     chapterSelect.innerHTML = "";
 
@@ -431,19 +529,12 @@
       const option = document.createElement("option");
 
       option.value = String(index);
-
-      if (section.type === "chapter") {
-        option.textContent = section.title;
-      } else {
-        option.textContent = section.title;
-      }
+      option.textContent = section.title;
 
       chapterSelect.appendChild(option);
     });
 
-    // =========================================
-    // 💾 SAVE READING PROGRESS
-    // =========================================
+    // RESTORE SAVED READING PROGRESS
 
     let currentIndex = 0;
 
@@ -463,9 +554,7 @@
       currentIndex = 0;
     }
 
-    // =========================================
     // DISPLAY SELECTED SECTION
-    // =========================================
 
     function showSection() {
       const section = sections[currentIndex];
@@ -487,15 +576,16 @@
         " · Your progress is saved on this device.";
 
       try {
-        localStorage.setItem(STORAGE_KEY, String(currentIndex));
+        localStorage.setItem(
+          STORAGE_KEY,
+          String(currentIndex)
+        );
       } catch (error) {
-        // Reading still works if local storage is unavailable.
+        // Reading still works if storage is unavailable.
       }
     }
 
-    // =========================================
     // NAVIGATION BUTTONS
-    // =========================================
 
     prevButton.addEventListener("click", function () {
       if (currentIndex > 0) {
