@@ -82,9 +82,38 @@
       font-style: italic;
     }
 
+    /* FREE DURING LAUNCH NOTICE */
+    .launch-notice {
+      max-width: 420px;
+      margin: 0 auto 25px;
+      padding: 13px 16px;
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      background: rgba(214, 173, 96, 0.07);
+      text-align: center;
+    }
+
+    .launch-notice strong {
+      display: block;
+      color: var(--gold);
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+
+    .launch-notice p {
+      color: #ddd;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* READER */
     .reader {
       max-width: 850px;
-      margin: 0 auto 50px;
+      margin: 0 auto;
       padding: 20px;
     }
 
@@ -212,7 +241,9 @@
       color: var(--gold);
     }
 
+    /* FOOTER */
     footer {
+      margin-top: 0;
       padding: 25px 15px;
       border-top: 1px solid var(--border);
       color: var(--muted);
@@ -225,8 +256,22 @@
       margin: 6px 0;
     }
 
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
     /* Mobile layout */
     @media (max-width: 520px) {
+      .hero {
+        padding: 20px 15px;
+      }
+
+      .launch-notice {
+        width: calc(100% - 30px);
+        margin-bottom: 20px;
+      }
+
       .reader {
         padding: 14px;
       }
@@ -274,6 +319,12 @@
   <p class="subtitle">The Girl They Framed</p>
   <p class="author">A novel by Blessing Effiong</p>
 </section>
+
+<!-- FREE DURING LAUNCH NOTICE -->
+<div class="launch-notice">
+  <strong>FREE DURING LAUNCH</strong>
+  <p>Enjoy this story free during our launch period.</p>
+</div>
 
 <main class="reader">
 
