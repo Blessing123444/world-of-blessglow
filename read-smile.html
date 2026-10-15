@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <meta name="theme-color" content="#100e12">
+
   <title>Behind Her Smile: The Girl They Framed | World of BlessGlow</title>
 
   <meta name="description"
@@ -83,6 +85,7 @@
     }
 
     /* FREE DURING LAUNCH NOTICE */
+
     .launch-notice {
       max-width: 420px;
       margin: 0 auto 25px;
@@ -111,6 +114,7 @@
     }
 
     /* READER */
+
     .reader {
       max-width: 850px;
       margin: 0 auto;
@@ -118,6 +122,7 @@
     }
 
     /* Keep both controls side by side */
+
     .controls {
       display: grid;
       grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
@@ -242,6 +247,7 @@
     }
 
     /* FOOTER */
+
     footer {
       margin-top: 0;
       padding: 25px 15px;
@@ -262,6 +268,7 @@
     }
 
     /* Mobile layout */
+
     @media (max-width: 520px) {
       .hero {
         padding: 20px 15px;
@@ -305,6 +312,9 @@
       }
     }
   </style>
+
+  <!-- Review styling is isolated to the review section. -->
+  <link rel="stylesheet" href="reviews.css">
 </head>
 
 <body>
@@ -321,6 +331,7 @@
 </section>
 
 <!-- FREE DURING LAUNCH NOTICE -->
+
 <div class="launch-notice">
   <strong>FREE DURING LAUNCH</strong>
   <p>Enjoy this story free during our launch period.</p>
@@ -391,6 +402,14 @@
 
 </main>
 
+<!-- READER REVIEWS -->
+
+<section
+  id="book-reviews"
+  data-book="behind-her-smile"
+  aria-label="Reviews for Behind Her Smile">
+</section>
+
 <footer>
   <p>World of BlessGlow</p>
   <p>Stories. Worlds. Imagination.</p>
@@ -445,6 +464,7 @@
   /*
    * Split front matter into separate pages where possible.
    */
+
   function splitFrontMatter(text) {
     if (typeof text !== "string" || !text.trim()) return;
 
@@ -522,6 +542,7 @@
   /*
    * Use combined closing pages only if separate pages are unavailable.
    */
+
   if (
     !book.acknowledgments &&
     !book.aboutAuthor &&
@@ -605,6 +626,22 @@
         "Reading works, but progress could not be saved.";
     }
 
+    /*
+     * Mark that the final section has been reached.
+     * reviews.js may load after this function initially runs,
+     * so it also checks this flag when it starts.
+     */
+    if (index === sections.length - 1) {
+      window.BLESSGLOW_READER_COMPLETE = true;
+
+      if (
+        window.BlessGlowReviewCompletion &&
+        typeof window.BlessGlowReviewCompletion.complete === "function"
+      ) {
+        window.BlessGlowReviewCompletion.complete();
+      }
+    }
+
     window.scrollTo({
       top: document.querySelector(".reader").offsetTop,
       behavior: "smooth"
@@ -635,5 +672,8 @@
 })();
 </script>
 
+<!-- Load reviews after the reader code. -->
+<script src="reviews.js"></script>
+
 </body>
-</html>
+  </html>
