@@ -2,14 +2,17 @@
   "use strict";
 
   /*
-   * WORLD OF BLESSGLOW REVIEW SYSTEM
+   * WORLD OF BLESSGLOW — READER REVIEW SYSTEM
    *
-   * Replace the two configuration placeholders below.
-   * Use your Supabase PROJECT URL and PUBLISHABLE KEY.
-   * Never put a secret API key in this file.
+   * Use your Supabase project URL and publishable key.
+   * Never place a secret/service-role key in this public file.
    */
-const SUPABASE_URL = "https://zngagaolaiidgyxoldsh.supabase.co";
-const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
+
+  const SUPABASE_URL =
+    "https://zngagaolaiidgyxoldsh.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
 
   const BOOKS = {
     "a-love-written-in-silence": {
@@ -31,31 +34,60 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
     }
   };
 
+  /*
+   * Find the review container on the current book page.
+   */
+
   const root = document.getElementById("book-reviews");
 
-  if (!root) return;
+  if (!root) {
+    console.warn(
+      "World of BlessGlow Reviews: #book-reviews was not found."
+    );
+    return;
+  }
 
   const slug = root.dataset.book;
   const book = BOOKS[slug];
 
   if (!book) {
-    root.textContent = "The review section could not be loaded.";
+    root.textContent =
+      "The review section could not be loaded for this book.";
     return;
   }
 
-  const endpoint = SUPABASE_URL.replace(/\/+$/, "") +
+  /*
+   * Supabase configuration.
+   */
+
+  const endpoint =
+    SUPABASE_URL.replace(/\/+$/, "") +
     "/rest/v1/book_reviews";
 
-  const headers = {
-    apikey: SUPABASE_KEY,
-    Authorization: "Bearer " + SUPABASE_KEY,
-    "Content-Type": "application/json"
-  };
+  const isConfigured =
+    SUPABASE_URL.startsWith("https://") &&
+    SUPABASE_KEY.length > 0 &&
+    SUPABASE_KEY !==
+      "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+
+  function getHeaders() {
+    return {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + SUPABASE_KEY,
+      "Content-Type": "application/json"
+    };
+  }
+
+  /*
+   * Build the review interface.
+   */
 
   root.innerHTML = `
     <section class="reviews-heading">
       <p class="reviews-eyebrow">YOUR READING EXPERIENCE</p>
+
       <h2>Reader Reviews</h2>
+
       <p class="reviews-description">
         Finished the story? Share your thoughts with World of BlessGlow.
       </p>
@@ -63,10 +95,12 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
 
     <div class="reviews-lock" id="reviews-lock">
       <h3>Complete the story first</h3>
+
       <p>
         Reach the final section of the book to unlock the review form.
         Your thoughts can help other readers discover this story.
       </p>
+
       <p id="reviews-lock-status" aria-live="polite">
         Your review form is currently locked.
       </p>
@@ -81,6 +115,7 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
       </p>
 
       <label for="review-name">Display name</label>
+
       <input
         id="review-name"
         name="display_name"
@@ -93,6 +128,7 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
       >
 
       <label for="review-rating">Your rating</label>
+
       <select id="review-rating" name="rating" required>
         <option value="">Choose a rating</option>
         <option value="5">5 stars — Loved it</option>
@@ -105,6 +141,7 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
       <div id="review-questions"></div>
 
       <label for="review-text">Your overall review</label>
+
       <textarea
         id="review-text"
         name="review_text"
@@ -129,9 +166,11 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
 
     <section class="approved-reviews">
       <h3>What Readers Are Saying</h3>
+
       <p class="reviews-small">
         Only approved reviews appear here.
       </p>
+
       <div id="approved-reviews-list" aria-live="polite">
         <p class="reviews-small">Loading reader reviews...</p>
       </div>
@@ -139,12 +178,11 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
   `;
 
   /*
-   * Add this book's discussion questions.
+   * Add the discussion questions for this book.
    */
 
-  const questionsContainer = document.getElementById(
-    "review-questions"
-  );
+  const questionsContainer =
+    document.getElementById("review-questions");
 
   book.questions.forEach((question, index) => {
     const wrapper = document.createElement("div");
@@ -159,6 +197,7 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
     label.textContent = question;
 
     textarea.id = fieldId;
+    textarea.name = fieldId;
     textarea.rows = 3;
     textarea.maxLength = 1000;
     textarea.required = true;
@@ -169,16 +208,19 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
   });
 
   /*
-   * Completion is tracked separately for each book.
+   * Completion tracking is separate for each book.
    *
-   * This is a browser-side restriction, not secure proof
-   * that a visitor has read the entire book.
+   * This is a browser-side convenience, not secure proof
+   * that a reader has read every section.
    */
 
-  const completionKey = "blessglow-review-completed-" + slug;
+  const completionKey =
+    "blessglow-review-completed-" + slug;
 
   const lock = document.getElementById("reviews-lock");
-  const lockStatus = document.getElementById("reviews-lock-status");
+  const lockStatus =
+    document.getElementById("reviews-lock-status");
+
   const form = document.getElementById("reviews-form");
 
   function unlockReviews() {
@@ -193,12 +235,13 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
       }
     } catch (_) {
       lockStatus.textContent =
-        "Browser storage is unavailable. Reviews may remain locked.";
+        "Browser storage is unavailable. " +
+        "The review form may remain locked.";
     }
   }
 
   /*
-   * The reader page calls this when its final section is reached.
+   * The reader page calls complete() at its final section.
    */
 
   window.BlessGlowReviewCompletion = {
@@ -206,9 +249,8 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
       try {
         localStorage.setItem(completionKey, "yes");
       } catch (_) {
-        // Do not claim completion was saved.
         lockStatus.textContent =
-          "Your browser could not save completion. " +
+          "Your browser could not save reading completion. " +
           "Enable browser storage and try again.";
         return;
       }
@@ -220,18 +262,26 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
   checkCompletion();
 
   /*
+   * Handle the case where the reader reached its final section
+   * before this file finished loading.
+   */
+
+  if (window.BLESSGLOW_READER_COMPLETE === true) {
+    window.BlessGlowReviewCompletion.complete();
+  }
+
+  /*
    * Load only approved reviews for this book.
    */
 
   async function loadApprovedReviews() {
-    const list = document.getElementById("approved-reviews-list");
+    const list =
+      document.getElementById("approved-reviews-list");
 
-    if (
-      SUPABASE_URL.startsWith("YOUR_") ||
-      SUPABASE_KEY.startsWith("YOUR_")
-    ) {
+    if (!isConfigured) {
       list.textContent =
-        "Reviews will appear here after the Supabase connection is configured.";
+        "Reader reviews will appear here once the Supabase " +
+        "publishable key has been configured.";
       return;
     }
 
@@ -244,13 +294,18 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
         limit: "30"
       });
 
-      const response = await fetch(endpoint + "?" + params, {
-        method: "GET",
-        headers
-      });
+      const response = await fetch(
+        endpoint + "?" + params.toString(),
+        {
+          method: "GET",
+          headers: getHeaders()
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Could not retrieve approved reviews.");
+        throw new Error(
+          "Could not retrieve approved reviews."
+        );
       }
 
       const reviews = await response.json();
@@ -259,9 +314,11 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
 
       if (!reviews.length) {
         const empty = document.createElement("p");
+
         empty.className = "reviews-small";
         empty.textContent =
           "No approved reviews yet. Your review could be the first!";
+
         list.appendChild(empty);
         return;
       }
@@ -275,10 +332,16 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
 
         const rating = document.createElement("p");
         rating.className = "review-stars";
+
+        const stars = Math.max(
+          0,
+          Math.min(5, Number(review.rating) || 0)
+        );
+
         rating.textContent =
-          "★".repeat(review.rating) +
-          "☆".repeat(5 - review.rating) +
-          " (" + review.rating + "/5)";
+          "★".repeat(stars) +
+          "☆".repeat(5 - stars) +
+          " (" + stars + "/5)";
 
         const text = document.createElement("p");
         text.className = "review-card-text";
@@ -296,28 +359,38 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
         card.append(name, rating, text, date);
         list.appendChild(card);
       });
-    } catch (_) {
+
+    } catch (error) {
+      console.error(
+        "World of BlessGlow: Could not load reviews.",
+        error
+      );
+
       list.textContent =
-        "Reader reviews are temporarily unavailable. Please try again later.";
+        "Reader reviews are temporarily unavailable. " +
+        "Please try again later.";
     }
   }
 
   /*
-   * Submit a review as pending moderation.
+   * Submit reviews for moderation.
+   *
+   * New reviews are submitted with status = pending.
+   * They do not appear publicly until approved.
    */
 
   form.addEventListener("submit", async event => {
     event.preventDefault();
 
-    const feedback = document.getElementById("reviews-feedback");
-    const submitButton = document.getElementById("review-submit");
+    const feedback =
+      document.getElementById("reviews-feedback");
 
-    if (
-      SUPABASE_URL.startsWith("YOUR_") ||
-      SUPABASE_KEY.startsWith("YOUR_")
-    ) {
+    const submitButton =
+      document.getElementById("review-submit");
+
+    if (!isConfigured) {
       feedback.textContent =
-        "The review system has not been connected yet.";
+        "The review system needs its Supabase publishable key.";
       return;
     }
 
@@ -341,24 +414,36 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
         .value.trim();
     });
 
-    if (displayName.length < 2 || displayName.length > 40) {
+    if (
+      displayName.length < 2 ||
+      displayName.length > 40
+    ) {
       feedback.textContent =
         "Your display name must be between 2 and 40 characters.";
       return;
     }
 
-    if (rating < 1 || rating > 5) {
+    if (
+      !Number.isInteger(rating) ||
+      rating < 1 ||
+      rating > 5
+    ) {
       feedback.textContent = "Please select a rating.";
       return;
     }
 
-    if (reviewText.length < 10 || reviewText.length > 2000) {
+    if (
+      reviewText.length < 10 ||
+      reviewText.length > 2000
+    ) {
       feedback.textContent =
         "Your review must be between 10 and 2,000 characters.";
       return;
     }
 
-    if (Object.values(answers).some(answer => !answer)) {
+    if (
+      Object.values(answers).some(answer => !answer)
+    ) {
       feedback.textContent =
         "Please answer all the discussion questions.";
       return;
@@ -370,10 +455,12 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
     try {
       const response = await fetch(endpoint, {
         method: "POST",
+
         headers: {
-          ...headers,
+          ...getHeaders(),
           Prefer: "return=minimal"
         },
+
         body: JSON.stringify({
           book_slug: slug,
           display_name: displayName,
@@ -385,6 +472,14 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
       });
 
       if (!response.ok) {
+        const details = await response.text();
+
+        console.error(
+          "Supabase review submission failed:",
+          response.status,
+          details
+        );
+
         throw new Error("Review submission failed.");
       }
 
@@ -393,13 +488,25 @@ const SUPABASE_KEY = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
       feedback.textContent =
         "Thank you! Your review has been submitted for approval.";
 
-    } catch (_) {
+    } catch (error) {
+      console.error(
+        "World of BlessGlow: Review submission failed.",
+        error
+      );
+
       feedback.textContent =
-        "We couldn't submit your review. Please try again later.";
+        "We couldn't submit your review. " +
+        "Please check your connection and try again later.";
+
     } finally {
       submitButton.disabled = false;
     }
   });
 
+  /*
+   * Start loading approved reviews.
+   */
+
   loadApprovedReviews();
+
 })();
