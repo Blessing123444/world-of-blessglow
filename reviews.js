@@ -9,8 +9,8 @@
    * Never put a secret API key in this file.
    */
 
-  const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-  const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+  const SUPABASE_URL = sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F
+  const SUPABASE_KEY = https://zngagaolaiidgyxoldsh.supabase.co/rest/v1/
 
   const BOOKS = {
     "a-love-written-in-silence": {
