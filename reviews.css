@@ -166,3 +166,69 @@
     padding: 17px;
   }
   }
+/* INTERACTIVE STAR RATING */
+
+#book-reviews .interactive-stars {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 10px 0;
+}
+
+#book-reviews .rating-star {
+  width: auto;
+  min-width: 38px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 3px;
+  border: none;
+  background: transparent;
+  color: var(--review-muted);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+#book-reviews .rating-star.is-selected {
+  color: var(--review-gold);
+}
+
+#book-reviews .rating-star:hover {
+  transform: scale(1.12);
+}
+
+#book-reviews .rating-star:focus-visible {
+  outline: 2px solid var(--review-gold);
+  outline-offset: 3px;
+}
+
+#book-reviews .review-field {
+  margin: 24px 0;
+}
+
+#book-reviews .review-field h4 {
+  margin-bottom: 8px;
+  color: var(--review-gold);
+}
+
+#book-reviews .review-average {
+  color: var(--review-gold);
+  font-weight: bold;
+}
+
+#book-reviews .review-question-prompt {
+  color: var(--review-muted);
+  font-size: 13px;
+}
+
+@media (max-width: 520px) {
+  #book-reviews .interactive-stars {
+    gap: 5px;
+  }
+
+  #book-reviews .rating-star {
+    min-width: 34px;
+    font-size: 30px;
+  }
+    }
