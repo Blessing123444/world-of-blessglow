@@ -8,6 +8,7 @@
   <title>A Love Written in Silence | World of BlessGlow</title>
 
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="reviews.css">
 
   <style>
     .reading-room {
@@ -25,7 +26,6 @@
       color: #d4af37;
     }
 
-    /* FREE DURING LAUNCH NOTICE */
     .launch-notice {
       max-width: 420px;
       margin: 20px auto;
@@ -50,7 +50,6 @@
       font-size: 14px;
     }
 
-    /* READING SETTINGS */
     .reader-settings {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -81,7 +80,6 @@
       font-size: 14px;
     }
 
-    /* READING PROGRESS */
     .reader-progress {
       margin: 0 0 25px;
     }
@@ -111,7 +109,6 @@
       transition: width 0.3s ease;
     }
 
-    /* STORY CARD */
     .chapter-panel {
       background: #1b1b1b;
       border: 1px solid #3a3324;
@@ -135,7 +132,6 @@
       transition: font-size 0.15s ease;
     }
 
-    /* PREVIOUS AND NEXT BUTTONS */
     .reader-controls {
       display: flex;
       justify-content: space-between;
@@ -161,7 +157,6 @@
       cursor: not-allowed;
     }
 
-    /* SAVED READING POSITION */
     .reading-position-note {
       color: #bbb;
       text-align: center;
@@ -170,7 +165,6 @@
       margin: 28px 0 10px;
     }
 
-    /* WEBSITE FOOTER */
     .site-footer {
       margin-top: 0;
       padding: 25px 15px;
@@ -190,7 +184,6 @@
       text-decoration: none;
     }
 
-    /* MOBILE LAYOUT */
     @media (max-width: 500px) {
       .reading-room {
         padding: 15px;
@@ -263,13 +256,11 @@
       </p>
     </div>
 
-    <!-- FREE DURING LAUNCH NOTICE -->
     <div class="launch-notice">
       <strong>FREE DURING LAUNCH</strong>
       <p>Enjoy this story free during our launch period.</p>
     </div>
 
-    <!-- READING SETTINGS -->
     <div class="reader-settings">
 
       <div class="setting-group">
@@ -293,7 +284,6 @@
 
     </div>
 
-    <!-- READING PROGRESS -->
     <div class="reader-progress">
 
       <p class="reader-note" id="readingProgress">
@@ -317,7 +307,6 @@
 
     </div>
 
-    <!-- STORY CARD -->
     <section class="chapter-panel">
 
       <h2 id="chapterTitle">Loading your book...</h2>
@@ -328,7 +317,6 @@
 
     </section>
 
-    <!-- NAVIGATION BUTTONS -->
     <div class="reader-controls">
 
       <button id="previousButton" type="button" disabled>
@@ -341,21 +329,28 @@
 
     </div>
 
-    <!-- SAVED READING POSITION -->
     <p class="reading-position-note">
       Your reading position is saved on this device.
     </p>
 
   </main>
 
-  <!-- WEBSITE FOOTER -->
+  <!-- REVIEWS FOR A LOVE WRITTEN IN SILENCE -->
+  <section
+    id="book-reviews"
+    data-book="a-love-written-in-silence"
+    aria-label="Reviews for A Love Written in Silence">
+  </section>
+
   <footer class="site-footer">
     <p>World of BlessGlow</p>
     <p>Stories. Worlds. Imagination.</p>
+
     <p>
       <a href="index.html">Home</a> ·
       <a href="books.html">Books</a>
     </p>
+
     <p>© 2026 Blessing Effiong. All rights reserved.</p>
   </footer>
 
@@ -713,6 +708,19 @@
       } catch (error) {
         // Navigation still works if storage is unavailable.
       }
+
+      /*
+       * UNLOCK REVIEWS WHEN THE FINAL SECTION IS REACHED.
+       * The review script loads at the bottom of this page.
+       */
+      if (currentIndex === sections.length - 1) {
+        if (
+          window.BlessGlowReviewCompletion &&
+          typeof window.BlessGlowReviewCompletion.complete === "function"
+        ) {
+          window.BlessGlowReviewCompletion.complete();
+        }
+      }
     }
 
     /* PREVIOUS BUTTON */
@@ -751,5 +759,8 @@
   })();
   </script>
 
+  <!-- REVIEW SYSTEM -->
+  <script src="reviews.js"></script>
+
 </body>
-</html>
+  </html>
