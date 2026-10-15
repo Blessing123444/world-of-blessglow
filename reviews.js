@@ -3,20 +3,20 @@
 
   /*
    * WORLD OF BLESSGLOW — READER REVIEW SYSTEM
-   *
-   * Use your Supabase project URL and publishable key.
-   * Never place a secret/service-role key in this public file.
+   * Preserves Supabase submission, moderation and reading lock.
    */
 
   const SUPABASE_URL =
     "https://zngagaolaiidgyxoldsh.supabase.co";
 
-  const SUPABASE_KEY =
-    "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+  // Keep your existing Supabase publishable key here.
+  const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
 
   const BOOKS = {
     "a-love-written-in-silence": {
       name: "A Love Written in Silence",
+      intro:
+        "Finished the story? Share your honest thoughts with World of BlessGlow.",
       questions: [
         "Which character did you connect with most, and why?",
         "What moment from the story stayed with you?",
@@ -26,17 +26,42 @@
 
     "behind-her-smile": {
       name: "Behind Her Smile: The Girl They Framed",
+      intro:
+        "Your honest thoughts mean the world to me! Tell me about your favourite characters, the suspense, the betrayal, and the moments that stayed with you.",
       questions: [
-        "What did you think of the characters and their decisions?",
-        "Which moment surprised you the most?",
-        "What would you tell someone considering this novel?"
+        {
+          title: "🔎 The Suspense",
+          question:
+            "Did you suspect Chloe was behind everything, or did the truth surprise you? Tell us why!"
+        },
+        {
+          title: "💔 The Emotional Moments",
+          question:
+            "Which scene or moment affected you the most, and what made it memorable?"
+        },
+        {
+          title: "👑 Your Favourite Character",
+          question:
+            "Who was your favourite character, and why? Was there a character whose choices you disagreed with?"
+        },
+        {
+          title: "🌷 The Ending",
+          question:
+            "Were you satisfied with the ending, or would you have changed anything?"
+        },
+        {
+          title: "✨ Would You Recommend This Book?",
+          question:
+            "Would you recommend this story to another reader?"
+        },
+        {
+          title: "💌 Leave a Message for the Author",
+          question:
+            "If you could tell Blessing Effiong one thing about this book, what would it be?"
+        }
       ]
     }
   };
-
-  /*
-   * Find the review container on the current book page.
-   */
 
   const root = document.getElementById("book-reviews");
 
@@ -56,10 +81,6 @@
     return;
   }
 
-  /*
-   * Supabase configuration.
-   */
-
   const endpoint =
     SUPABASE_URL.replace(/\/+$/, "") +
     "/rest/v1/book_reviews";
@@ -67,8 +88,7 @@
   const isConfigured =
     SUPABASE_URL.startsWith("https://") &&
     SUPABASE_KEY.length > 0 &&
-    SUPABASE_KEY !==
-      "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+    SUPABASE_KEY !== "YOUR_EXISTING_PUBLISHABLE_KEY";
 
   function getHeaders() {
     return {
@@ -79,81 +99,103 @@
   }
 
   /*
-   * Build the review interface.
+   * FORM
    */
 
   root.innerHTML = `
     <section class="reviews-heading">
       <p class="reviews-eyebrow">YOUR READING EXPERIENCE</p>
-
-      <h2>Reader Reviews</h2>
-
+      <h2>🌸 What Did You Think of the Story?</h2>
+      <h3 class="reviews-book-title"></h3>
+      <p class="reviews-description reviews-intro"></p>
       <p class="reviews-description">
-        Finished the story? Share your thoughts with World of BlessGlow.
+        There are no right or wrong answers. Just share your honest experience!
       </p>
     </section>
 
     <div class="reviews-lock" id="reviews-lock">
       <h3>Complete the story first</h3>
-
       <p>
         Reach the final section of the book to unlock the review form.
-        Your thoughts can help other readers discover this story.
       </p>
-
       <p id="reviews-lock-status" aria-live="polite">
         Your review form is currently locked.
       </p>
     </div>
 
     <form class="reviews-form" id="reviews-form" hidden>
-      <h3>Share Your Thoughts</h3>
-
+      <h3>💖 Submit Your Review</h3>
       <p class="reviews-small">
         Your review will be checked before it appears publicly.
-        You do not need to create an account.
       </p>
 
-      <label for="review-name">Display name</label>
+      <div class="review-field">
+        <h4>⭐ 1. Rate This Book</h4>
+        <p class="review-question-prompt"></p>
+        <div
+          class="interactive-stars"
+          id="interactive-stars"
+          role="group"
+          aria-label="Rate this book from one to five stars"
+        >
+          ${[1, 2, 3, 4, 5].map(n => `
+            <button
+              type="button"
+              class="rating-star"
+              data-rating="${n}"
+              aria-label="${n} star${n > 1 ? "s" : ""}"
+              aria-pressed="false"
+            >☆</button>
+          `).join("")}
+        </div>
+        <p id="rating-caption" class="reviews-small" aria-live="polite">
+          Select your rating from 1 to 5 stars.
+        </p>
+        <input
+          type="hidden"
+          id="review-rating"
+          name="rating"
+          value=""
+        >
+      </div>
 
-      <input
-        id="review-name"
-        name="display_name"
-        type="text"
-        minlength="2"
-        maxlength="40"
-        autocomplete="nickname"
-        required
-        placeholder="Name readers will see"
-      >
+      <div class="review-field">
+        <h4>👤 2. Your Name</h4>
+        <label for="review-name">
+          What name would you like displayed with your review?
+        </label>
+        <input
+          id="review-name"
+          name="display_name"
+          type="text"
+          minlength="2"
+          maxlength="40"
+          autocomplete="nickname"
+          required
+          placeholder="Enter your name or preferred nickname"
+        >
+      </div>
 
-      <label for="review-rating">Your rating</label>
-
-      <select id="review-rating" name="rating" required>
-        <option value="">Choose a rating</option>
-        <option value="5">5 stars — Loved it</option>
-        <option value="4">4 stars — Really enjoyed it</option>
-        <option value="3">3 stars — It was good</option>
-        <option value="2">2 stars — Could be better</option>
-        <option value="1">1 star — Not for me</option>
-      </select>
+      <div class="review-field">
+        <h4>💭 ${slug === "behind-her-smile" ? "3" : "3"}. Share Your Thoughts</h4>
+        <label for="review-text">
+          What did you think of the story overall?
+        </label>
+        <textarea
+          id="review-text"
+          name="review_text"
+          minlength="10"
+          maxlength="2000"
+          rows="6"
+          required
+          placeholder="Tell us what you thought of the story..."
+        ></textarea>
+      </div>
 
       <div id="review-questions"></div>
 
-      <label for="review-text">Your overall review</label>
-
-      <textarea
-        id="review-text"
-        name="review_text"
-        minlength="10"
-        maxlength="2000"
-        rows="6"
-        required
-        placeholder="Tell us what you thought of the story..."
-      ></textarea>
-
       <button type="submit" id="review-submit">
-        Submit Review
+        ⭐ Submit My Review
       </button>
 
       <p
@@ -162,14 +204,19 @@
         role="status"
         aria-live="polite"
       ></p>
+
+      <p class="reviews-small">
+        Thank you for being part of the World of BlessGlow reading community. ❤️
+      </p>
     </form>
 
     <section class="approved-reviews">
-      <h3>What Readers Are Saying</h3>
-
+      <h3>💖 What Readers Are Saying</h3>
       <p class="reviews-small">
         Only approved reviews appear here.
       </p>
+
+      <div id="approved-rating-summary" aria-live="polite"></div>
 
       <div id="approved-reviews-list" aria-live="polite">
         <p class="reviews-small">Loading reader reviews...</p>
@@ -177,41 +224,118 @@
     </section>
   `;
 
+  root.querySelector(".reviews-book-title").textContent = book.name;
+  root.querySelector(".reviews-intro").textContent = book.intro;
+
   /*
-   * Add the discussion questions for this book.
+   * Build questions.
+   *
+   * Behind Her Smile has six specific questions after the
+   * overall review. The recommendation question is a choice.
+   * The author message is saved privately with the submission.
+   *
+   * A Love Written in Silence retains its three existing questions.
    */
 
   const questionsContainer =
     document.getElementById("review-questions");
 
-  book.questions.forEach((question, index) => {
+  const isSmile = slug === "behind-her-smile";
+
+  const questions = isSmile
+    ? book.questions
+    : book.questions.map((question, index) => ({
+        title: `Question ${index + 4}`,
+        question
+      }));
+
+  questions.forEach((item, index) => {
     const wrapper = document.createElement("div");
-    wrapper.className = "review-question";
+    wrapper.className = "review-field review-question";
+
+    const heading = document.createElement("h4");
+    heading.textContent = item.title;
 
     const label = document.createElement("label");
-    const textarea = document.createElement("textarea");
-
     const fieldId = "review-answer-" + (index + 1);
 
     label.htmlFor = fieldId;
-    label.textContent = question;
+    label.textContent = item.question;
 
-    textarea.id = fieldId;
-    textarea.name = fieldId;
-    textarea.rows = 3;
-    textarea.maxLength = 1000;
-    textarea.required = true;
-    textarea.placeholder = "Share your answer...";
+    let field;
 
-    wrapper.append(label, textarea);
+    if (isSmile && index === 4) {
+      field = document.createElement("select");
+      field.innerHTML = `
+        <option value="">Choose your answer</option>
+        <option value="Absolutely">❤️ Absolutely!</option>
+        <option value="Maybe">😊 Maybe.</option>
+        <option value="Not sure">🤔 Not sure.</option>
+        <option value="Probably not">💔 Probably not.</option>
+      `;
+    } else {
+      field = document.createElement("textarea");
+      field.rows = 3;
+      field.maxLength = 1000;
+      field.placeholder = "Share your answer...";
+    }
+
+    field.id = fieldId;
+    field.name = fieldId;
+    field.required = true;
+
+    wrapper.append(heading, label, field);
     questionsContainer.appendChild(wrapper);
   });
 
   /*
-   * Completion tracking is separate for each book.
-   *
-   * This is a browser-side convenience, not secure proof
-   * that a reader has read every section.
+   * Interactive star rating.
+   */
+
+  let selectedRating = 0;
+
+  const starButtons = [
+    ...document.querySelectorAll(".rating-star")
+  ];
+
+  const ratingInput = document.getElementById("review-rating");
+  const ratingCaption = document.getElementById("rating-caption");
+
+  const ratingLabels = {
+    1: "Not for me",
+    2: "Could be better",
+    3: "It was good",
+    4: "Really enjoyed it",
+    5: "Loved it!"
+  };
+
+  function updateStars(rating) {
+    starButtons.forEach(button => {
+      const value = Number(button.dataset.rating);
+      const active = value <= rating;
+
+      button.textContent = active ? "★" : "☆";
+      button.classList.toggle("is-selected", active);
+      button.setAttribute(
+        "aria-pressed",
+        String(value === selectedRating)
+      );
+    });
+  }
+
+  starButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      selectedRating = Number(button.dataset.rating);
+      ratingInput.value = String(selectedRating);
+      updateStars(selectedRating);
+
+      ratingCaption.textContent =
+        `${selectedRating}/5 stars — ${ratingLabels[selectedRating]}`;
+    });
+  });
+
+  /*
+   * Completion lock.
    */
 
   const completionKey =
@@ -220,7 +344,6 @@
   const lock = document.getElementById("reviews-lock");
   const lockStatus =
     document.getElementById("reviews-lock-status");
-
   const form = document.getElementById("reviews-form");
 
   function unlockReviews() {
@@ -235,14 +358,9 @@
       }
     } catch (_) {
       lockStatus.textContent =
-        "Browser storage is unavailable. " +
-        "The review form may remain locked.";
+        "Browser storage is unavailable. The review form may remain locked.";
     }
   }
-
-  /*
-   * The reader page calls complete() at its final section.
-   */
 
   window.BlessGlowReviewCompletion = {
     complete() {
@@ -250,8 +368,7 @@
         localStorage.setItem(completionKey, "yes");
       } catch (_) {
         lockStatus.textContent =
-          "Your browser could not save reading completion. " +
-          "Enable browser storage and try again.";
+          "Your browser could not save reading completion.";
         return;
       }
 
@@ -261,27 +378,25 @@
 
   checkCompletion();
 
-  /*
-   * Handle the case where the reader reached its final section
-   * before this file finished loading.
-   */
-
   if (window.BLESSGLOW_READER_COMPLETE === true) {
     window.BlessGlowReviewCompletion.complete();
   }
 
   /*
-   * Load only approved reviews for this book.
+   * Load approved reviews and calculate average rating.
    */
 
   async function loadApprovedReviews() {
     const list =
       document.getElementById("approved-reviews-list");
 
+    const summary =
+      document.getElementById("approved-rating-summary");
+
     if (!isConfigured) {
       list.textContent =
-        "Reader reviews will appear here once the Supabase " +
-        "publishable key has been configured.";
+        "Reader reviews will appear here once the Supabase publishable key is configured.";
+      summary.textContent = "";
       return;
     }
 
@@ -291,7 +406,7 @@
         book_slug: "eq." + slug,
         status: "eq.approved",
         order: "created_at.desc",
-        limit: "30"
+        limit: "1000"
       });
 
       const response = await fetch(
@@ -303,18 +418,16 @@
       );
 
       if (!response.ok) {
-        throw new Error(
-          "Could not retrieve approved reviews."
-        );
+        throw new Error("Could not retrieve approved reviews.");
       }
 
       const reviews = await response.json();
 
       list.replaceChildren();
+      summary.replaceChildren();
 
       if (!reviews.length) {
         const empty = document.createElement("p");
-
         empty.className = "reviews-small";
         empty.textContent =
           "No approved reviews yet. Your review could be the first!";
@@ -322,6 +435,20 @@
         list.appendChild(empty);
         return;
       }
+
+      const totalRating = reviews.reduce(
+        (sum, review) => sum + Number(review.rating || 0),
+        0
+      );
+
+      const average = totalRating / reviews.length;
+
+      const averageLine = document.createElement("p");
+      averageLine.className = "review-average";
+      averageLine.textContent =
+        `★ ${average.toFixed(1)}/5 · Based on ${reviews.length} approved review${reviews.length === 1 ? "" : "s"}`;
+
+      summary.appendChild(averageLine);
 
       reviews.forEach(review => {
         const card = document.createElement("article");
@@ -341,7 +468,7 @@
         rating.textContent =
           "★".repeat(stars) +
           "☆".repeat(5 - stars) +
-          " (" + stars + "/5)";
+          ` (${stars}/5)`;
 
         const text = document.createElement("p");
         text.className = "review-card-text";
@@ -367,16 +494,12 @@
       );
 
       list.textContent =
-        "Reader reviews are temporarily unavailable. " +
-        "Please try again later.";
+        "Reader reviews are temporarily unavailable. Please try again later.";
     }
   }
 
   /*
-   * Submit reviews for moderation.
-   *
-   * New reviews are submitted with status = pending.
-   * They do not appear publicly until approved.
+   * Submit review for approval.
    */
 
   form.addEventListener("submit", async event => {
@@ -394,58 +517,50 @@
       return;
     }
 
-    const displayName = document
-      .getElementById("review-name")
-      .value.trim();
+    const displayName =
+      document.getElementById("review-name").value.trim();
 
-    const rating = Number(
-      document.getElementById("review-rating").value
-    );
+    const rating = Number(ratingInput.value);
 
-    const reviewText = document
-      .getElementById("review-text")
-      .value.trim();
+    const reviewText =
+      document.getElementById("review-text").value.trim();
 
     const answers = {};
 
-    book.questions.forEach((question, index) => {
-      answers[question] = document
-        .getElementById("review-answer-" + (index + 1))
-        .value.trim();
+    questions.forEach((item, index) => {
+      const field = document.getElementById(
+        "review-answer-" + (index + 1)
+      );
+
+      answers[item.title] = field.value.trim();
     });
 
-    if (
-      displayName.length < 2 ||
-      displayName.length > 40
-    ) {
+    if (displayName.length < 2 || displayName.length > 40) {
       feedback.textContent =
         "Your display name must be between 2 and 40 characters.";
       return;
     }
 
-    if (
-      !Number.isInteger(rating) ||
-      rating < 1 ||
-      rating > 5
-    ) {
-      feedback.textContent = "Please select a rating.";
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      feedback.textContent = "Please select a star rating.";
       return;
     }
 
-    if (
-      reviewText.length < 10 ||
-      reviewText.length > 2000
-    ) {
+    if (reviewText.length < 10 || reviewText.length > 2000) {
       feedback.textContent =
-        "Your review must be between 10 and 2,000 characters.";
+        "Your overall review must be between 10 and 2,000 characters.";
       return;
     }
 
-    if (
-      Object.values(answers).some(answer => !answer)
-    ) {
+    if (questions.some((_, index) => {
+      const value = document.getElementById(
+        "review-answer-" + (index + 1)
+      ).value.trim();
+
+      return !value;
+    })) {
       feedback.textContent =
-        "Please answer all the discussion questions.";
+        "Please complete all the review questions.";
       return;
     }
 
@@ -455,12 +570,10 @@
     try {
       const response = await fetch(endpoint, {
         method: "POST",
-
         headers: {
           ...getHeaders(),
           Prefer: "return=minimal"
         },
-
         body: JSON.stringify({
           book_slug: slug,
           display_name: displayName,
@@ -484,9 +597,15 @@
       }
 
       form.reset();
+      selectedRating = 0;
+      ratingInput.value = "";
+      updateStars(0);
+
+      ratingCaption.textContent =
+        "Select your rating from 1 to 5 stars.";
 
       feedback.textContent =
-        "Thank you! Your review has been submitted for approval.";
+        "Thank you! ❤️ Your review has been submitted for approval. Once approved, it may appear in our reader reviews section.";
 
     } catch (error) {
       console.error(
@@ -495,17 +614,12 @@
       );
 
       feedback.textContent =
-        "We couldn't submit your review. " +
-        "Please check your connection and try again later.";
+        "We couldn't submit your review. Please check your connection and try again later.";
 
     } finally {
       submitButton.disabled = false;
     }
   });
-
-  /*
-   * Start loading approved reviews.
-   */
 
   loadApprovedReviews();
 
