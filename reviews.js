@@ -3,63 +3,115 @@
 
   /*
    * WORLD OF BLESSGLOW — READER REVIEW SYSTEM
-   * Preserves Supabase submission, moderation and reading lock.
+   * Book-specific questions, interactive star ratings,
+   * reading-completion lock, and Supabase moderation.
    */
 
   const SUPABASE_URL =
     "https://zngagaolaiidgyxoldsh.supabase.co";
 
-  // Keep your existing Supabase publishable key here.
-  const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+  /*
+   * KEEP YOUR EXISTING SUPABASE PUBLISHABLE KEY HERE.
+   * Never use a service-role or secret key in this file.
+   */
+  const SUPABASE_KEY = "YOUR_EXISTING_PUBLISHABLE_KEY";
 
   const BOOKS = {
     "a-love-written-in-silence": {
       name: "A Love Written in Silence",
       intro:
-        "Finished the story? Share your honest thoughts with World of BlessGlow.",
+        "Thank you for reading my debut novel, A Love Written in Silence! 🥹💗 I'd love to hear your honest thoughts about the story. Your feedback means a lot to me and helps me grow as an author. 📚✨",
+
       questions: [
-        "Which character did you connect with most, and why?",
-        "What moment from the story stayed with you?",
-        "How would you describe your experience reading this novel?"
-      ]
+        {
+          title: "💕 1. Your Favourite Character",
+          question:
+            "Who was your favourite character, and what made you love them?",
+          type: "textarea"
+        },
+        {
+          title: "📖 2. Your Favourite Moment",
+          question:
+            "What was your favourite moment or scene in the story, and why did it stand out to you?",
+          type: "textarea"
+        },
+        {
+          title: "🥹 3. Your Feelings About the Love Story",
+          question:
+            "How did the love story make you feel, and were you satisfied with the ending?",
+          type: "textarea"
+        },
+        {
+          title: "✨ 4. Describe the Book in Three Words",
+          question:
+            "If you could describe A Love Written in Silence in three words, what would they be?",
+          type: "textarea"
+        },
+        {
+          title: "💌 5. Would You Recommend This Book?",
+          question:
+            "Would you recommend this novel to another reader? Why or why not?",
+          type: "recommendation"
+        },
+        {
+          title: "🌷 6. A Message for the Author",
+          question:
+            "If you could tell Blessing Effiong one thing about A Love Written in Silence, what would it be?",
+          type: "textarea"
+        }
+      ],
+
+      thankYou:
+        "Thank you for being part of the World of BlessGlow! Every review, kind word, and honest suggestion helps me become a better storyteller. Thank you for giving my first novel a chance. 💗📚✨"
     },
 
     "behind-her-smile": {
       name: "Behind Her Smile: The Girl They Framed",
+
       intro:
         "Your honest thoughts mean the world to me! Tell me about your favourite characters, the suspense, the betrayal, and the moments that stayed with you.",
+
       questions: [
         {
           title: "🔎 The Suspense",
           question:
-            "Did you suspect Chloe was behind everything, or did the truth surprise you? Tell us why!"
+            "Did you suspect Chloe was behind everything, or did the truth surprise you? Tell us why!",
+          type: "textarea"
         },
         {
           title: "💔 The Emotional Moments",
           question:
-            "Which scene or moment affected you the most, and what made it memorable?"
+            "Which scene or moment affected you the most, and what made it memorable?",
+          type: "textarea"
         },
         {
           title: "👑 Your Favourite Character",
           question:
-            "Who was your favourite character, and why? Was there a character whose choices you disagreed with?"
+            "Who was your favourite character, and why? Was there a character whose choices you disagreed with?",
+          type: "textarea"
         },
         {
           title: "🌷 The Ending",
           question:
-            "Were you satisfied with the ending, or would you have changed anything?"
+            "Were you satisfied with the ending, or would you have changed anything?",
+          type: "textarea"
         },
         {
           title: "✨ Would You Recommend This Book?",
           question:
-            "Would you recommend this story to another reader?"
+            "Would you recommend this story to another reader?",
+          type: "recommendation"
         },
         {
           title: "💌 Leave a Message for the Author",
           question:
-            "If you could tell Blessing Effiong one thing about this book, what would it be?"
+            "If you could tell Blessing Effiong one thing about this book, what would it be?",
+          type: "textarea"
         }
-      ]
+      ],
+
+      thankYou:
+        "Thank you for reading Behind Her Smile and sharing your thoughts with World of BlessGlow. 💗📚"
     }
   };
 
@@ -99,22 +151,22 @@
   }
 
   /*
-   * FORM
+   * BUILD THE REVIEW INTERFACE
    */
 
   root.innerHTML = `
     <section class="reviews-heading">
       <p class="reviews-eyebrow">YOUR READING EXPERIENCE</p>
-      <h2>🌸 What Did You Think of the Story?</h2>
+      <h2>🌸 Reader Review &amp; Feedback 💌</h2>
       <h3 class="reviews-book-title"></h3>
       <p class="reviews-description reviews-intro"></p>
       <p class="reviews-description">
-        There are no right or wrong answers. Just share your honest experience!
+        There are no right or wrong answers. Share your honest experience!
       </p>
     </section>
 
     <div class="reviews-lock" id="reviews-lock">
-      <h3>Complete the story first</h3>
+      <h3>📖 Complete the Story First</h3>
       <p>
         Reach the final section of the book to unlock the review form.
       </p>
@@ -124,14 +176,17 @@
     </div>
 
     <form class="reviews-form" id="reviews-form" hidden>
-      <h3>💖 Submit Your Review</h3>
+      <h3>💖 Share Your Review</h3>
       <p class="reviews-small">
         Your review will be checked before it appears publicly.
       </p>
 
       <div class="review-field">
         <h4>⭐ 1. Rate This Book</h4>
-        <p class="review-question-prompt"></p>
+        <p class="reviews-small">
+          How would you rate this story?
+        </p>
+
         <div
           class="interactive-stars"
           id="interactive-stars"
@@ -148,9 +203,11 @@
             >☆</button>
           `).join("")}
         </div>
+
         <p id="rating-caption" class="reviews-small" aria-live="polite">
-          Select your rating from 1 to 5 stars.
+          Select your rating from one to five stars.
         </p>
+
         <input
           type="hidden"
           id="review-rating"
@@ -160,9 +217,8 @@
       </div>
 
       <div class="review-field">
-        <h4>👤 2. Your Name</h4>
         <label for="review-name">
-          What name would you like displayed with your review?
+          👤 What name or nickname would you like displayed with your review?
         </label>
         <input
           id="review-name"
@@ -172,12 +228,12 @@
           maxlength="40"
           autocomplete="nickname"
           required
-          placeholder="Enter your name or preferred nickname"
+          placeholder="Enter your preferred name"
         >
       </div>
 
       <div class="review-field">
-        <h4>💭 ${slug === "behind-her-smile" ? "3" : "3"}. Share Your Thoughts</h4>
+        <h4>💭 Share Your Overall Thoughts</h4>
         <label for="review-text">
           What did you think of the story overall?
         </label>
@@ -205,9 +261,7 @@
         aria-live="polite"
       ></p>
 
-      <p class="reviews-small">
-        Thank you for being part of the World of BlessGlow reading community. ❤️
-      </p>
+      <p class="reviews-small" id="review-thank-you"></p>
     </form>
 
     <section class="approved-reviews">
@@ -227,29 +281,17 @@
   root.querySelector(".reviews-book-title").textContent = book.name;
   root.querySelector(".reviews-intro").textContent = book.intro;
 
+  document.getElementById("review-thank-you").textContent =
+    book.thankYou;
+
   /*
-   * Build questions.
-   *
-   * Behind Her Smile has six specific questions after the
-   * overall review. The recommendation question is a choice.
-   * The author message is saved privately with the submission.
-   *
-   * A Love Written in Silence retains its three existing questions.
+   * BUILD BOOK-SPECIFIC QUESTIONS
    */
 
   const questionsContainer =
     document.getElementById("review-questions");
 
-  const isSmile = slug === "behind-her-smile";
-
-  const questions = isSmile
-    ? book.questions
-    : book.questions.map((question, index) => ({
-        title: `Question ${index + 4}`,
-        question
-      }));
-
-  questions.forEach((item, index) => {
+  book.questions.forEach((item, index) => {
     const wrapper = document.createElement("div");
     wrapper.className = "review-field review-question";
 
@@ -264,15 +306,21 @@
 
     let field;
 
-    if (isSmile && index === 4) {
+    if (item.type === "recommendation") {
       field = document.createElement("select");
-      field.innerHTML = `
-        <option value="">Choose your answer</option>
-        <option value="Absolutely">❤️ Absolutely!</option>
-        <option value="Maybe">😊 Maybe.</option>
-        <option value="Not sure">🤔 Not sure.</option>
-        <option value="Probably not">💔 Probably not.</option>
-      `;
+
+      [
+        ["", "Choose your answer"],
+        ["Absolutely", "❤️ Absolutely!"],
+        ["Maybe", "😊 Maybe."],
+        ["Not sure", "🤔 I'm not sure."],
+        ["Probably not", "💔 Probably not."]
+      ].forEach(([value, text]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = text;
+        field.appendChild(option);
+      });
     } else {
       field = document.createElement("textarea");
       field.rows = 3;
@@ -289,24 +337,27 @@
   });
 
   /*
-   * Interactive star rating.
+   * INTERACTIVE STAR RATING
    */
 
   let selectedRating = 0;
 
   const starButtons = [
-    ...document.querySelectorAll(".rating-star")
+    ...root.querySelectorAll(".rating-star")
   ];
 
-  const ratingInput = document.getElementById("review-rating");
-  const ratingCaption = document.getElementById("rating-caption");
+  const ratingInput =
+    document.getElementById("review-rating");
+
+  const ratingCaption =
+    document.getElementById("rating-caption");
 
   const ratingLabels = {
-    1: "Not for me",
-    2: "Could be better",
+    1: "It wasn't for me",
+    2: "It could be better",
     3: "It was good",
     4: "Really enjoyed it",
-    5: "Loved it!"
+    5: "Absolutely loved it!"
   };
 
   function updateStars(rating) {
@@ -327,6 +378,7 @@
     button.addEventListener("click", () => {
       selectedRating = Number(button.dataset.rating);
       ratingInput.value = String(selectedRating);
+
       updateStars(selectedRating);
 
       ratingCaption.textContent =
@@ -335,16 +387,19 @@
   });
 
   /*
-   * Completion lock.
+   * READING-COMPLETION LOCK
    */
 
   const completionKey =
     "blessglow-review-completed-" + slug;
 
   const lock = document.getElementById("reviews-lock");
+
   const lockStatus =
     document.getElementById("reviews-lock-status");
-  const form = document.getElementById("reviews-form");
+
+  const form =
+    document.getElementById("reviews-form");
 
   function unlockReviews() {
     lock.hidden = true;
@@ -358,7 +413,7 @@
       }
     } catch (_) {
       lockStatus.textContent =
-        "Browser storage is unavailable. The review form may remain locked.";
+        "Your browser could not check saved reading progress. Please try again.";
     }
   }
 
@@ -383,7 +438,7 @@
   }
 
   /*
-   * Load approved reviews and calculate average rating.
+   * LOAD APPROVED REVIEWS
    */
 
   async function loadApprovedReviews() {
@@ -499,7 +554,7 @@
   }
 
   /*
-   * Submit review for approval.
+   * SUBMIT REVIEW FOR APPROVAL
    */
 
   form.addEventListener("submit", async event => {
@@ -527,7 +582,7 @@
 
     const answers = {};
 
-    questions.forEach((item, index) => {
+    book.questions.forEach((item, index) => {
       const field = document.getElementById(
         "review-answer-" + (index + 1)
       );
@@ -542,7 +597,8 @@
     }
 
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-      feedback.textContent = "Please select a star rating.";
+      feedback.textContent =
+        "Please select a star rating.";
       return;
     }
 
@@ -552,13 +608,15 @@
       return;
     }
 
-    if (questions.some((_, index) => {
-      const value = document.getElementById(
+    const incompleteQuestion = book.questions.some((_, index) => {
+      const field = document.getElementById(
         "review-answer-" + (index + 1)
-      ).value.trim();
+      );
 
-      return !value;
-    })) {
+      return !field.value.trim();
+    });
+
+    if (incompleteQuestion) {
       feedback.textContent =
         "Please complete all the review questions.";
       return;
@@ -597,12 +655,14 @@
       }
 
       form.reset();
+
       selectedRating = 0;
       ratingInput.value = "";
+
       updateStars(0);
 
       ratingCaption.textContent =
-        "Select your rating from 1 to 5 stars.";
+        "Select your rating from one to five stars.";
 
       feedback.textContent =
         "Thank you! ❤️ Your review has been submitted for approval. Once approved, it may appear in our reader reviews section.";
