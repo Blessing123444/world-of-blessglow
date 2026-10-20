@@ -364,3 +364,160 @@
     line-height: 1.75;
   }
   }
+/* =========================================
+   WORLD OF BLESSGLOW — REVIEW DISPLAY FIX
+   ========================================= */
+
+/* Keep the review section in a clear order */
+#book-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Keep the review form and public reviews separate */
+#book-reviews > h3 {
+  order: 0;
+  margin: 0 0 8px;
+}
+
+#book-reviews > .approved-reviews {
+  order: 1;
+  width: 100%;
+  margin: 0;
+}
+
+#book-reviews > .book-review-form {
+  order: 2;
+  width: 100%;
+  margin: 0;
+}
+
+/* Reader review cards */
+#book-reviews .review-card {
+  display: block;
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 20px;
+  text-align: left;
+  border: 1px solid rgba(214, 173, 96, 0.3);
+  border-radius: 12px;
+  background: #100e12;
+  overflow-wrap: anywhere;
+}
+
+/* Reader names */
+#book-reviews .review-card h4 {
+  margin: 0 0 10px;
+  text-align: left;
+}
+
+/* STARS: remove the button-box appearance */
+#book-reviews .review-stars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin: 8px 0 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+#book-reviews .review-stars button {
+  display: inline-block;
+  width: auto;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  background: transparent;
+  color: #d6ad60;
+  font-family: Arial, sans-serif;
+  font-size: 25px;
+  line-height: 1;
+  box-shadow: none;
+  cursor: default;
+}
+
+#book-reviews .review-stars button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+#book-reviews .review-stars button:hover {
+  transform: none;
+}
+
+/* Overall review text */
+#book-reviews .review-card > p {
+  margin: 12px 0;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Discussion answers: one question followed by its answer */
+#book-reviews .review-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+#book-reviews .review-answer {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 14px 16px;
+  border: none;
+  border-left: 3px solid #d6ad60;
+  border-radius: 0 8px 8px 0;
+  background: rgba(214, 173, 96, 0.07);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+#book-reviews .review-answer strong {
+  display: block;
+  margin: 0 0 7px;
+  color: #d6ad60;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#book-reviews .review-answer p {
+  display: block;
+  margin: 0;
+  color: #f7f0e7;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Review date */
+#book-reviews .review-date {
+  display: block;
+  margin-top: 16px;
+  color: #c1b5c4;
+  font-size: 12px;
+}
+
+/* Mobile layout */
+@media (max-width: 520px) {
+  #book-reviews .review-card {
+    padding: 15px;
+  }
+
+  #book-reviews .review-stars button {
+    font-size: 23px;
+  }
+
+  #book-reviews .review-answer {
+    padding: 12px;
+  }
+  }
