@@ -1,43 +1,144 @@
 (() => {
   "use strict";
 
-  // SUPABASE CONFIGURATION
-  const SUPABASE_URL = "https://zngagaolaiidgyxoldsh.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+  // WORLD OF BLESSGLOW — READER REVIEWS
+
+  const SUPABASE_URL =
+    "https://zngagaolaiidgyxoldsh.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
 
   const API = `${SUPABASE_URL}/rest/v1/book_reviews`;
 
-  // BOOKS AND ORIGINAL DISCUSSION QUESTIONS
+  // BOOKS AND QUESTIONS — KEEP THE ORIGINAL ORDER
   const BOOKS = {
     "a-love-written-in-silence": {
       title: "A Love Written in Silence",
+
+      introduction:
+        "Thank you for reading my debut novel, A Love Written in Silence! 🥹💗 I'd love to hear your honest thoughts about the story. Your feedback means a lot to me and helps me grow as an author. 📚✨",
+
       questions: [
-        "💗 Your Favourite Character",
-        "📖 Your Favourite Moment",
-        "🥺 Your Feelings About the Love Story",
-        "✨ Describe the Book in Three Words",
-        "💌 Would You Recommend This Book?",
-        "🌷 A Message for the Author"
+        {
+          label: "💕 Who was your favourite character, and what made you love them?",
+          old: [
+            "💗 Your Favourite Character",
+            "Your Favourite Character"
+          ],
+          prompt: "Share your thoughts below."
+        },
+        {
+          label: "📖 What was your favourite moment or scene in the story, and why did it stand out to you?",
+          old: [
+            "📖 Your Favourite Moment",
+            "Your Favourite Moment"
+          ],
+          prompt: "Tell me about the moment that stayed with you."
+        },
+        {
+          label: "🥹 How did the love story make you feel, and were you satisfied with the ending?",
+          old: [
+            "🥺 Your Feelings About the Love Story",
+            "Your Feelings About the Love Story"
+          ],
+          prompt: "I'd love to hear your honest thoughts."
+        },
+        {
+          label: "💌 If you could describe A Love Written in Silence in three words, what would they be?",
+          old: [
+            "✨ Describe the Book in Three Words",
+            "Describe the Book in Three Words"
+          ],
+          prompt: "Your honest opinion is always welcome!"
+        },
+        {
+          label: "💗 Would you recommend this book to another reader? Why or why not?",
+          old: [
+            "💌 Would You Recommend This Book?",
+            "Would You Recommend This Book?"
+          ],
+          prompt: "Tell me why!"
+        },
+        {
+          label: "🌷 What would you like to tell Blessing Effiong, the author?",
+          old: [
+            "🌷 A Message for the Author",
+            "A Message for the Author",
+            "What would you want to tell the author?",
+            "What would you like to tell the author?"
+          ],
+          prompt: "Your words and encouragement mean so much to me. 💗"
+        }
       ]
     },
 
     "behind-her-smile": {
       title: "Behind Her Smile: The Girl They Framed",
+
+      introduction:
+        "Thank you for reading Behind Her Smile: The Girl They Framed! 🖤📚 I'd love to hear your honest thoughts about the story, its characters, and its secrets. Your feedback helps me grow as an author. ✨",
+
       questions: [
-        "🖤 Your First Impression",
-        "👀 The Most Surprising Character",
-        "💔 The Most Emotional Moment",
-        "🔐 Trust and Betrayal",
-        "💌 Would You Recommend This Book?",
-        "🌷 A Message for the Author"
+        {
+          label: "🖤 What was your first impression of the story?",
+          old: [
+            "🖤 Your First Impression",
+            "Your First Impression"
+          ],
+          prompt: "Tell me what caught your attention."
+        },
+        {
+          label: "👀 Which character surprised you the most, and why?",
+          old: [
+            "👀 The Most Surprising Character",
+            "The Most Surprising Character"
+          ],
+          prompt: "I'd love to know what you thought!"
+        },
+        {
+          label: "💔 What was the most emotional or unforgettable moment for you?",
+          old: [
+            "💔 The Most Emotional Moment",
+            "The Most Emotional Moment"
+          ],
+          prompt: "Share the moment that stayed with you."
+        },
+        {
+          label: "🔐 What did the story teach you about trust and betrayal?",
+          old: [
+            "🔐 Trust and Betrayal",
+            "Trust and Betrayal"
+          ],
+          prompt: "Tell me your honest thoughts."
+        },
+        {
+          label: "💌 Would you recommend this book to another reader? Why or why not?",
+          old: [
+            "💌 Would You Recommend This Book?",
+            "Would You Recommend This Book?"
+          ],
+          prompt: "Your recommendation matters!"
+        },
+        {
+          label: "🌷 What would you like to tell Blessing Effiong, the author?",
+          old: [
+            "🌷 A Message for the Author",
+            "A Message for the Author",
+            "What would you want to tell the author?",
+            "What would you like to tell the author?"
+          ],
+          prompt: "Thank you for supporting my storytelling journey. 💗"
+        }
       ]
     }
   };
 
   function configured() {
-    return Boolean(
+    return (
       SUPABASE_URL.startsWith("https://") &&
-      SUPABASE_KEY.startsWith("sb_publishable_")
+      SUPABASE_KEY.startsWith("sb_publishable_") &&
+      !SUPABASE_KEY.includes("YOUR_EXISTING")
     );
   }
 
@@ -53,17 +154,26 @@
     });
 
     if (!response.ok) {
-      throw new Error(await response.text());
+      throw new Error(
+        `Request failed (${response.status}): ${await response.text()}`
+      );
     }
 
-    return response.status === 204 ? null : response.json();
+    return response.status === 204
+      ? null
+      : response.json();
   }
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
 
-    if (text !== undefined) node.textContent = text;
-    if (className) node.className = className;
+    if (text !== undefined) {
+      node.textContent = text;
+    }
+
+    if (className) {
+      node.className = className;
+    }
 
     return node;
   }
@@ -76,18 +186,41 @@
       interactive ? "interactive-stars" : "review-stars"
     );
 
+    wrapper.setAttribute(
+      "aria-label",
+      interactive ? "Choose your rating" : `${value} out of 5 stars`
+    );
+
     for (let i = 1; i <= 5; i++) {
       const star = element("button", "★", "rating-star");
 
       star.type = "button";
+      star.style.background = "transparent";
+      star.style.border = "none";
+      star.style.boxShadow = "none";
+      star.style.outlineOffset = "3px";
+      star.style.padding = "0";
+      star.style.margin = "0";
+      star.style.width = "auto";
+      star.style.minWidth = "0";
+      star.style.minHeight = "0";
+      star.style.display = "inline-block";
+      star.style.lineHeight = "1";
+      star.style.cursor = interactive ? "pointer" : "default";
       star.style.color = i <= value ? "#d6ad60" : "#888";
+      star.style.fontSize = interactive ? "34px" : "22px";
+
       star.setAttribute("aria-label", `${i} out of 5 stars`);
 
       if (interactive) {
-        star.addEventListener("click", () => onSelect(i));
+        star.setAttribute("aria-pressed", "false");
+
+        star.addEventListener("click", () => {
+          onSelect(i);
+        });
       } else {
         star.disabled = true;
-        star.setAttribute("aria-hidden", "true");
+        star.tabIndex = -1;
       }
 
       wrapper.appendChild(star);
@@ -106,7 +239,98 @@
       : date.toLocaleDateString();
   }
 
-  // DISPLAY PUBLIC, APPROVED REVIEWS
+  // NORMALISE OLD AND NEW QUESTION NAMES
+  function normalise(value) {
+    return String(value || "")
+      .normalize("NFKC")
+      .replace(/^[\s\p{Extended_Pictographic}\uFE0F\u200D]+/gu, "")
+      .replace(/^\d+[\s.)-]*/, "")
+      .replace(/[?!.,:;'"“”‘’]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+
+  function getAnswers(review) {
+    let answers = review.discussion_answers;
+
+    if (typeof answers === "string") {
+      try {
+        answers = JSON.parse(answers);
+      } catch {
+        return {};
+      }
+    }
+
+    return answers &&
+      typeof answers === "object" &&
+      !Array.isArray(answers)
+      ? answers
+      : {};
+  }
+
+  // FIND ANSWERS WITHOUT RANDOMISING THEIR DISPLAY ORDER
+  function orderedAnswers(book, answers) {
+    const entries = Object.entries(answers);
+    const usedKeys = new Set();
+
+    return book.questions.map((question, index) => {
+      const possibleNames = [
+        question.label,
+        ...question.old
+      ].map(normalise);
+
+      let match = entries.find(([key, value]) =>
+        !usedKeys.has(key) &&
+        possibleNames.includes(normalise(key)) &&
+        String(value ?? "").trim()
+      );
+
+      // Support older records using numbered question keys.
+      if (!match) {
+        match = entries.find(([key, value]) =>
+          !usedKeys.has(key) &&
+          new RegExp(
+            `^(question\\s*)?${index + 1}[.)\\s:-]`,
+            "i"
+          ).test(String(key)) &&
+          String(value ?? "").trim()
+        );
+      }
+
+      // Older records may use different wording.
+      if (!match) {
+        const oldWords = question.old
+          .map(normalise)
+          .filter(Boolean);
+
+        match = entries.find(([key, value]) =>
+          !usedKeys.has(key) &&
+          oldWords.some(oldName =>
+            normalise(key).includes(oldName) ||
+            oldName.includes(normalise(key))
+          ) &&
+          String(value ?? "").trim()
+        );
+      }
+
+      if (!match) {
+        return {
+          question,
+          answer: ""
+        };
+      }
+
+      usedKeys.add(match[0]);
+
+      return {
+        question,
+        answer: String(match[1]).trim()
+      };
+    });
+  }
+
+  // DISPLAY APPROVED PUBLIC REVIEWS
   async function loadApprovedReviews(slug, container) {
     container.replaceChildren(
       element("p", "Loading reviews...", "review-loading")
@@ -128,21 +352,23 @@
         container.appendChild(
           element(
             "p",
-            "No approved reviews yet. Be the first to share your thoughts!"
+            "No approved reviews yet. Be the first to share your thoughts!",
+            "review-empty"
           )
         );
         return;
       }
 
-      const average = reviews.reduce(
-        (sum, review) => sum + Number(review.rating || 0),
-        0
-      ) / reviews.length;
+      const average =
+        reviews.reduce(
+          (sum, review) => sum + Number(review.rating || 0),
+          0
+        ) / reviews.length;
 
       container.appendChild(
         element(
           "p",
-          `${average.toFixed(1)} out of 5 ⭐ · ${reviews.length} review${reviews.length === 1 ? "" : "s"}`,
+          `${average.toFixed(1)} out of 5 · ${reviews.length} review${reviews.length === 1 ? "" : "s"}`,
           "review-summary"
         )
       );
@@ -150,138 +376,81 @@
       reviews.forEach(review => {
         const card = element("article", undefined, "review-card");
 
-        card.append(
+        card.appendChild(
           element(
             "h4",
             review.display_name || "Reader",
             "review-card-name"
-          ),
-          makeStars(Number(review.rating) || 0),
+          )
+        );
+
+        card.appendChild(
+          makeStars(Number(review.rating) || 0)
+        );
+
+        card.appendChild(
           element(
             "h5",
-            "Reader's overall review",
+            "Reader's Overall Review",
             "review-section-heading"
-          ),
+          )
+        );
+
+        card.appendChild(
           element(
             "p",
-            review.review_text || "No written review provided.",
+            review.review_text || "No overall review provided.",
             "review-card-text"
           )
         );
 
-        // DISCUSSION ANSWERS IN THE ORIGINAL QUESTION ORDER
-        let answers = review.discussion_answers;
+        const answers = getAnswers(review);
+        const ordered = orderedAnswers(BOOKS[slug], answers);
 
-        if (typeof answers === "string") {
-          try {
-            answers = JSON.parse(answers);
-          } catch {
-            answers = {};
-          }
-        }
+        const answerList = element(
+          "div",
+          undefined,
+          "review-discussion-answers"
+        );
 
-        if (answers && typeof answers === "object" && !Array.isArray(answers)) {
-          const answerHeading = element(
-            "h5",
-            "Reader's discussion answers",
-            "review-section-heading"
-          );
+        ordered.forEach(({ question, answer }) => {
+          if (!answer) return;
 
-          const answerList = element(
+          const item = element(
             "div",
             undefined,
-            "review-discussion-answers"
+            "review-answer-item"
           );
 
-          BOOKS[slug].questions.forEach((question, index) => {
-            const possibleKeys = [
-              question,
-              question.replace(/^[^\p{L}\p{N}]+\s*/u, ""),
-              question.replace(/^[^\p{L}\p{N}]+\s*/u, "").replace(/^[^ ]+\s*/, ""),
-              `question${index + 1}`,
-              `q${index + 1}`
-            ];
+          item.appendChild(
+            element(
+              "h5",
+              question.label,
+              "review-answer-question"
+            )
+          );
 
-            let answer;
+          item.appendChild(
+            element(
+              "p",
+              answer,
+              "review-answer-text"
+            )
+          );
 
-            for (const key of possibleKeys) {
-              if (
-                Object.prototype.hasOwnProperty.call(answers, key) &&
-                String(answers[key] ?? "").trim()
-              ) {
-                answer = String(answers[key]).trim();
-                break;
-              }
-            }
+          answerList.appendChild(item);
+        });
 
-            // Also support numbered question keys saved by older versions.
-            if (!answer) {
-              const keys = Object.keys(answers);
-              const matchingKey = keys.find(key =>
-                new RegExp(`^(question\\s*)?${index + 1}[.)\\s:-]`, "i").test(key)
-              );
+        if (answerList.childElementCount) {
+          card.appendChild(
+            element(
+              "h5",
+              "Reader's Discussion Answers",
+              "review-section-heading"
+            )
+          );
 
-              if (matchingKey && String(answers[matchingKey] ?? "").trim()) {
-                answer = String(answers[matchingKey]).trim();
-              }
-            }
-
-            if (!answer) return;
-
-            const item = element(
-              "div",
-              undefined,
-              "review-answer-item"
-            );
-
-            item.append(
-              element(
-                "strong",
-                `${question}`,
-                "review-answer-question"
-              ),
-              element(
-                "p",
-                answer,
-                "review-answer-text"
-              )
-            );
-
-            answerList.appendChild(item);
-          });
-
-          // Preserve any older answers that do not match current question keys.
-          Object.entries(answers).forEach(([key, value]) => {
-            if (!String(value ?? "").trim()) return;
-
-            const alreadyDisplayed = Array.from(
-              answerList.querySelectorAll(".review-answer-question")
-            ).some(node => node.textContent === key);
-
-            const knownQuestion = BOOKS[slug].questions.some(question =>
-              key === question ||
-              key === question.replace(/^[^\p{L}\p{N}]+\s*/u, "")
-            );
-
-            if (alreadyDisplayed || knownQuestion) return;
-
-            const item = element(
-              "div",
-              undefined,
-              "review-answer-item"
-            );
-
-            item.append(
-              element("strong", key, "review-answer-question"),
-              element("p", String(value), "review-answer-text")
-            );
-
-            answerList.appendChild(item);
-          });
-
-          if (answerList.childElementCount) {
-            card.append(answerHeading, answerList);
-          }
+          card.appendChild(answerList);
         }
 
         const date = formatDate(review.created_at);
@@ -307,7 +476,7 @@
     }
   }
 
-  // CREATE REVIEW SUBMISSION FORM
+  // CREATE THE REVIEW FORM
   function createReviewForm(slug, host) {
     const book = BOOKS[slug];
 
@@ -318,73 +487,136 @@
 
     let rating = 0;
 
-    form.appendChild(element("h3", `Review ${book.title}`));
+    form.appendChild(
+      element("h3", "🌸 Reader Review & Feedback 💌")
+    );
 
+    form.appendChild(
+      element("p", book.introduction, "review-introduction")
+    );
+
+    // DISPLAY NAME
     const nameLabel = element("label", "Your display name");
     const name = element("input");
 
+    name.id = `review-name-${slug}`;
     name.name = "display_name";
     name.maxLength = 60;
     name.required = true;
     name.autocomplete = "nickname";
-    nameLabel.htmlFor = "review-name-" + slug;
-    name.id = nameLabel.htmlFor;
+    nameLabel.htmlFor = name.id;
 
     form.append(nameLabel, name);
 
-    form.appendChild(element("label", "Your rating"));
+    // RATING
+    form.appendChild(
+      element(
+        "label",
+        "1. ⭐ How would you rate " + book.title + "?"
+      )
+    );
+
+    const ratingStatus = element(
+      "p",
+      "Tap a star to select your rating.",
+      "review-rating-hint"
+    );
 
     const starPicker = makeStars(0, true, selected => {
       rating = selected;
 
       starPicker.querySelectorAll("button").forEach((star, index) => {
-        star.style.color = index < rating ? "#d6ad60" : "#888";
+        const selectedStar = index < rating;
+
+        star.style.color = selectedStar ? "#d6ad60" : "#888";
+
         star.setAttribute(
           "aria-pressed",
           String(index + 1 === rating)
         );
       });
+
+      ratingStatus.textContent =
+        `${rating} out of 5 stars selected.`;
     });
 
-    form.appendChild(starPicker);
+    form.append(starPicker, ratingStatus);
 
-    const reviewLabel = element("label", "Your overall review");
+    // OVERALL REVIEW
+    const reviewLabel = element(
+      "label",
+      "💗 Share your overall review"
+    );
+
     const review = element("textarea");
 
+    review.id = `review-text-${slug}`;
     review.name = "review_text";
     review.rows = 4;
     review.maxLength = 3000;
     review.required = true;
-    review.placeholder = "Share your honest thoughts about the book...";
-    reviewLabel.htmlFor = "review-text-" + slug;
-    review.id = reviewLabel.htmlFor;
+    review.placeholder =
+      "Share your honest thoughts about the book...";
+
+    reviewLabel.htmlFor = review.id;
 
     form.append(reviewLabel, review);
 
-    const answers = {};
-
+    // DISCUSSION QUESTIONS
     form.appendChild(
-      element("h4", "💛 Discussion Questions")
+      element("h4", "💌 Let's Talk About the Story")
     );
 
+    const answers = [];
+
     book.questions.forEach((question, index) => {
-      const label = element("label", question);
+      const field = element(
+        "div",
+        undefined,
+        "review-field"
+      );
+
+      const label = element(
+        "label",
+        `${index + 2}. ${question.label}`
+      );
+
+      const prompt = element(
+        "p",
+        question.prompt,
+        "review-question-prompt"
+      );
+
       const answer = element("textarea");
 
-      answer.rows = 2;
+      answer.id = `review-answer-${slug}-${index + 1}`;
+      answer.name = `question_${index + 1}`;
+      answer.rows = 3;
       answer.maxLength = 1500;
       answer.required = true;
-      answer.placeholder = "Write your answer...";
+      answer.placeholder = "Write your answer here...";
 
-      label.htmlFor = `review-answer-${slug}-${index + 1}`;
-      answer.id = label.htmlFor;
+      label.htmlFor = answer.id;
 
-      answers[question] = answer;
+      answers.push({
+        question,
+        input: answer
+      });
 
-      form.append(label, answer);
+      field.append(label, prompt, answer);
+      form.appendChild(field);
     });
 
-    const submit = element("button", "Submit Review");
+    // THANK-YOU MESSAGE
+    form.appendChild(
+      element(
+        "p",
+        "🌷 Thank you for being part of the World of BlessGlow! Every review, kind word, and honest suggestion helps me become a better storyteller. Thank you for giving my story a chance. 💗📚✨",
+        "review-thank-you"
+      )
+    );
+
+    const submit = element("button", "Submit Review 💌");
     submit.type = "submit";
     submit.className = "review-submit";
 
@@ -394,7 +626,8 @@
       event.preventDefault();
 
       if (!configured()) {
-        status.textContent = "The review system is not configured correctly.";
+        status.textContent =
+          "Please check the Supabase configuration in reviews.js.";
         return;
       }
 
@@ -408,8 +641,8 @@
 
       const discussionAnswers = {};
 
-      Object.entries(answers).forEach(([question, input]) => {
-        discussionAnswers[question] = input.value.trim();
+      answers.forEach(({ question, input }) => {
+        discussionAnswers[question.label] = input.value.trim();
       });
 
       const payload = {
@@ -424,7 +657,9 @@
       try {
         await request(API, {
           method: "POST",
-          headers: { Prefer: "return=minimal" },
+          headers: {
+            Prefer: "return=minimal"
+          },
           body: JSON.stringify(payload)
         });
 
@@ -433,11 +668,14 @@
 
         starPicker.querySelectorAll("button").forEach(star => {
           star.style.color = "#888";
-          star.removeAttribute("aria-pressed");
+          star.setAttribute("aria-pressed", "false");
         });
 
+        ratingStatus.textContent =
+          "Tap a star to select your rating.";
+
         status.textContent =
-          "Thank you! Your review has been submitted for approval.";
+          "Thank you for your review! 💗 It has been submitted for approval before appearing publicly.";
       } catch (error) {
         console.error("Review submission failed:", error);
 
@@ -451,32 +689,50 @@
     host.appendChild(form);
   }
 
-  // INITIALISE REVIEW SECTIONS
+  // INITIALISE EACH BOOK'S REVIEW SECTION
   function initialise() {
     if (!configured()) {
-      console.error("Check the Supabase URL and publishable key in reviews.js.");
+      console.error(
+        "Check the Supabase URL and publishable key in reviews.js."
+      );
     }
 
-    document.querySelectorAll("[data-book-reviews], #book-reviews[data-book]").forEach(host => {
-      const slug = host.dataset.bookReviews || host.dataset.book;
+    document
+      .querySelectorAll("[data-book-reviews], #book-reviews[data-book]")
+      .forEach(host => {
+        const slug =
+          host.dataset.bookReviews ||
+          host.dataset.book;
 
-      if (!BOOKS[slug]) {
-        console.warn("Unknown book review section:", slug);
-        return;
-      }
+        if (!BOOKS[slug]) {
+          console.warn("Unknown book review section:", slug);
+          return;
+        }
 
-      // Prevent duplicate rendering if initialisation runs more than once.
-      if (host.dataset.reviewsInitialised === "true") return;
-      host.dataset.reviewsInitialised = "true";
+        if (host.dataset.reviewsInitialised === "true") {
+          return;
+        }
 
-      const heading = element("h3", "Reader Reviews");
-      const publicReviews = element("div", undefined, "approved-reviews");
+        host.dataset.reviewsInitialised = "true";
 
-      host.append(heading, publicReviews);
+        // Keep the form first and public reviews underneath it.
+        const heading = element(
+          "h3",
+          "🌸 Reader Reviews"
+        );
 
-      loadApprovedReviews(slug, publicReviews);
-      createReviewForm(slug, host);
-    });
+        const publicReviews = element(
+          "div",
+          undefined,
+          "approved-reviews"
+        );
+
+        host.appendChild(heading);
+        createReviewForm(slug, host);
+        host.appendChild(publicReviews);
+
+        loadApprovedReviews(slug, publicReviews);
+      });
   }
 
   if (document.readyState === "loading") {
