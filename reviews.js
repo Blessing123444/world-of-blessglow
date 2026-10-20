@@ -14,7 +14,7 @@
    * KEEP YOUR EXISTING SUPABASE PUBLISHABLE KEY HERE.
    * Never use a service-role or secret key in this file.
    */
-  const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+  const SUPABASE_KEY = "";
 
   const BOOKS = {
     "a-love-written-in-silence": {
