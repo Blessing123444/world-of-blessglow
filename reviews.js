@@ -2,23 +2,32 @@
   "use strict";
 
   /*
-   * WORLD OF BLESSGLOW — READER REVIEW SYSTEM
-   * Book-specific questions, interactive star ratings,
-   * reading-completion lock, and Supabase moderation.
+   * WORLD OF BLESSGLOW
+   * Reader Reviews and Feedback System
+   *
+   * Features:
+   * - Book-specific review questions
+   * - Interactive star ratings
+   * - Reading-completion lock
+   * - Supabase review submission
+   * - Approved public reviews
+   * - Full written reviews and discussion answers
    */
 
   const SUPABASE_URL =
     "https://zngagaolaiidgyxoldsh.supabase.co";
 
   /*
-   * KEEP YOUR EXISTING SUPABASE PUBLISHABLE KEY HERE.
-   * Never use a service-role or secret key in this file.
+   * IMPORTANT:
+   * Keep your existing Supabase PUBLISHABLE key here.
+   * Never use a service-role or secret key in browser code.
    */
-  const SUPABASE_KEY = "";
+  const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
 
   const BOOKS = {
     "a-love-written-in-silence": {
       name: "A Love Written in Silence",
+
       intro:
         "Thank you for reading my debut novel, A Love Written in Silence! 🥹💗 I'd love to hear your honest thoughts about the story. Your feedback means a lot to me and helps me grow as an author. 📚✨",
 
@@ -140,7 +149,8 @@
   const isConfigured =
     SUPABASE_URL.startsWith("https://") &&
     SUPABASE_KEY.length > 0 &&
-    SUPABASE_KEY !== "YOUR_EXISTING_PUBLISHABLE_KEY";
+    SUPABASE_KEY !== "YOUR_EXISTING_PUBLISHABLE_KEY" &&
+    SUPABASE_KEY !== "PASTE_YOUR_EXISTING_PUBLISHABLE_KEY_HERE";
 
   function getHeaders() {
     return {
@@ -157,19 +167,26 @@
   root.innerHTML = `
     <section class="reviews-heading">
       <p class="reviews-eyebrow">YOUR READING EXPERIENCE</p>
+
       <h2>🌸 Reader Review &amp; Feedback 💌</h2>
+
       <h3 class="reviews-book-title"></h3>
+
       <p class="reviews-description reviews-intro"></p>
+
       <p class="reviews-description">
-        There are no right or wrong answers. Share your honest experience!
+        There are no right or wrong answers.
+        Share your honest experience!
       </p>
     </section>
 
     <div class="reviews-lock" id="reviews-lock">
       <h3>📖 Complete the Story First</h3>
+
       <p>
         Reach the final section of the book to unlock the review form.
       </p>
+
       <p id="reviews-lock-status" aria-live="polite">
         Your review form is currently locked.
       </p>
@@ -177,12 +194,14 @@
 
     <form class="reviews-form" id="reviews-form" hidden>
       <h3>💖 Share Your Review</h3>
+
       <p class="reviews-small">
         Your review will be checked before it appears publicly.
       </p>
 
       <div class="review-field">
         <h4>⭐ 1. Rate This Book</h4>
+
         <p class="reviews-small">
           How would you rate this story?
         </p>
@@ -204,7 +223,11 @@
           `).join("")}
         </div>
 
-        <p id="rating-caption" class="reviews-small" aria-live="polite">
+        <p
+          id="rating-caption"
+          class="reviews-small"
+          aria-live="polite"
+        >
           Select your rating from one to five stars.
         </p>
 
@@ -220,6 +243,7 @@
         <label for="review-name">
           👤 What name or nickname would you like displayed with your review?
         </label>
+
         <input
           id="review-name"
           name="display_name"
@@ -234,9 +258,11 @@
 
       <div class="review-field">
         <h4>💭 Share Your Overall Thoughts</h4>
+
         <label for="review-text">
           What did you think of the story overall?
         </label>
+
         <textarea
           id="review-text"
           name="review_text"
@@ -266,6 +292,7 @@
 
     <section class="approved-reviews">
       <h3>💖 What Readers Are Saying</h3>
+
       <p class="reviews-small">
         Only approved reviews appear here.
       </p>
@@ -293,12 +320,14 @@
 
   book.questions.forEach((item, index) => {
     const wrapper = document.createElement("div");
+
     wrapper.className = "review-field review-question";
 
     const heading = document.createElement("h4");
     heading.textContent = item.title;
 
     const label = document.createElement("label");
+
     const fieldId = "review-answer-" + (index + 1);
 
     label.htmlFor = fieldId;
@@ -317,12 +346,15 @@
         ["Probably not", "💔 Probably not."]
       ].forEach(([value, text]) => {
         const option = document.createElement("option");
+
         option.value = value;
         option.textContent = text;
+
         field.appendChild(option);
       });
     } else {
       field = document.createElement("textarea");
+
       field.rows = 3;
       field.maxLength = 1000;
       field.placeholder = "Share your answer...";
@@ -333,6 +365,7 @@
     field.required = true;
 
     wrapper.append(heading, label, field);
+
     questionsContainer.appendChild(wrapper);
   });
 
@@ -366,7 +399,9 @@
       const active = value <= rating;
 
       button.textContent = active ? "★" : "☆";
+
       button.classList.toggle("is-selected", active);
+
       button.setAttribute(
         "aria-pressed",
         String(value === selectedRating)
@@ -377,6 +412,7 @@
   starButtons.forEach(button => {
     button.addEventListener("click", () => {
       selectedRating = Number(button.dataset.rating);
+
       ratingInput.value = String(selectedRating);
 
       updateStars(selectedRating);
@@ -438,7 +474,7 @@
   }
 
   /*
-   * LOAD APPROVED REVIEWS
+   * DISPLAY APPROVED REVIEWS
    */
 
   async function loadApprovedReviews() {
@@ -451,13 +487,15 @@
     if (!isConfigured) {
       list.textContent =
         "Reader reviews will appear here once the Supabase publishable key is configured.";
+
       summary.textContent = "";
       return;
     }
 
     try {
       const params = new URLSearchParams({
-        select: "display_name,rating,review_text,created_at",
+        select:
+          "display_name,rating,review_text,discussion_answers,created_at",
         book_slug: "eq." + slug,
         status: "eq.approved",
         order: "created_at.desc",
@@ -473,6 +511,14 @@
       );
 
       if (!response.ok) {
+        const details = await response.text();
+
+        console.error(
+          "Supabase review retrieval failed:",
+          response.status,
+          details
+        );
+
         throw new Error("Could not retrieve approved reviews.");
       }
 
@@ -483,23 +529,28 @@
 
       if (!reviews.length) {
         const empty = document.createElement("p");
+
         empty.className = "reviews-small";
+
         empty.textContent =
           "No approved reviews yet. Your review could be the first!";
 
         list.appendChild(empty);
+
         return;
       }
 
       const totalRating = reviews.reduce(
-        (sum, review) => sum + Number(review.rating || 0),
+        (sum, review) => sum + (Number(review.rating) || 0),
         0
       );
 
       const average = totalRating / reviews.length;
 
       const averageLine = document.createElement("p");
+
       averageLine.className = "review-average";
+
       averageLine.textContent =
         `★ ${average.toFixed(1)}/5 · Based on ${reviews.length} approved review${reviews.length === 1 ? "" : "s"}`;
 
@@ -507,12 +558,26 @@
 
       reviews.forEach(review => {
         const card = document.createElement("article");
+
         card.className = "review-card";
 
+        /*
+         * Reader name
+         */
+
         const name = document.createElement("h4");
-        name.textContent = review.display_name;
+
+        name.className = "review-card-name";
+
+        name.textContent =
+          review.display_name || "Anonymous Reader";
+
+        /*
+         * Star rating
+         */
 
         const rating = document.createElement("p");
+
         rating.className = "review-stars";
 
         const stars = Math.max(
@@ -525,12 +590,179 @@
           "☆".repeat(5 - stars) +
           ` (${stars}/5)`;
 
+        /*
+         * Main written review
+         */
+
+        const reviewHeading = document.createElement("h5");
+
+        reviewHeading.className = "review-section-heading";
+
+        reviewHeading.textContent = "💭 Overall Review";
+
         const text = document.createElement("p");
+
         text.className = "review-card-text";
-        text.textContent = review.review_text;
+
+        const reviewText =
+          typeof review.review_text === "string"
+            ? review.review_text.trim()
+            : "";
+
+        text.textContent =
+          reviewText || "No written review was provided.";
+
+        /*
+         * Discussion answers
+         */
+
+        const answersContainer =
+          document.createElement("div");
+
+        answersContainer.className =
+          "review-discussion-answers";
+
+        let answers = review.discussion_answers;
+
+        /*
+         * Supabase JSON columns normally arrive as objects.
+         * Handle stringified JSON too, if necessary.
+         */
+
+        if (typeof answers === "string") {
+          try {
+            answers = JSON.parse(answers);
+          } catch (_) {
+            answers = {};
+          }
+        }
+
+        if (
+          answers &&
+          typeof answers === "object" &&
+          !Array.isArray(answers)
+        ) {
+          const answerEntries = Object.entries(answers)
+            .filter(([, answer]) =>
+              answer !== null &&
+              answer !== undefined &&
+              String(answer).trim() !== ""
+            );
+
+          if (answerEntries.length > 0) {
+            const discussionHeading =
+              document.createElement("h5");
+
+            discussionHeading.className =
+              "review-section-heading";
+
+            discussionHeading.textContent =
+              "📖 Reader Discussion";
+
+            answersContainer.appendChild(discussionHeading);
+
+            /*
+             * Use the question titles defined for this book.
+             * This keeps answers in the original question order.
+             */
+
+            book.questions.forEach(question => {
+              if (
+                !Object.prototype.hasOwnProperty.call(
+                  answers,
+                  question.title
+                )
+              ) {
+                return;
+              }
+
+              const answerValue = answers[question.title];
+
+              if (
+                answerValue === null ||
+                answerValue === undefined ||
+                String(answerValue).trim() === ""
+              ) {
+                return;
+              }
+
+              const answerCard =
+                document.createElement("div");
+
+              answerCard.className =
+                "review-answer-item";
+
+              const questionTitle =
+                document.createElement("h6");
+
+              questionTitle.className =
+                "review-answer-question";
+
+              questionTitle.textContent = question.title;
+
+              const answerText =
+                document.createElement("p");
+
+              answerText.className =
+                "review-answer-text";
+
+              answerText.textContent = String(answerValue);
+
+              answerCard.append(questionTitle, answerText);
+
+              answersContainer.appendChild(answerCard);
+            });
+
+            /*
+             * Preserve any older or additional answer keys
+             * that do not match the current question titles.
+             */
+
+            const knownTitles = new Set(
+              book.questions.map(question => question.title)
+            );
+
+            answerEntries.forEach(([title, answer]) => {
+              if (knownTitles.has(title)) {
+                return;
+              }
+
+              const answerCard =
+                document.createElement("div");
+
+              answerCard.className =
+                "review-answer-item";
+
+              const questionTitle =
+                document.createElement("h6");
+
+              questionTitle.className =
+                "review-answer-question";
+
+              questionTitle.textContent = title;
+
+              const answerText =
+                document.createElement("p");
+
+              answerText.className =
+                "review-answer-text";
+
+              answerText.textContent = String(answer);
+
+              answerCard.append(questionTitle, answerText);
+
+              answersContainer.appendChild(answerCard);
+            });
+          }
+        }
+
+        /*
+         * Review date
+         */
 
         const date = document.createElement("p");
-        date.className = "reviews-small";
+
+        date.className = "reviews-small review-card-date";
 
         const parsedDate = new Date(review.created_at);
 
@@ -538,149 +770,11 @@
           ? ""
           : parsedDate.toLocaleDateString();
 
-        card.append(name, rating, text, date);
-        list.appendChild(card);
-      });
+        /*
+         * Assemble card
+         */
 
-    } catch (error) {
-      console.error(
-        "World of BlessGlow: Could not load reviews.",
-        error
-      );
-
-      list.textContent =
-        "Reader reviews are temporarily unavailable. Please try again later.";
-    }
-  }
-
-  /*
-   * SUBMIT REVIEW FOR APPROVAL
-   */
-
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const feedback =
-      document.getElementById("reviews-feedback");
-
-    const submitButton =
-      document.getElementById("review-submit");
-
-    if (!isConfigured) {
-      feedback.textContent =
-        "The review system needs its Supabase publishable key.";
-      return;
-    }
-
-    const displayName =
-      document.getElementById("review-name").value.trim();
-
-    const rating = Number(ratingInput.value);
-
-    const reviewText =
-      document.getElementById("review-text").value.trim();
-
-    const answers = {};
-
-    book.questions.forEach((item, index) => {
-      const field = document.getElementById(
-        "review-answer-" + (index + 1)
-      );
-
-      answers[item.title] = field.value.trim();
-    });
-
-    if (displayName.length < 2 || displayName.length > 40) {
-      feedback.textContent =
-        "Your display name must be between 2 and 40 characters.";
-      return;
-    }
-
-    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-      feedback.textContent =
-        "Please select a star rating.";
-      return;
-    }
-
-    if (reviewText.length < 10 || reviewText.length > 2000) {
-      feedback.textContent =
-        "Your overall review must be between 10 and 2,000 characters.";
-      return;
-    }
-
-    const incompleteQuestion = book.questions.some((_, index) => {
-      const field = document.getElementById(
-        "review-answer-" + (index + 1)
-      );
-
-      return !field.value.trim();
-    });
-
-    if (incompleteQuestion) {
-      feedback.textContent =
-        "Please complete all the review questions.";
-      return;
-    }
-
-    submitButton.disabled = true;
-    feedback.textContent = "Submitting your review...";
-
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          ...getHeaders(),
-          Prefer: "return=minimal"
-        },
-        body: JSON.stringify({
-          book_slug: slug,
-          display_name: displayName,
+        card.append(
+          name,
           rating,
-          review_text: reviewText,
-          discussion_answers: answers,
-          status: "pending"
-        })
-      });
-
-      if (!response.ok) {
-        const details = await response.text();
-
-        console.error(
-          "Supabase review submission failed:",
-          response.status,
-          details
-        );
-
-        throw new Error("Review submission failed.");
-      }
-
-      form.reset();
-
-      selectedRating = 0;
-      ratingInput.value = "";
-
-      updateStars(0);
-
-      ratingCaption.textContent =
-        "Select your rating from one to five stars.";
-
-      feedback.textContent =
-        "Thank you! ❤️ Your review has been submitted for approval. Once approved, it may appear in our reader reviews section.";
-
-    } catch (error) {
-      console.error(
-        "World of BlessGlow: Review submission failed.",
-        error
-      );
-
-      feedback.textContent =
-        "We couldn't submit your review. Please check your connection and try again later.";
-
-    } finally {
-      submitButton.disabled = false;
-    }
-  });
-
-  loadApprovedReviews();
-
-})();
+          reviewHeading, 
