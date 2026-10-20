@@ -10,15 +10,16 @@
    * - Interactive star ratings
    * - Reading-completion lock
    * - Supabase review submission
+   * - Pending reviews for moderation
    * - Approved public reviews
    * - Full written reviews and discussion answers
+   * - Average rating summary
    */
 
   const SUPABASE_URL =
     "https://zngagaolaiidgyxoldsh.supabase.co";
 
   /*
-   * IMPORTANT:
    * Keep your existing Supabase PUBLISHABLE key here.
    * Never use a service-role or secret key in browser code.
    */
@@ -124,24 +125,6 @@
     }
   };
 
-  const root = document.getElementById("book-reviews");
-
-  if (!root) {
-    console.warn(
-      "World of BlessGlow Reviews: #book-reviews was not found."
-    );
-    return;
-  }
-
-  const slug = root.dataset.book;
-  const book = BOOKS[slug];
-
-  if (!book) {
-    root.textContent =
-      "The review section could not be loaded for this book.";
-    return;
-  }
-
   const endpoint =
     SUPABASE_URL.replace(/\/+$/, "") +
     "/rest/v1/book_reviews";
@@ -158,6 +141,40 @@
       Authorization: "Bearer " + SUPABASE_KEY,
       "Content-Type": "application/json"
     };
+  }
+
+  function makeElement(tag, className, textContent) {
+    const element = document.createElement(tag);
+
+    if (className) {
+      element.className = className;
+    }
+
+    if (textContent !== undefined) {
+      element.textContent = textContent;
+    }
+
+    return element;
+  }
+
+  const root = document.getElementById("book-reviews");
+
+  if (!root) {
+    console.warn(
+      "World of BlessGlow Reviews: #book-reviews was not found."
+    );
+    return;
+  }
+
+  const slug = root.dataset.book;
+  const book = BOOKS[slug];
+
+  if (!book) {
+    root.textContent =
+      "The review section could not be loaded for this book.";
+
+    console.error("Unknown book review slug:", slug);
+    return;
   }
 
   /*
@@ -212,12 +229,12 @@
           role="group"
           aria-label="Rate this book from one to five stars"
         >
-          ${[1, 2, 3, 4, 5].map(n => `
+          ${[1, 2, 3, 4, 5].map(number => `
             <button
               type="button"
               class="rating-star"
-              data-rating="${n}"
-              aria-label="${n} star${n > 1 ? "s" : ""}"
+              data-rating="${number}"
+              aria-label="${number} star${number === 1 ? "" : "s"}"
               aria-pressed="false"
             >☆</button>
           `).join("")}
@@ -308,7 +325,7 @@
   root.querySelector(".reviews-book-title").textContent = book.name;
   root.querySelector(".reviews-intro").textContent = book.intro;
 
-  document.getElementById("review-thank-you").textContent =
+  root.querySelector("#review-thank-you").textContent =
     book.thankYou;
 
   /*
@@ -316,22 +333,20 @@
    */
 
   const questionsContainer =
-    document.getElementById("review-questions");
+    root.querySelector("#review-questions");
 
   book.questions.forEach((item, index) => {
-    const wrapper = document.createElement("div");
+    const wrapper = makeElement(
+      "div",
+      "review-field review-question"
+    );
 
-    wrapper.className = "review-field review-question";
-
-    const heading = document.createElement("h4");
-    heading.textContent = item.title;
-
-    const label = document.createElement("label");
+    const heading = makeElement("h4", "", item.title);
+    const label = makeElement("label", "", item.question);
 
     const fieldId = "review-answer-" + (index + 1);
 
     label.htmlFor = fieldId;
-    label.textContent = item.question;
 
     let field;
 
@@ -344,11 +359,11 @@
         ["Maybe", "😊 Maybe."],
         ["Not sure", "🤔 I'm not sure."],
         ["Probably not", "💔 Probably not."]
-      ].forEach(([value, text]) => {
+      ].forEach(([value, labelText]) => {
         const option = document.createElement("option");
 
         option.value = value;
-        option.textContent = text;
+        option.textContent = labelText;
 
         field.appendChild(option);
       });
@@ -365,7 +380,6 @@
     field.required = true;
 
     wrapper.append(heading, label, field);
-
     questionsContainer.appendChild(wrapper);
   });
 
@@ -379,11 +393,8 @@
     ...root.querySelectorAll(".rating-star")
   ];
 
-  const ratingInput =
-    document.getElementById("review-rating");
-
-  const ratingCaption =
-    document.getElementById("rating-caption");
+  const ratingInput = root.querySelector("#review-rating");
+  const ratingCaption = root.querySelector("#rating-caption");
 
   const ratingLabels = {
     1: "It wasn't for me",
@@ -412,7 +423,6 @@
   starButtons.forEach(button => {
     button.addEventListener("click", () => {
       selectedRating = Number(button.dataset.rating);
-
       ratingInput.value = String(selectedRating);
 
       updateStars(selectedRating);
@@ -429,13 +439,9 @@
   const completionKey =
     "blessglow-review-completed-" + slug;
 
-  const lock = document.getElementById("reviews-lock");
-
-  const lockStatus =
-    document.getElementById("reviews-lock-status");
-
-  const form =
-    document.getElementById("reviews-form");
+  const lock = root.querySelector("#reviews-lock");
+  const lockStatus = root.querySelector("#reviews-lock-status");
+  const form = root.querySelector("#reviews-form");
 
   function unlockReviews() {
     lock.hidden = true;
@@ -447,9 +453,11 @@
       if (localStorage.getItem(completionKey) === "yes") {
         unlockReviews();
       }
-    } catch (_) {
+    } catch (error) {
       lockStatus.textContent =
         "Your browser could not check saved reading progress. Please try again.";
+
+      console.warn("Could not read review completion:", error);
     }
   }
 
@@ -457,9 +465,11 @@
     complete() {
       try {
         localStorage.setItem(completionKey, "yes");
-      } catch (_) {
+      } catch (error) {
         lockStatus.textContent =
           "Your browser could not save reading completion.";
+
+        console.warn("Could not save review completion:", error);
         return;
       }
 
@@ -478,17 +488,19 @@
    */
 
   async function loadApprovedReviews() {
-    const list =
-      document.getElementById("approved-reviews-list");
-
-    const summary =
-      document.getElementById("approved-rating-summary");
+    const list = root.querySelector("#approved-reviews-list");
+    const summary = root.querySelector("#approved-rating-summary");
 
     if (!isConfigured) {
       list.textContent =
-        "Reader reviews will appear here once the Supabase publishable key is configured.";
+        "Reader reviews are temporarily unavailable because the Supabase publishable key has not been configured.";
 
-      summary.textContent = "";
+      summary.replaceChildren();
+
+      console.error(
+        "World of BlessGlow Reviews: Supabase publishable key is missing."
+      );
+
       return;
     }
 
@@ -519,7 +531,9 @@
           details
         );
 
-        throw new Error("Could not retrieve approved reviews.");
+        throw new Error(
+          "Could not retrieve approved reviews."
+        );
       }
 
       const reviews = await response.json();
@@ -527,112 +541,105 @@
       list.replaceChildren();
       summary.replaceChildren();
 
-      if (!reviews.length) {
-        const empty = document.createElement("p");
-
-        empty.className = "reviews-small";
-
-        empty.textContent =
-          "No approved reviews yet. Your review could be the first!";
-
-        list.appendChild(empty);
+      if (!Array.isArray(reviews) || reviews.length === 0) {
+        list.appendChild(
+          makeElement(
+            "p",
+            "reviews-small",
+            "No approved reviews yet. Your review could be the first!"
+          )
+        );
 
         return;
       }
 
+      /*
+       * AVERAGE RATING
+       */
+
       const totalRating = reviews.reduce(
-        (sum, review) => sum + (Number(review.rating) || 0),
+        (sum, review) =>
+          sum + (Number(review.rating) || 0),
         0
       );
 
       const average = totalRating / reviews.length;
 
-      const averageLine = document.createElement("p");
-
-      averageLine.className = "review-average";
-
-      averageLine.textContent =
-        `★ ${average.toFixed(1)}/5 · Based on ${reviews.length} approved review${reviews.length === 1 ? "" : "s"}`;
+      const averageLine = makeElement(
+        "p",
+        "review-average",
+        `★ ${average.toFixed(1)}/5 · Based on ${reviews.length} approved review${reviews.length === 1 ? "" : "s"}`
+      );
 
       summary.appendChild(averageLine);
 
+      /*
+       * CREATE EACH REVIEW CARD
+       */
+
       reviews.forEach(review => {
-        const card = document.createElement("article");
+        const card = makeElement("article", "review-card");
 
-        card.className = "review-card";
-
-        /*
-         * Reader name
-         */
-
-        const name = document.createElement("h4");
-
-        name.className = "review-card-name";
-
-        name.textContent =
-          review.display_name || "Anonymous Reader";
-
-        /*
-         * Star rating
-         */
-
-        const rating = document.createElement("p");
-
-        rating.className = "review-stars";
+        const name = makeElement(
+          "h4",
+          "review-card-name",
+          review.display_name || "Anonymous Reader"
+        );
 
         const stars = Math.max(
           0,
           Math.min(5, Number(review.rating) || 0)
         );
 
-        rating.textContent =
+        const rating = makeElement(
+          "p",
+          "review-stars",
           "★".repeat(stars) +
-          "☆".repeat(5 - stars) +
-          ` (${stars}/5)`;
+            "☆".repeat(5 - stars) +
+            ` (${stars}/5)`
+        );
 
         /*
-         * Main written review
+         * FULL WRITTEN REVIEW
          */
 
-        const reviewHeading = document.createElement("h5");
+        const reviewHeading = makeElement(
+          "h5",
+          "review-section-heading",
+          "💭 Overall Review"
+        );
 
-        reviewHeading.className = "review-section-heading";
-
-        reviewHeading.textContent = "💭 Overall Review";
-
-        const text = document.createElement("p");
-
-        text.className = "review-card-text";
-
-        const reviewText =
+        const writtenReview =
           typeof review.review_text === "string"
             ? review.review_text.trim()
             : "";
 
-        text.textContent =
-          reviewText || "No written review was provided.";
+        const text = makeElement(
+          "p",
+          "review-card-text",
+          writtenReview || "No written review was provided."
+        );
 
         /*
-         * Discussion answers
+         * DISCUSSION ANSWERS
          */
 
-        const answersContainer =
-          document.createElement("div");
-
-        answersContainer.className =
-          "review-discussion-answers";
+        const answersContainer = makeElement(
+          "div",
+          "review-discussion-answers"
+        );
 
         let answers = review.discussion_answers;
-
-        /*
-         * Supabase JSON columns normally arrive as objects.
-         * Handle stringified JSON too, if necessary.
-         */
 
         if (typeof answers === "string") {
           try {
             answers = JSON.parse(answers);
-          } catch (_) {
+          } catch (error) {
+            console.warn(
+              "Could not parse review discussion answers:",
+              error
+            );
+
             answers = {};
           }
         }
@@ -642,28 +649,26 @@
           typeof answers === "object" &&
           !Array.isArray(answers)
         ) {
-          const answerEntries = Object.entries(answers)
-            .filter(([, answer]) =>
+          const answerEntries = Object.entries(answers).filter(
+            ([, answer]) =>
               answer !== null &&
               answer !== undefined &&
               String(answer).trim() !== ""
-            );
+          );
 
           if (answerEntries.length > 0) {
-            const discussionHeading =
-              document.createElement("h5");
+            answersContainer.appendChild(
+              makeElement(
+                "h5",
+                "review-section-heading",
+                "📖 Reader Discussion"
+              )
+            );
 
-            discussionHeading.className =
-              "review-section-heading";
-
-            discussionHeading.textContent =
-              "📖 Reader Discussion";
-
-            answersContainer.appendChild(discussionHeading);
+            const displayedTitles = new Set();
 
             /*
-             * Use the question titles defined for this book.
-             * This keeps answers in the original question order.
+             * Display current book questions in their original order.
              */
 
             book.questions.forEach(question => {
@@ -676,93 +681,79 @@
                 return;
               }
 
-              const answerValue = answers[question.title];
+              const answer = answers[question.title];
 
               if (
-                answerValue === null ||
-                answerValue === undefined ||
-                String(answerValue).trim() === ""
+                answer === null ||
+                answer === undefined ||
+                String(answer).trim() === ""
               ) {
                 return;
               }
 
-              const answerCard =
-                document.createElement("div");
+              const answerCard = makeElement(
+                "div",
+                "review-answer-item"
+              );
 
-              answerCard.className =
-                "review-answer-item";
+              const questionTitle = makeElement(
+                "h6",
+                "review-answer-question",
+                question.title
+              );
 
-              const questionTitle =
-                document.createElement("h6");
-
-              questionTitle.className =
-                "review-answer-question";
-
-              questionTitle.textContent = question.title;
-
-              const answerText =
-                document.createElement("p");
-
-              answerText.className =
-                "review-answer-text";
-
-              answerText.textContent = String(answerValue);
+              const answerText = makeElement(
+                "p",
+                "review-answer-text",
+                String(answer)
+              );
 
               answerCard.append(questionTitle, answerText);
-
               answersContainer.appendChild(answerCard);
+
+              displayedTitles.add(question.title);
             });
 
             /*
-             * Preserve any older or additional answer keys
-             * that do not match the current question titles.
+             * Preserve older answer keys from existing reviews.
              */
 
-            const knownTitles = new Set(
-              book.questions.map(question => question.title)
-            );
-
             answerEntries.forEach(([title, answer]) => {
-              if (knownTitles.has(title)) {
+              if (displayedTitles.has(title)) {
                 return;
               }
 
-              const answerCard =
-                document.createElement("div");
+              const answerCard = makeElement(
+                "div",
+                "review-answer-item"
+              );
 
-              answerCard.className =
-                "review-answer-item";
+              const questionTitle = makeElement(
+                "h6",
+                "review-answer-question",
+                title
+              );
 
-              const questionTitle =
-                document.createElement("h6");
-
-              questionTitle.className =
-                "review-answer-question";
-
-              questionTitle.textContent = title;
-
-              const answerText =
-                document.createElement("p");
-
-              answerText.className =
-                "review-answer-text";
-
-              answerText.textContent = String(answer);
+              const answerText = makeElement(
+                "p",
+                "review-answer-text",
+                String(answer)
+              );
 
               answerCard.append(questionTitle, answerText);
-
               answersContainer.appendChild(answerCard);
             });
           }
         }
 
         /*
-         * Review date
+         * REVIEW DATE
          */
 
-        const date = document.createElement("p");
-
-        date.className = "reviews-small review-card-date";
+        const date = makeElement(
+          "p",
+          "reviews-small review-card-date"
+        );
 
         const parsedDate = new Date(review.created_at);
 
@@ -771,10 +762,24 @@
           : parsedDate.toLocaleDateString();
 
         /*
-         * Assemble card
+         * ASSEMBLE THE COMPLETE CARD
          */
 
         card.append(
           name,
           rating,
-          reviewHeading, 
+          reviewHeading,
+          text
+        );
+
+        if (answersContainer.childElementCount > 0) {
+          card.appendChild(answersContainer);
+        }
+
+        card.appendChild(date);
+        list.appendChild(card);
+      });
+
+    } catch (error) {
+      console.error(
+        "World of BlessGlo
