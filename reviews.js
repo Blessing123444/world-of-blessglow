@@ -11,7 +11,7 @@
 
   const API = `${SUPABASE_URL}/rest/v1/book_reviews`;
 
-  // BOOKS AND QUESTIONS — KEEP THE ORIGINAL ORDER
+  // BOOKS AND QUESTIONS
   const BOOKS = {
     "a-love-written-in-silence": {
       title: "A Love Written in Silence",
@@ -22,42 +22,27 @@
       questions: [
         {
           label: "💕 Who was your favourite character, and what made you love them?",
-          old: [
-            "💗 Your Favourite Character",
-            "Your Favourite Character"
-          ],
+          old: ["💗 Your Favourite Character", "Your Favourite Character"],
           prompt: "Share your thoughts below."
         },
         {
           label: "📖 What was your favourite moment or scene in the story, and why did it stand out to you?",
-          old: [
-            "📖 Your Favourite Moment",
-            "Your Favourite Moment"
-          ],
+          old: ["📖 Your Favourite Moment", "Your Favourite Moment"],
           prompt: "Tell me about the moment that stayed with you."
         },
         {
           label: "🥹 How did the love story make you feel, and were you satisfied with the ending?",
-          old: [
-            "🥺 Your Feelings About the Love Story",
-            "Your Feelings About the Love Story"
-          ],
+          old: ["🥺 Your Feelings About the Love Story", "Your Feelings About the Love Story"],
           prompt: "I'd love to hear your honest thoughts."
         },
         {
           label: "💌 If you could describe A Love Written in Silence in three words, what would they be?",
-          old: [
-            "✨ Describe the Book in Three Words",
-            "Describe the Book in Three Words"
-          ],
+          old: ["✨ Describe the Book in Three Words", "Describe the Book in Three Words"],
           prompt: "Your honest opinion is always welcome!"
         },
         {
           label: "💗 Would you recommend this book to another reader? Why or why not?",
-          old: [
-            "💌 Would You Recommend This Book?",
-            "Would You Recommend This Book?"
-          ],
+          old: ["💌 Would You Recommend This Book?", "Would You Recommend This Book?"],
           prompt: "Tell me why!"
         },
         {
@@ -82,42 +67,27 @@
       questions: [
         {
           label: "🖤 What was your first impression of the story?",
-          old: [
-            "🖤 Your First Impression",
-            "Your First Impression"
-          ],
+          old: ["🖤 Your First Impression", "Your First Impression"],
           prompt: "Tell me what caught your attention."
         },
         {
           label: "👀 Which character surprised you the most, and why?",
-          old: [
-            "👀 The Most Surprising Character",
-            "The Most Surprising Character"
-          ],
+          old: ["👀 The Most Surprising Character", "The Most Surprising Character"],
           prompt: "I'd love to know what you thought!"
         },
         {
           label: "💔 What was the most emotional or unforgettable moment for you?",
-          old: [
-            "💔 The Most Emotional Moment",
-            "The Most Emotional Moment"
-          ],
+          old: ["💔 The Most Emotional Moment", "The Most Emotional Moment"],
           prompt: "Share the moment that stayed with you."
         },
         {
           label: "🔐 What did the story teach you about trust and betrayal?",
-          old: [
-            "🔐 Trust and Betrayal",
-            "Trust and Betrayal"
-          ],
+          old: ["🔐 Trust and Betrayal", "Trust and Betrayal"],
           prompt: "Tell me your honest thoughts."
         },
         {
           label: "💌 Would you recommend this book to another reader? Why or why not?",
-          old: [
-            "💌 Would You Recommend This Book?",
-            "Would You Recommend This Book?"
-          ],
+          old: ["💌 Would You Recommend This Book?", "Would You Recommend This Book?"],
           prompt: "Your recommendation matters!"
         },
         {
@@ -137,8 +107,7 @@
   function configured() {
     return (
       SUPABASE_URL.startsWith("https://") &&
-      SUPABASE_KEY.startsWith("sb_publishable_") &&
-      !SUPABASE_KEY.includes("YOUR_EXISTING")
+      SUPABASE_KEY.startsWith("sb_publishable_")
     );
   }
 
@@ -159,21 +128,14 @@
       );
     }
 
-    return response.status === 204
-      ? null
-      : response.json();
+    return response.status === 204 ? null : response.json();
   }
 
   function element(tag, text, className) {
     const node = document.createElement(tag);
 
-    if (text !== undefined) {
-      node.textContent = text;
-    }
-
-    if (className) {
-      node.className = className;
-    }
+    if (text !== undefined) node.textContent = text;
+    if (className) node.className = className;
 
     return node;
   }
@@ -198,7 +160,6 @@
       star.style.background = "transparent";
       star.style.border = "none";
       star.style.boxShadow = "none";
-      star.style.outlineOffset = "3px";
       star.style.padding = "0";
       star.style.margin = "0";
       star.style.width = "auto";
@@ -214,10 +175,7 @@
 
       if (interactive) {
         star.setAttribute("aria-pressed", "false");
-
-        star.addEventListener("click", () => {
-          onSelect(i);
-        });
+        star.addEventListener("click", () => onSelect(i));
       } else {
         star.disabled = true;
         star.tabIndex = -1;
@@ -239,7 +197,6 @@
       : date.toLocaleDateString();
   }
 
-  // NORMALISE OLD AND NEW QUESTION NAMES
   function normalise(value) {
     return String(value || "")
       .normalize("NFKC")
@@ -269,44 +226,35 @@
       : {};
   }
 
-  // FIND ANSWERS WITHOUT RANDOMISING THEIR DISPLAY ORDER
+  // KEEP DISCUSSION ANSWERS IN THE BOOK'S ORIGINAL ORDER
   function orderedAnswers(book, answers) {
     const entries = Object.entries(answers);
     const usedKeys = new Set();
 
     return book.questions.map((question, index) => {
-      const possibleNames = [
-        question.label,
-        ...question.old
-      ].map(normalise);
+      const names = [question.label, ...question.old].map(normalise);
 
       let match = entries.find(([key, value]) =>
         !usedKeys.has(key) &&
-        possibleNames.includes(normalise(key)) &&
+        names.includes(normalise(key)) &&
         String(value ?? "").trim()
       );
 
-      // Support older records using numbered question keys.
       if (!match) {
         match = entries.find(([key, value]) =>
           !usedKeys.has(key) &&
-          new RegExp(
-            `^(question\\s*)?${index + 1}[.)\\s:-]`,
-            "i"
-          ).test(String(key)) &&
+          new RegExp(`^(question\\s*)?${index + 1}[.)\\s:-]`, "i")
+            .test(String(key)) &&
           String(value ?? "").trim()
         );
       }
 
-      // Older records may use different wording.
       if (!match) {
-        const oldWords = question.old
-          .map(normalise)
-          .filter(Boolean);
+        const oldNames = question.old.map(normalise).filter(Boolean);
 
         match = entries.find(([key, value]) =>
           !usedKeys.has(key) &&
-          oldWords.some(oldName =>
+          oldNames.some(oldName =>
             normalise(key).includes(oldName) ||
             oldName.includes(normalise(key))
           ) &&
@@ -314,12 +262,7 @@
         );
       }
 
-      if (!match) {
-        return {
-          question,
-          answer: ""
-        };
-      }
+      if (!match) return { question, answer: "" };
 
       usedKeys.add(match[0]);
 
@@ -330,7 +273,7 @@
     });
   }
 
-  // DISPLAY APPROVED PUBLIC REVIEWS
+  // LOAD APPROVED REVIEWS
   async function loadApprovedReviews(slug, container) {
     container.replaceChildren(
       element("p", "Loading reviews...", "review-loading")
@@ -359,11 +302,10 @@
         return;
       }
 
-      const average =
-        reviews.reduce(
-          (sum, review) => sum + Number(review.rating || 0),
-          0
-        ) / reviews.length;
+      const average = reviews.reduce(
+        (sum, review) => sum + Number(review.rating || 0),
+        0
+      ) / reviews.length;
 
       container.appendChild(
         element(
@@ -377,23 +319,13 @@
         const card = element("article", undefined, "review-card");
 
         card.appendChild(
-          element(
-            "h4",
-            review.display_name || "Reader",
-            "review-card-name"
-          )
+          element("h4", review.display_name || "Reader", "review-card-name")
         );
 
-        card.appendChild(
-          makeStars(Number(review.rating) || 0)
-        );
+        card.appendChild(makeStars(Number(review.rating) || 0));
 
         card.appendChild(
-          element(
-            "h5",
-            "Reader's Overall Review",
-            "review-section-heading"
-          )
+          element("h5", "Reader's Overall Review", "review-section-heading")
         );
 
         card.appendChild(
@@ -404,8 +336,10 @@
           )
         );
 
-        const answers = getAnswers(review);
-        const ordered = orderedAnswers(BOOKS[slug], answers);
+        const ordered = orderedAnswers(
+          BOOKS[slug],
+          getAnswers(review)
+        );
 
         const answerList = element(
           "div",
@@ -416,26 +350,14 @@
         ordered.forEach(({ question, answer }) => {
           if (!answer) return;
 
-          const item = element(
-            "div",
-            undefined,
-            "review-answer-item"
+          const item = element("div", undefined, "review-answer-item");
+
+          item.appendChild(
+            element("h5", question.label, "review-answer-question")
           );
 
           item.appendChild(
-            element(
-              "h5",
-              question.label,
-              "review-answer-question"
-            )
-          );
-
-          item.appendChild(
-            element(
-              "p",
-              answer,
-              "review-answer-text"
-            )
+            element("p", answer, "review-answer-text")
           );
 
           answerList.appendChild(item);
@@ -456,9 +378,7 @@
         const date = formatDate(review.created_at);
 
         if (date) {
-          card.appendChild(
-            element("small", date, "review-card-date")
-          );
+          card.appendChild(element("small", date, "review-card-date"));
         }
 
         container.appendChild(card);
@@ -479,7 +399,6 @@
   // CREATE THE REVIEW FORM
   function createReviewForm(slug, host) {
     const book = BOOKS[slug];
-
     if (!book) return;
 
     const form = element("form", undefined, "book-review-form");
@@ -508,12 +427,10 @@
 
     form.append(nameLabel, name);
 
-    // RATING
-    form.appendChild(
-      element(
-        "label",
-        "1. ⭐ How would you rate " + book.title + "?"
-      )
+    // STAR RATING
+    const ratingLabel = element(
+      "label",
+      `1. ⭐ How would you rate ${book.title}?`
     );
 
     const ratingStatus = element(
@@ -526,21 +443,17 @@
       rating = selected;
 
       starPicker.querySelectorAll("button").forEach((star, index) => {
-        const selectedStar = index < rating;
-
-        star.style.color = selectedStar ? "#d6ad60" : "#888";
-
+        star.style.color = index < rating ? "#d6ad60" : "#888";
         star.setAttribute(
           "aria-pressed",
           String(index + 1 === rating)
         );
       });
 
-      ratingStatus.textContent =
-        `${rating} out of 5 stars selected.`;
+      ratingStatus.textContent = `${rating} out of 5 stars selected.`;
     });
 
-    form.append(starPicker, ratingStatus);
+    form.append(ratingLabel, starPicker, ratingStatus);
 
     // OVERALL REVIEW
     const reviewLabel = element(
@@ -555,9 +468,7 @@
     review.rows = 4;
     review.maxLength = 3000;
     review.required = true;
-    review.placeholder =
-      "Share your honest thoughts about the book...";
-
+    review.placeholder = "Share your honest thoughts about the book...";
     reviewLabel.htmlFor = review.id;
 
     form.append(reviewLabel, review);
@@ -570,11 +481,7 @@
     const answers = [];
 
     book.questions.forEach((question, index) => {
-      const field = element(
-        "div",
-        undefined,
-        "review-field"
-      );
+      const field = element("div", undefined, "review-field");
 
       const label = element(
         "label",
@@ -598,10 +505,7 @@
 
       label.htmlFor = answer.id;
 
-      answers.push({
-        question,
-        input: answer
-      });
+      answers.push({ question, input: answer });
 
       field.append(label, prompt, answer);
       form.appendChild(field);
@@ -627,7 +531,7 @@
 
       if (!configured()) {
         status.textContent =
-          "Please check the Supabase configuration in reviews.js.";
+          "Please check the Supabase URL and publishable key in reviews.js.";
         return;
       }
 
@@ -671,8 +575,7 @@
           star.setAttribute("aria-pressed", "false");
         });
 
-        ratingStatus.textContent =
-          "Tap a star to select your rating.";
+        ratingStatus.textContent = "Tap a star to select your rating.";
 
         status.textContent =
           "Thank you for your review! 💗 It has been submitted for approval before appearing publicly.";
@@ -689,7 +592,7 @@
     host.appendChild(form);
   }
 
-  // INITIALISE EACH BOOK'S REVIEW SECTION
+  // INITIALISE: FORM FIRST, APPROVED REVIEWS SECOND
   function initialise() {
     if (!configured()) {
       console.error(
@@ -700,25 +603,23 @@
     document
       .querySelectorAll("[data-book-reviews], #book-reviews[data-book]")
       .forEach(host => {
-        const slug =
-          host.dataset.bookReviews ||
-          host.dataset.book;
+        const slug = host.dataset.bookReviews || host.dataset.book;
 
         if (!BOOKS[slug]) {
           console.warn("Unknown book review section:", slug);
           return;
         }
 
-        if (host.dataset.reviewsInitialised === "true") {
-          return;
-        }
+        if (host.dataset.reviewsInitialised === "true") return;
 
         host.dataset.reviewsInitialised = "true";
 
-        // Keep the form first and public reviews underneath it.
-        const heading = element(
-          "h3",
-          "🌸 Reader Reviews"
+        // The form appears first.
+        createReviewForm(slug, host);
+
+        // Approved reader reviews appear underneath.
+        host.appendChild(
+          element("h3", "⭐ Reader Reviews", "reader-reviews-heading")
         );
 
         const publicReviews = element(
@@ -727,8 +628,6 @@
           "approved-reviews"
         );
 
-        host.appendChild(heading);
-        createReviewForm(slug, host);
         host.appendChild(publicReviews);
 
         loadApprovedReviews(slug, publicReviews);
