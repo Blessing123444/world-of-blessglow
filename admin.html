@@ -1,828 +1,629 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0b0b">
-  <title>Admin Dashboard | World of BlessGlow</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<title>Admin Dashboard | World of BlessGlow</title>
 
-  <style>
-    :root {
-      --bg: #0b0b0b;
-      --panel: #151515;
-      --gold: #d4af37;
-      --text: #f5f0df;
-      --muted: #aaa;
-      --border: #302817;
-      --green: #63d69b;
-      --red: #ff7777;
-      --blue: #8ebdff;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-    }
-
-    header {
-      padding: 24px 16px;
-      border-bottom: 1px solid var(--border);
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      color: var(--gold);
-      font-family: Georgia, serif;
-      font-size: 27px;
-    }
-
-    header p {
-      margin: 5px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: 28px auto;
-      padding: 0 15px 40px;
-    }
-
-    .panel,
-    .stat {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 18px;
-    }
-
-    h2 {
-      margin-top: 0;
-      font-family: Georgia, serif;
-    }
-
-    label {
-      display: block;
-      margin: 14px 0 6px;
-      color: var(--gold);
-      font-size: 14px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 13px;
-      border: 1px solid #4a4028;
-      border-radius: 7px;
-      background: #090909;
-      color: white;
-      font-size: 15px;
-    }
-
-    button {
-      padding: 11px 15px;
-      border: 1px solid transparent;
-      border-radius: 7px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: opacity .2s ease, transform .2s ease;
-    }
-
-    button:hover:not(:disabled) {
-      opacity: .88;
-      transform: translateY(-1px);
-    }
-
-    button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .primary {
-      width: 100%;
-      margin-top: 18px;
-      background: var(--gold);
-      color: #111;
-    }
-
-    .approve,
-    .restore {
-      background: #174b35;
-      color: #a9ffce;
-    }
-
-    .reject,
-    .delete {
-      background: #512323;
-      color: #ffc1c1;
-    }
-
-    .secondary {
-      background: #292929;
-      color: white;
-      border-color: #454545;
-    }
-
-    .trash-button {
-      background: #473518;
-      color: #ffe0a1;
-    }
-
-    .gold {
-      color: var(--gold);
-    }
-
-    #message,
-    #loginMessage {
-      margin: 12px 0;
-      overflow-wrap: anywhere;
-      font-size: 14px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .stat {
-      margin: 0;
-      padding: 14px;
-      min-width: 0;
-    }
-
-    .stat strong {
-      display: block;
-      color: var(--gold);
-      font-size: 25px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      margin: 15px 0;
-    }
-
-    .toolbar button {
-      flex: 1 1 130px;
-    }
-
-    .toolbar button.active {
-      outline: 1px solid var(--gold);
-      background: #382e15;
-      color: var(--gold);
-    }
-
-    .review {
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .review:last-child {
-      border-bottom: 0;
-    }
-
-    .review h3 {
-      margin: 0;
-      color: var(--gold);
-      overflow-wrap: anywhere;
-    }
-
-    .meta {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .review-text {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .answers {
-      padding: 12px;
-      background: #0d0d0d;
-      border-radius: 8px;
-      overflow-wrap: anywhere;
-    }
-
-    .answers p {
-      margin: 8px 0;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 15px;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 3px 9px;
-      border-radius: 20px;
-      background: #252525;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .empty {
-      padding: 25px 0;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    .notice {
-      padding: 12px;
-      background: #211c0e;
-      border: 1px solid #4a4028;
-      border-radius: 8px;
-      color: #e8d9a8;
-      font-size: 13px;
-    }
-
-    footer {
-      padding: 20px;
-      color: var(--muted);
-      text-align: center;
-      font-size: 12px;
-    }
-
-    @media (max-width: 760px) {
-      .stats {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 480px) {
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-      }
-
-      .stat {
-        padding: 12px;
-      }
-
-      .stat strong {
-        font-size: 22px;
-      }
-
-      .panel {
-        padding: 15px;
-      }
-
-      header h1 {
-        font-size: 23px;
-      }
-
-      .actions button {
-        flex: 1 1 120px;
-      }
-    }
-  </style>
+<style>
+:root {
+  --bg:#0b0b0b;
+  --panel:#151515;
+  --gold:#d4af37;
+  --text:#f5f0df;
+  --muted:#aaa;
+  --border:#302817;
+  --green:#63d69b;
+  --red:#ff7777;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.6 Arial,sans-serif
+}
+header{
+  padding:22px 15px;text-align:center;
+  border-bottom:1px solid var(--border)
+}
+header h1{margin:0;color:var(--gold);font:27px Georgia,serif}
+header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+main{max-width:1100px;margin:25px auto;padding:0 15px 40px}
+.panel,.stat{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:18px;margin-bottom:16px
+}
+h2{margin-top:0;font-family:Georgia,serif}
+label{display:block;margin:13px 0 5px;color:var(--gold)}
+input,select{
+  width:100%;padding:12px;border:1px solid #4a4028;
+  border-radius:7px;background:#090909;color:white;font-size:15px
+}
+button{
+  padding:11px 14px;border:0;border-radius:7px;
+  font-weight:bold;cursor:pointer
+}
+button:disabled{opacity:.5;cursor:wait}
+.primary{width:100%;margin-top:17px;background:var(--gold);color:#111}
+.secondary{background:#292929;color:white;border:1px solid #454545}
+.approve,.restore{background:#174b35;color:#a9ffce}
+.reject,.delete{background:#512323;color:#ffc1c1}
+.trash-button{background:#473518;color:#ffe0a1}
+.gold{color:var(--gold)}
+#message,#loginMessage{overflow-wrap:anywhere;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.stat{padding:12px;margin:0}
+.stat strong{display:block;color:var(--gold);font-size:24px}
+.stat span{font-size:12px;color:var(--muted)}
+.toolbar,.actions{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}
+.toolbar button{flex:1}
+.toolbar .active{outline:1px solid var(--gold);color:var(--gold);background:#382e15}
+.review{padding:18px 0;border-bottom:1px solid var(--border)}
+.review:last-child{border:0}
+.review h3{margin:0;color:var(--gold);overflow-wrap:anywhere}
+.meta{color:var(--muted);font-size:13px}
+.review-text,.answers{overflow-wrap:anywhere;white-space:pre-wrap}
+.answers{background:#0d0d0d;padding:12px;border-radius:8px}
+.status-badge{display:inline-block;padding:3px 9px;border-radius:20px;background:#252525;font-size:12px}
+.empty{text-align:center;color:var(--muted);padding:22px 0}
+.notice{padding:12px;background:#211c0e;border:1px solid #4a4028;border-radius:8px;color:#e8d9a8;font-size:13px}
+.hidden{display:none!important}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:12px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:420px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .panel{padding:14px}
+  header h1{font-size:23px}
+  .actions button{flex:1}
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <h1>World of BlessGlow</h1>
-    <p>Private Book Review Dashboard</p>
-  </header>
+<header>
+  <h1>World of BlessGlow</h1>
+  <p>Private Book Review Dashboard</p>
+</header>
 
-  <main>
-    <!-- ADMIN LOGIN -->
-    <section id="loginPanel" class="panel">
-      <h2>Admin Sign In</h2>
-      <p>Sign in with your designated administrator account.</p>
+<main>
 
-      <form id="loginForm">
-        <label for="email">Email address</label>
-        <input
-          id="email"
-          type="email"
-          autocomplete="username"
-          required
-          placeholder="Your admin email"
-        >
+<section id="loginPanel" class="panel">
+  <h2>Admin Sign In</h2>
+  <p>Sign in with your administrator account.</p>
 
-        <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
-          required
-          placeholder="Your admin password"
-        >
+  <form id="loginForm">
+    <label for="email">Email address</label>
+    <input id="email" type="email" autocomplete="username"
+      required placeholder="Your admin email">
 
-        <button class="primary" type="submit">Sign In</button>
-      </form>
+    <label for="password">Password</label>
+    <input id="password" type="password"
+      autocomplete="current-password" required
+      placeholder="Your admin password">
 
-      <p id="loginMessage" role="status" aria-live="polite"></p>
-    </section>
+    <button id="loginButton" class="primary" type="submit">
+      Sign In
+    </button>
+  </form>
 
-    <!-- ADMIN DASHBOARD -->
-    <section id="dashboard" class="hidden">
+  <p id="loginMessage" role="status" aria-live="polite"></p>
+</section>
 
-      <div class="panel">
-        <h2>Welcome, Admin 👑</h2>
-        <p>Manage reader feedback for your books.</p>
+<section id="dashboard" class="hidden">
 
-        <div class="actions">
-          <button id="refreshButton" class="secondary">
-            🔄 Refresh
-          </button>
+  <div class="panel">
+    <h2>Welcome, Admin 👑</h2>
+    <p>Manage reader feedback for your books.</p>
+    <div class="actions">
+      <button id="refreshButton" class="secondary">🔄 Refresh</button>
+      <button id="logoutButton" class="secondary">Sign Out</button>
+    </div>
+    <p id="message" role="status" aria-live="polite"></p>
+  </div>
 
-          <button id="logoutButton" class="secondary">
-            Sign Out
-          </button>
-        </div>
+  <div class="stats">
+    <div class="stat"><strong id="totalCount">0</strong><span>Active Reviews</span></div>
+    <div class="stat"><strong id="pendingCount">0</strong><span>Pending</span></div>
+    <div class="stat"><strong id="approvedCount">0</strong><span>Approved</span></div>
+    <div class="stat"><strong id="rejectedCount">0</strong><span>Rejected</span></div>
+    <div class="stat"><strong id="trashCount">0</strong><span>In Trash</span></div>
+  </div>
 
-        <p id="message" role="status" aria-live="polite"></p>
-      </div>
+  <div class="panel">
+    <h2>Reader Reviews</h2>
 
-      <!-- STATISTICS -->
-      <div class="stats">
-        <div class="stat">
-          <strong id="totalCount">0</strong>
-          <span>Active Reviews</span>
-        </div>
+    <div class="toolbar">
+      <button id="activeButton" class="secondary active" type="button">
+        📚 Active Reviews
+      </button>
+      <button id="trashButton" class="secondary" type="button">
+        🗑️ Trash
+      </button>
+    </div>
 
-        <div class="stat">
-          <strong id="pendingCount">0</strong>
-          <span>Pending</span>
-        </div>
+    <label for="bookFilter">Choose a book</label>
+    <select id="bookFilter">
+      <option value="all">All Books</option>
+      <option value="a-love-written-in-silence">A Love Written in Silence</option>
+      <option value="behind-her-smile">Behind Her Smile: The Girl They Framed</option>
+    </select>
 
-        <div class="stat">
-          <strong id="approvedCount">0</strong>
-          <span>Approved</span>
-        </div>
+    <div id="statusBox">
+      <label for="statusFilter">Review status</label>
+      <select id="statusFilter">
+        <option value="all">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
 
-        <div class="stat">
-          <strong id="rejectedCount">0</strong>
-          <span>Rejected</span>
-        </div>
+    <div id="trashNotice" class="notice hidden">
+      Trashed reviews are hidden from the active list. You can restore
+      them or permanently delete them. Permanent deletion cannot be undone.
+    </div>
 
-        <div class="stat">
-          <strong id="trashCount">0</strong>
-          <span>In Trash</span>
-        </div>
-      </div>
+    <div id="reviewsList">
+      <p class="empty">Sign in to load reviews.</p>
+    </div>
+  </div>
+</section>
+</main>
 
-      <!-- REVIEW MANAGEMENT -->
-      <div class="panel">
-        <h2>Reader Reviews</h2>
+<footer>World of BlessGlow · Stories. Worlds. Imagination.</footer>
 
-        <div class="toolbar">
-          <button
-            id="activeViewButton"
-            class="secondary active"
-            type="button"
-          >
-            📚 Active Reviews
-          </button>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-          <button
-            id="trashViewButton"
-            class="secondary"
-            type="button"
-          >
-            🗑️ Trash
-          </button>
-        </div>
+<script>
+(() => {
+"use strict";
 
-        <label for="bookFilter">Choose a book</label>
-        <select id="bookFilter">
-          <option value="all">All Books</option>
+/* CONFIGURATION */
+const SUPABASE_URL = "https://zngagaolaiidgyxoldsh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+const ADMIN_ID = "2bd42c9f-de63-4c68-a685-2c541b1a549c";
+const API_URL = "https://world-of-blessglow.pages.dev/api/admin/reviews";
 
-          <option value="a-love-written-in-silence">
-            A Love Written in Silence
-          </option>
+const $ = id => document.getElementById(id);
 
-          <option value="behind-her-smile">
-            Behind Her Smile: The Girl They Framed
-          </option>
-        </select>
+const loginPanel = $("loginPanel");
+const dashboard = $("dashboard");
+const loginForm = $("loginForm");
+const loginButton = $("loginButton");
+const loginMessage = $("loginMessage");
+const message = $("message");
+const reviewsList = $("reviewsList");
+const bookFilter = $("bookFilter");
+const statusFilter = $("statusFilter");
 
-        <div id="statusFilterContainer">
-          <label for="statusFilter">Review status</label>
-          <select id="statusFilter">
-            <option value="all">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
-        </div>
+if (!window.supabase) {
+  loginMessage.textContent =
+    "The login library failed to load. Check your internet connection and reload.";
+  loginButton.disabled = true;
+  return;
+}
 
-        <div id="trashNotice" class="notice hidden">
-          Reviews in Trash are hidden from the active list.
-          You can restore them or permanently delete them.
-          Permanent deletion cannot be undone.
-        </div>
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
 
-        <div id="reviewsList">
-          <p class="empty">Sign in to load reviews.</p>
-        </div>
-      </div>
-    </section>
-  </main>
+let currentUser = null;
+let activeReviews = [];
+let trashedReviews = [];
+let currentView = "active";
+let loadingReviews = false;
 
-  <footer>
-    World of BlessGlow · Stories. Worlds. Imagination.
-  </footer>
+/* HELPERS */
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[c]);
+}
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+function setLogin(text, error = false) {
+  loginMessage.textContent = text;
+  loginMessage.style.color = error ? "var(--red)" : "var(--gold)";
+}
 
-  <script>
-    (() => {
-      "use strict";
+function setMessage(text, error = false) {
+  message.textContent = text;
+  message.style.color = error ? "var(--red)" : "var(--gold)";
+}
 
-      // -----------------------------------------
-      // CONFIGURATION
-      // -----------------------------------------
+function bookName(slug) {
+  return {
+    "a-love-written-in-silence":"A Love Written in Silence",
+    "behind-her-smile":"Behind Her Smile: The Girl They Framed"
+  }[slug] || slug || "Unknown book";
+}
 
-      const SUPABASE_URL =
-        "https://zngagaolaiidgyxoldsh.supabase.co";
-
-      const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
-
-      const ADMIN_USER_ID =
-        "2bd42c9f-de63-4c68-a685-2c541b1a549c";
-
-      const API_URL =
-        "https://world-of-blessglow.pages.dev/api/admin/reviews";
-
-      const loginPanel = document.getElementById("loginPanel");
-      const dashboard = document.getElementById("dashboard");
-      const loginForm = document.getElementById("loginForm");
-      const loginMessage = document.getElementById("loginMessage");
-      const message = document.getElementById("message");
-      const reviewsList = document.getElementById("reviewsList");
-
-      const bookFilter = document.getElementById("bookFilter");
-      const statusFilter = document.getElementById("statusFilter");
-
-      const statusFilterContainer =
-        document.getElementById("statusFilterContainer");
-
-      const trashNotice = document.getElementById("trashNotice");
-
-      const activeViewButton =
-        document.getElementById("activeViewButton");
-
-      const trashViewButton =
-        document.getElementById("trashViewButton");
-
-      const client = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
+function withTimeout(promise, milliseconds = 15000) {
+  let timer;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      timer = setTimeout(
+        () => reject(new Error(
+          "The request took too long. Check your connection and try again."
+        )),
+        milliseconds
       );
+    })
+  ]).finally(() => clearTimeout(timer));
+}
 
-      let currentUser = null;
-      let loadedReviews = [];
-      let trashCount = 0;
-      let currentView = "active";
-      let isLoading = false;
+function showDashboard(user) {
+  currentUser = user;
+  loginPanel.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+}
 
-      // -----------------------------------------
-      // HELPERS
-      // -----------------------------------------
+function showLogin() {
+  currentUser = null;
+  dashboard.classList.add("hidden");
+  loginPanel.classList.remove("hidden");
+}
 
-      function escapeHTML(value) {
-        return String(value ?? "").replace(/[&<>"']/g, character => ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;"
-        })[character]);
+/* VERIFY ADMIN SESSION */
+async function getToken() {
+  const { data, error } = await withTimeout(client.auth.getSession());
+
+  if (error) throw error;
+
+  const session = data.session;
+  if (!session?.access_token) {
+    throw new Error("Your session has expired. Please sign in again.");
+  }
+
+  if (session.user.id !== ADMIN_ID) {
+    await client.auth.signOut();
+    showLogin();
+    throw new Error("This account is not authorized to manage reviews.");
+  }
+
+  currentUser = session.user;
+  return session.access_token;
+}
+
+/* LOGIN */
+loginForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (loginButton.disabled) return;
+
+  loginButton.disabled = true;
+  loginButton.textContent = "Signing in...";
+  setLogin("Checking your account...");
+
+  try {
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    const { data, error } = await withTimeout(
+      client.auth.signInWithPassword({ email, password })
+    );
+
+    if (error) throw error;
+    if (!data.user) throw new Error("Sign-in returned no user.");
+
+    if (data.user.id !== ADMIN_ID) {
+      await client.auth.signOut();
+      throw new Error(
+        "You signed in successfully, but this account is not the designated admin."
+      );
+    }
+
+    showDashboard(data.user);
+    setLogin("");
+    setMessage("Signed in successfully.");
+    await loadReviews();
+
+  } catch (error) {
+    setLogin(
+      error.message || "Sign-in failed. Please try again.",
+      true
+    );
+  } finally {
+    loginButton.disabled = false;
+    loginButton.textContent = "Sign In";
+  }
+});
+
+/* API REQUESTS */
+async function apiRequest(method, params = {}, body = null) {
+  const token = await getToken();
+  const url = new URL(API_URL);
+
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+
+  const options = {
+    method,
+    headers: { Authorization: "Bearer " + token }
+  };
+
+  if (body !== null) {
+    options.headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify(body);
+  }
+
+  const response = await withTimeout(
+    fetch(url.toString(), options)
+  );
+
+  const result = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      result.error || "Server request failed (" + response.status + ")."
+    );
+  }
+
+  return result;
+}
+
+/* FETCH REVIEWS */
+async function fetchReviews(trash = false) {
+  const params = {
+    status: "all",
+    trash: trash ? "true" : "false"
+  };
+
+  if (bookFilter.value !== "all") {
+    params.book = bookFilter.value;
+  }
+
+  const result = await apiRequest("GET", params);
+  return Array.isArray(result.reviews) ? result.reviews : [];
+}
+
+async function loadReviews() {
+  if (!currentUser || loadingReviews) return;
+
+  loadingReviews = true;
+  setMessage("Loading reviews...");
+  reviewsList.innerHTML = '<p class="empty">Loading reviews...</p>';
+
+  try {
+    const results = await Promise.all([
+      fetchReviews(false),
+      fetchReviews(true)
+    ]);
+
+    activeReviews = results[0];
+    trashedReviews = results[1];
+
+    $("totalCount").textContent = activeReviews.length;
+    $("pendingCount").textContent =
+      activeReviews.filter(r => r.status === "pending").length;
+    $("approvedCount").textContent =
+      activeReviews.filter(r => r.status === "approved").length;
+    $("rejectedCount").textContent =
+      activeReviews.filter(r => r.status === "rejected").length;
+    $("trashCount").textContent = trashedReviews.length;
+
+    renderReviews();
+    setMessage("Reviews loaded successfully.");
+
+  } catch (error) {
+    setMessage(error.message, true);
+    reviewsList.innerHTML =
+      '<p class="empty">Could not load reviews. Check your API deployment and permissions.</p>';
+  } finally {
+    loadingReviews = false;
+  }
+}
+
+/* RENDER REVIEWS */
+function renderReviews() {
+  const source = currentView === "trash" ? trashedReviews : activeReviews;
+
+  const filtered = source.filter(review =>
+    currentView === "trash" ||
+    statusFilter.value === "all" ||
+    review.status === statusFilter.value
+  );
+
+  if (!filtered.length) {
+    reviewsList.innerHTML = currentView === "trash"
+      ? '<p class="empty">Your Trash is empty. 🗑️</p>'
+      : '<p class="empty">No reviews match these filters.</p>';
+    return;
+  }
+
+  reviewsList.innerHTML = filtered.map(review => {
+    const answers = review.discussion_answers &&
+      typeof review.discussion_answers === "object"
+      ? review.discussion_answers : {};
+
+    const answerHTML = Object.entries(answers).map(([question, answer]) => `
+      <p><strong>${escapeHTML(question)}</strong><br>
+      ${escapeHTML(typeof answer === "string" ? answer : JSON.stringify(answer))}</p>
+    `).join("");
+
+    const stars = "★".repeat(
+      Math.max(0, Math.min(5, Number(review.rating) || 0))
+    );
+
+    const date = review.created_at
+      ? new Date(review.created_at).toLocaleString()
+      : "Date unavailable";
+
+    const statusColor = review.status === "approved"
+      ? "var(--green)"
+      : review.status === "rejected" ? "var(--red)" : "var(--gold)";
+
+    let buttons = "";
+
+    if (currentView === "trash") {
+      buttons = `
+        <button class="restore" data-action="restore" data-id="${escapeHTML(review.id)}">♻️ Restore</button>
+        <button class="delete" data-action="permanent-delete" data-id="${escapeHTML(review.id)}">🚮 Permanently Delete</button>
+      `;
+    } else {
+      if (review.status !== "approved") {
+        buttons += `<button class="approve" data-action="approved" data-id="${escapeHTML(review.id)}">✅ Approve</button>`;
       }
-
-      function bookTitle(slug) {
-        const titles = {
-          "a-love-written-in-silence":
-            "A Love Written in Silence",
-
-          "behind-her-smile":
-            "Behind Her Smile: The Girl They Framed"
-        };
-
-        return titles[slug] || slug || "Unknown book";
+      if (review.status !== "rejected") {
+        buttons += `<button class="reject" data-action="rejected" data-id="${escapeHTML(review.id)}">❌ Reject</button>`;
       }
+      buttons += `<button class="trash-button" data-action="trash" data-id="${escapeHTML(review.id)}">🗑️ Move to Trash</button>`;
+    }
 
-      function showMessage(text, isError = false) {
-        message.textContent = text;
-        message.style.color = isError ? "#ff7777" : "#d4af37";
-      }
+    return `
+      <article class="review">
+        <h3>${escapeHTML(review.display_name || "Reader")}</h3>
+        <p class="meta">${escapeHTML(bookName(review.book_slug))}<br>
+        Submitted: ${escapeHTML(date)}</p>
 
-      function setLoginMessage(text, isError = false) {
-        loginMessage.textContent = text;
-        loginMessage.style.color = isError ? "#ff7777" : "#d4af37";
-      }
+        <p>Rating: <span class="gold">${stars || "No rating"}</span>
+        (${escapeHTML(review.rating ?? "Not provided")}/5)</p>
 
-      function getStatusColor(status) {
-        if (status === "approved") return "#63d69b";
-        if (status === "rejected") return "#ff7777";
-        return "#d4af37";
-      }
+        <p>Status: <span class="status-badge" style="color:${statusColor}">
+        ${escapeHTML(review.status || "pending")}</span></p>
 
-      function updateCounts(reviews, trashedCount) {
-        document.getElementById("totalCount").textContent =
-          reviews.length;
+        <div class="review-text">${escapeHTML(review.review_text || "No written review.")}</div>
 
-        document.getElementById("pendingCount").textContent =
-          reviews.filter(r => r.status === "pending").length;
+        ${answerHTML ? `<h4 class="gold">Answers to Review Questions</h4><div class="answers">${answerHTML}</div>` : ""}
 
-        document.getElementById("approvedCount").textContent =
-          reviews.filter(r => r.status === "approved").length;
+        <div class="actions">${buttons}</div>
+      </article>
+    `;
+  }).join("");
+}
 
-        document.getElementById("rejectedCount").textContent =
-          reviews.filter(r => r.status === "rejected").length;
+/* REVIEW ACTIONS */
+reviewsList.addEventListener("click", async event => {
+  const button = event.target.closest("button[data-action]");
+  if (!button || button.disabled) return;
 
-        document.getElementById("trashCount").textContent =
-          trashedCount;
-      }
+  const id = button.dataset.id;
+  const action = button.dataset.action;
 
-      async function getAccessToken() {
-        const { data, error } = await client.auth.getSession();
+  if (!id) return;
 
-        if (error) throw error;
+  if (action === "permanent-delete" &&
+      !confirm("Permanently delete this review? This cannot be undone.")) {
+    return;
+  }
 
-        const session = data.session;
+  if (action === "trash" &&
+      !confirm("Move this review to Trash?")) {
+    return;
+  }
 
-        if (!session || !session.access_token) {
-          currentUser = null;
-          throw new Error("Your session has expired. Please sign in again.");
-        }
+  button.disabled = true;
+  setMessage("Updating review...");
 
-        if (session.user.id !== ADMIN_USER_ID) {
-          await client.auth.signOut();
-          currentUser = null;
-          throw new Error("You are not authorized to manage reviews.");
-        }
+  try {
+    if (action === "approved" || action === "rejected") {
+      await apiRequest("PATCH", {}, {
+        id,
+        action: "status",
+        status: action
+      });
+    } else if (action === "trash" || action === "restore") {
+      await apiRequest("PATCH", {}, { id, action });
+    } else if (action === "permanent-delete") {
+      await apiRequest("DELETE", {}, {
+        id,
+        action: "permanent-delete"
+      });
+    }
 
-        return session.access_token;
-      }
+    setMessage("Review updated successfully.");
+    await loadReviews();
 
-      // -----------------------------------------
-      // SECURE API REQUEST
-      // -----------------------------------------
+  } catch (error) {
+    setMessage(error.message, true);
+  } finally {
+    button.disabled = false;
+  }
+});
 
-      async function apiRequest(method, params = {}, body = null) {
-        const token = await getAccessToken();
+/* ACTIVE AND TRASH VIEWS */
+function switchView(view) {
+  currentView = view;
 
-        const url = new URL(API_URL);
+  $("activeButton").classList.toggle("active", view === "active");
+  $("trashButton").classList.toggle("active", view === "trash");
+  $("statusBox").classList.toggle("hidden", view === "trash");
+  $("trashNotice").classList.toggle("hidden", view !== "trash");
 
-        Object.entries(params).forEach(([key, value]) => {
-          url.searchParams.set(key, value);
-        });
+  renderReviews();
+}
 
-        const options = {
-          method,
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        };
+$("activeButton").addEventListener("click", () => switchView("active"));
+$("trashButton").addEventListener("click", () => switchView("trash"));
 
-        if (body !== null) {
-          options.headers["Content-Type"] = "application/json";
-          options.body = JSON.stringify(body);
-        }
+$("refreshButton").addEventListener("click", loadReviews);
+bookFilter.addEventListener("change", loadReviews);
+statusFilter.addEventListener("change", renderReviews);
 
-        const response = await fetch(url.toString(), options);
+/* LOG OUT */
+$("logoutButton").addEventListener("click", async () => {
+  $("logoutButton").disabled = true;
+  setMessage("Signing out...");
 
-        const result = await response.json().catch(() => ({}));
+  try {
+    const { error } = await withTimeout(client.auth.signOut());
+    if (error) throw error;
 
-        if (!response.ok) {
-          throw new Error(
-            result.error || `Request failed (${response.status}).`
-          );
-        }
+    activeReviews = [];
+    trashedReviews = [];
+    showLogin();
+    setLogin("You have signed out.");
+    reviewsList.innerHTML = '<p class="empty">Sign in to load reviews.</p>';
 
-        return result;
-      }
+  } catch (error) {
+    setMessage(error.message, true);
+  } finally {
+    $("logoutButton").disabled = false;
+  }
+});
 
-      // -----------------------------------------
-      // LOAD REVIEWS
-      // -----------------------------------------
+/* RESTORE EXISTING SESSION */
+async function restoreSession() {
+  loginButton.disabled = true;
+  loginButton.textContent = "Checking session...";
 
-      async function fetchReviewList(trash = false) {
-        const params = {
-          status: "all",
-          trash: trash ? "true" : "false"
-        };
+  try {
+    const { data, error } = await withTimeout(client.auth.getSession());
+    if (error) throw error;
 
-        if (bookFilter.value !== "all") {
-          params.book = bookFilter.value;
-        }
+    const session = data.session;
+    if (!session) return;
 
-        const result = await apiRequest("GET", params);
+    if (session.user.id !== ADMIN_ID) {
+      await client.auth.signOut();
+      setLogin("Please sign in with the designated admin account.", true);
+      return;
+    }
 
-        return Array.isArray(result.reviews)
-          ? result.reviews
-          : [];
-      }
+    showDashboard(session.user);
+    await loadReviews();
 
-      async function loadReviews() {
-        if (!currentUser || isLoading) return;
+  } catch (error) {
+    setLogin(error.message || "Could not restore your session.", true);
+  } finally {
+    loginButton.disabled = false;
+    loginButton.textContent = "Sign In";
+  }
+}
 
-        isLoading = true;
-        showMessage("Loading reviews...");
+restoreSession();
 
-        reviewsList.innerHTML =
-          '<p class="empty">Loading reviews...</p>';
-
-        try {
-          // Load active reviews and Trash separately.
-          const [activeReviews, trashedReviews] = await Promise.all([
-            fetchReviewList(false),
-            fetchReviewList(true)
-          ]);
-
-          loadedReviews = activeReviews;
-          trashCount = trashedReviews.length;
-
-          updateCounts(loadedReviews, trashCount);
-          renderReviews();
-
-          showMessage("Reviews refreshed successfully.");
-        } catch (error) {
-          showMessage(error.message, true);
-
-          reviewsList.innerHTML =
-            '<p class="empty">Could not load reviews. Check your API deployment and permissions.</p>';
-        } finally {
-          isLoading = false;
-        }
-      }
-
-      // -----------------------------------------
-      // REVIEW DISPLAY
-      // -----------------------------------------
-
-      function renderReviews() {
-        const source = currentView === "trash"
-          ? window.currentTrashedReviews || []
-          : loadedReviews;
-
-        const selectedStatus = statusFilter.value;
-
-        const filtered = source.filter(review => {
-          if (
-            currentView === "active" &&
-            selectedStatus !== "all" &&
-            review.status !== selectedStatus
-          ) {
-            return false;
-          }
-
-          return true;
-        });
-
-        if (!filtered.length) {
-          reviewsList.innerHTML = currentView === "trash"
-            ? '<p class="empty">Your Trash is empty. 🗑️</p>'
-            : '<p class="empty">No reviews match these filters.</p>';
-
-          return;
-        }
-
-        reviewsList.innerHTML = filtered.map(review => {
-          const answers = review.discussion_answers &&
-            typeof review.discussion_answers === "object"
-              ? review.discussion_answers
-              : {};
-
-          const answerHTML = Object.entries(answers).map(
-            ([question, answer]) => {
-              const answerText = typeof answer === "string"
-                ? answer
-                : JSON.stringify(answer);
-
-              return `
-                <p>
-                  <strong>${escapeHTML(question)}</strong><br>
-                  ${escapeHTML(answerText)}
-                </p>
-              `;
-            }
-          ).join("");
-
-          const date = review.created_at
-            ? new Date(review.created_at).toLocaleString()
-            : "Date unavailable";
-
-          const stars = "★".repeat(
-            Math.max(0, Math.min(5, Number(review.rating) || 0))
-          );
-
-          const statusColor = getStatusColor(review.status);
-
-          let actionButtons = "";
-
-          if (currentView === "trash") {
-            actionButtons = `
-              <button
-                class="restore"
-                data-action="restore"
-                data-id="${escapeHTML(review.id)}"
-              >
-                ♻️ Restore
-              </button>
-
-              <button
-                class="delete"
-                data-action="permanent-delete"
-                data-id="${escapeHTML(review.id)}"
-              >
-                🚮 Permanently Delete
-              </button>
-            `;
-          } else {
-            if (review.status !== "approved") {
-              actionButtons += `
-                <button
-                  class="approve"
-                  data-action="approved"
-                  data-id="${escapeHTML(review.id)}"
-                >
-                  ✅ Approve
-                </button>
-              `;
-            }
-
-            if (review.status !== "rejected") {
-              actionButtons += `
-                <button
-                  class="reject"
-                  data-action="rejected"
-                  data-id="${escapeHTML(review.id)}"
-                >
-                  ❌ Reject
-                </button>
-              `;
-            }
-
-            actionButtons += `
-              <button
-                class="trash-button"
-                data-action="trash"
-                data-id="${escapeHTML(review.id)}"
-              >
-                🗑️ Move to Trash
-              </button>
-            `;
-          }
-
-          return `
-            <article class="review">
-              <h3>${escapeHTML(review.display_name || "Reader")}</h3>
-
-              <p class="meta">
-                ${escapeHTML(bookTitle(review.book_slug))}<br>
-                Submitted: ${escapeHTML(date)}
-              </p>
-
-              <p>
-                Rating:
-                <span class="gold">${stars || "No rating"}</span>
-                (${escapeHTML(review.rating ?? "Not provided")}/5)
-              </p>
-
-              <p>
-                Status:
-                <span
-                  class="status-badge"
-                  style="color:${statusColor}"
-                >
-                  ${escapeHTML(review.status)}
-                </span>
-              </p>
-
-              <div class="review-text">
-                ${escapeHTML(review.review_text || "No written review.")}
-              </div>
-
-              ${answerHTML ? `
-                <h4 class="gold">Answers to Review Questions</h4>
-                <div class="answers">${answerHTML}</div>
-             
+})();
+</script>
+</body>
+</html>
