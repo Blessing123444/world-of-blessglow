@@ -76,7 +76,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 .hero-image {
   z-index: -2;
-  background: url("images/blessglow-hero.png") center / cover no-repeat;
+  background: url("blessglow-hero.png") center / cover no-repeat;
 }
 .hero-shade {
   z-index: -1;
@@ -238,7 +238,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 .genre-card:hover { border-color: var(--gold); transform: translateY(-3px); }
 .genre-card:hover::before { transform: scale(1.05); }
-.genre-romance::before { background-image: url("images/romance-collection.png"); }
+.genre-romance::before { background-image: url("romance-collection.png"); }
 .genre-dark-romance::before { background-image: linear-gradient(135deg, #512137, #100910); }
 .genre-fantasy::before { background-image: linear-gradient(135deg, #243d52, #151020); }
 .genre-werewolf::before { background-image: linear-gradient(135deg, #454337, #17121b); }
