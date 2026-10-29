@@ -401,3 +401,51 @@ footer, .site-footer {
   .footer-brand { grid-column: 1 / -1; }
   }
   
+/* DISCOVER MORE CARDS */
+.discover-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.discover-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+  padding: 28px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.discover-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+}
+
+.discover-card h3 {
+  margin-top: 0;
+  color: var(--cream);
+  font: 400 1.6rem var(--serif);
+}
+
+.discover-card p {
+  color: var(--muted);
+}
+
+.discover-card .text-link {
+  margin-top: 18px;
+  color: var(--gold);
+}
+
+@media (max-width: 850px) {
+  .discover-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .discover-card {
+    min-height: 180px;
+  }
+}
+
