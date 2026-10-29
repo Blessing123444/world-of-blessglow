@@ -1,18 +1,28 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>World of BlessGlow | Stories. Worlds. Imagination.</title>
-  <meta name="description" content="Welcome to World of BlessGlow — a creative home for books, stories, and animated worlds.">
+  <meta name="description" content="Explore original books, romance, fantasy, mystery, royal stories and animated worlds by Blessing Effiong.">
+  <meta name="theme-color" content="#08070b">
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <header class="site-header">
-    <a class="brand" href="index.html"><span>World of</span> BlessGlow</a>
-    <button class="menu-toggle" aria-label="Open menu">☰</button>
-    <nav class="nav">
-      <a class="active" href="index.html">Home</a>
+    <a class="brand" href="index.html" aria-label="World of BlessGlow home">
+      <span>World of</span> BlessGlow
+    </a>
+
+    <button class="menu-toggle" aria-label="Open navigation menu"
+      aria-expanded="false" aria-controls="main-navigation">☰</button>
+
+    <nav class="nav" id="main-navigation" aria-label="Main navigation">
+      <a class="active" href="index.html" aria-current="page">Home</a>
       <a href="books.html">Books</a>
       <a href="shop.html">Shop</a>
       <a href="animations.html">Animations</a>
@@ -23,43 +33,301 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="stars"></div>
+    <!-- HERO -->
+    <section class="hero hero-home" aria-label="Welcome to World of BlessGlow">
+      <div class="hero-image" role="img"
+        aria-label="A mysterious glowing portal opening into a magical world"></div>
+      <div class="hero-shade"></div>
+
       <div class="hero-content">
-        <p class="eyebrow">WELCOME TO MY CREATIVE WORLD</p>
+        <p class="eyebrow">WELCOME TO WORLD OF BLESSGLOW</p>
+
         <h1>Stories.<br><em>Worlds.</em><br>Imagination.</h1>
-        <p class="hero-text">Step into a world of mystery, fantasy, romance, betrayal, and unforgettable stories.</p>
+
+        <p class="hero-slogan">Question everything. Imagine beyond.</p>
+
+        <p class="hero-text">
+          Explore the unknown. Discover the unseen.
+          Beyond every world lies a question.
+          Every story holds a world. Every world hides a truth.
+          Some stories entertain. Others change you.
+        </p>
+
         <div class="hero-buttons">
           <a class="btn btn-gold" href="books.html">Explore My Books</a>
           <a class="btn btn-outline" href="animations.html">Watch My Animations</a>
         </div>
+
+        <a class="hero-discover" href="#discover">Begin your journey ↓</a>
       </div>
-      <div class="moon"></div>
     </section>
 
-    <section class="section intro">
-      <p class="eyebrow">THE WORLD OF BLESSGLOW</p>
-      <h2>Every story begins with <em>one page.</em></h2>
-      <p class="lead">Welcome to my little corner of storytelling — where written stories can become entire worlds.</p>
+    <!-- WELCOME -->
+    <section class="section intro welcome-section" id="discover">
+      <p class="eyebrow">A WORLD OF STORIES</p>
+      <h2>Every story opens <em>a new world.</em></h2>
+
+      <p class="lead">
+        Welcome to my creative universe, where imagination has no boundaries.
+        Discover unforgettable characters, hidden truths, unexpected love,
+        magical kingdoms and mysteries waiting to be uncovered.
+      </p>
+
       <div class="feature-grid">
-        <a class="feature-card" href="books.html"><span>01</span><h3>Books</h3><p>Discover stories across mystery, fantasy, romance, and more.</p><b>Explore →</b></a>
-        <a class="feature-card" href="animations.html"><span>02</span><h3>Animations</h3><p>Watch my stories come alive through animated episodes and visual worlds.</p><b>Watch →</b></a>
-        <a class="feature-card" href="shop.html"><span>03</span><h3>Shop</h3><p>Find the books and releases available to readers.</p><b>Visit →</b></a>
+        <a class="feature-card" href="books.html">
+          <span>01 / READ</span>
+          <h3>Books & Stories</h3>
+          <p>Enter stories filled with emotion, secrets, adventure and discovery.</p>
+          <b>Explore the library →</b>
+        </a>
+
+        <a class="feature-card" href="animations.html">
+          <span>02 / WATCH</span>
+          <h3>Animations</h3>
+          <p>Discover visual worlds and stories brought to life through animation.</p>
+          <b>Enter the screen →</b>
+        </a>
+
+        <a class="feature-card" href="shop.html">
+          <span>03 / COLLECT</span>
+          <h3>The Shop</h3>
+          <p>Explore available books and featured releases from World of BlessGlow.</p>
+          <b>Explore the shop →</b>
+        </a>
       </div>
     </section>
 
+    <!-- FEATURED BOOKS -->
+    <section class="home-featured section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">THE READING LIST</p>
+          <h2>Stories worth <em>discovering.</em></h2>
+          <p>Step into a story. Stay for the world inside it.</p>
+        </div>
+        <a class="text-link" href="books.html">View all books →</a>
+      </div>
+
+      <div class="featured-book-grid">
+        <article class="featured-book">
+          <a class="featured-cover love-cover"
+             href="books.html# a-love-written-in-silence"
+             aria-label="Discover A Love Written in Silence">
+            <span class="cover-kicker">A WORLD OF FEELINGS</span>
+            <span class="cover-title">A Love<br>Written in<br>Silence</span>
+            <span class="cover-author">BLESSING EFFIONG</span>
+          </a>
+          <div class="featured-book-info">
+            <p class="book-category">ROMANCE</p>
+            <h3><a href="books.html">A Love Written in Silence</a></h3>
+            <p>A heartfelt story of love, quiet feelings and the words left unspoken.</p>
+            <a class="text-link" href="books.html">Discover the story →</a>
+          </div>
+        </article>
+
+        <article class="featured-book">
+          <a class="featured-cover smile-cover"
+             href="books.html"
+             aria-label="Discover Behind Her Smile">
+            <span class="cover-kicker">SOME SECRETS CHANGE EVERYTHING</span>
+            <span class="cover-title">Behind<br>Her Smile</span>
+            <span class="cover-subtitle">THE GIRL THEY FRAMED</span>
+            <span class="cover-author">BLESSING EFFIONG</span>
+          </a>
+          <div class="featured-book-info">
+            <p class="book-category">DRAMA & SECRETS</p>
+            <h3><a href="books.html">Behind Her Smile</a></h3>
+            <p>When trust is broken and the truth is buried, appearances can deceive.</p>
+            <a class="text-link" href="books.html">Discover the story →</a>
+          </div>
+        </article>
+
+        <article class="featured-book">
+          <a class="featured-cover library-cover"
+             href="books.html"
+             aria-label="Discover The Library That Opens at Midnight">
+            <span class="cover-kicker">SOME DOORS SHOULD STAY CLOSED</span>
+            <span class="cover-title">The Library<br>That Opens<br>at Midnight</span>
+            <span class="cover-author">BLESSING EFFIONG</span>
+          </a>
+          <div class="featured-book-info">
+            <p class="book-category">FANTASY & MYSTERY</p>
+            <h3><a href="books.html">The Library That Opens at Midnight</a></h3>
+            <p>A mysterious library invites readers into a world of secrets and wonder.</p>
+            <a class="text-link" href="books.html">Discover the story →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- GENRE COLLECTIONS -->
+    <section class="home-collections section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">FIND YOUR NEXT OBSESSION</p>
+          <h2>Explore the <em>collections.</em></h2>
+          <p>Different genres. Different worlds. Endless possibilities.</p>
+        </div>
+        <a class="text-link" href="books.html">Explore all books →</a>
+      </div>
+
+      <div class="genre-grid">
+        <a class="genre-card genre-romance" href="books.html">
+          <span class="genre-number">01</span>
+          <span class="genre-copy">
+            <small>HEARTS & EMOTIONS</small>
+            <strong>Romance</strong>
+            <span>Love stories that stay with you →</span>
+          </span>
+        </a>
+
+        <a class="genre-card genre-fantasy" href="books.html">
+          <span class="genre-number">02</span>
+          <span class="genre-copy">
+            <small>MAGIC & WONDER</small>
+            <strong>Fantasy</strong>
+            <span>Discover worlds beyond reality →</span>
+          </span>
+        </a>
+
+        <a class="genre-card genre-werewolf" href="books.html">
+          <span class="genre-number">03</span>
+          <span class="genre-copy">
+            <small>INSTINCT & DESTINY</small>
+            <strong>Werewolf</strong>
+            <span>Enter a world of shifters →</span>
+          </span>
+        </a>
+
+        <a class="genre-card genre-royal" href="books.html">
+          <span class="genre-number">04</span>
+          <span class="genre-copy">
+            <small>THRONES & SECRETS</small>
+            <strong>Royal Stories</strong>
+            <span>Power, crowns and hidden truths →</span>
+          </span>
+        </a>
+
+        <a class="genre-card genre-revenge" href="books.html">
+          <span class="genre-number">05</span>
+          <span class="genre-copy">
+            <small>BETRAYAL & CONSEQUENCES</small>
+            <strong>Revenge</strong>
+            <span>When everything changes →</span>
+          </span>
+        </a>
+
+        <a class="genre-card genre-thriller" href="books.html">
+          <span class="genre-number">06</span>
+          <span class="genre-copy">
+            <small>CLUES & SECRETS</small>
+            <strong>Thriller & Mystery</strong>
+            <span>Look closer. Question everything →</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- BEYOND THE GENRES -->
+    <section class="beyond-section">
+      <div class="beyond-art" aria-hidden="true">
+        <div class="beyond-orbit"></div>
+        <div class="beyond-light"></div>
+        <span>BEYOND<br>THE<br>EXPECTED</span>
+      </div>
+
+      <div class="beyond-copy">
+        <p class="eyebrow">BEYOND THE GENRES</p>
+        <h2>Some stories refuse to fit <em>one world.</em></h2>
+        <p>
+          Discover stories that cross boundaries, challenge expectations
+          and take you somewhere unexpected. Your next favourite story
+          might be the one you never expected to find.
+        </p>
+        <a class="btn btn-gold" href="books.html">Find Your Next Story</a>
+      </div>
+    </section>
+
+    <!-- DISCOVER MORE -->
+    <section class="section discover-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">YOUR NEXT JOURNEY AWAITS</p>
+          <h2>There is always <em>more to discover.</em></h2>
+          <p>Explore the wider library and find the world that speaks to you.</p>
+        </div>
+      </div>
+
+      <div class="discover-grid">
+        <a class="discover-card" href="books.html">
+          <span>01</span>
+          <h3>Browse the Library</h3>
+          <p>Explore the growing collection of stories.</p>
+          <b>Find a book →</b>
+        </a>
+
+        <a class="discover-card" href="animations.html">
+          <span>02</span>
+          <h3>Watch the Worlds</h3>
+          <p>Step into visual storytelling and animation.</p>
+          <b>Watch now →</b>
+        </a>
+
+        <a class="discover-card" href="about.html">
+          <span>03</span>
+          <h3>Meet the Author</h3>
+          <p>Discover the creative mind behind the stories.</p>
+          <b>Read my story →</b>
+        </a>
+      </div>
+    </section>
+
+    <!-- QUOTE -->
     <section class="section quote-section">
       <div class="quote-mark">“</div>
-      <blockquote>A story is more than words on a page. It is a place you get to visit.</blockquote>
-      <p>— BlessGlow</p>
+      <blockquote>
+        A story is more than words on a page. It is a place you get to visit.
+      </blockquote>
+      <p>— Blessing Effiong</p>
     </section>
   </main>
 
-  <footer>
-    <div><a class="brand" href="index.html"><span>World of</span> BlessGlow</a><p>Stories. Worlds. Imagination.</p></div>
-    <div class="footer-links"><a href="books.html">Books</a><a href="shop.html">Shop</a><a href="animations.html">Animations</a><a href="contact.html">Contact</a></div>
-    <p class="copyright">© 2026 World of BlessGlow. All rights reserved.</p>
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="brand" href="index.html"><span>World of</span> BlessGlow</a>
+        <p>Stories. Worlds. Imagination.</p>
+        <p class="footer-tagline">Every story opens a door to somewhere new.</p>
+      </div>
+
+      <div class="footer-column">
+        <h2>Explore</h2>
+        <a href="books.html">Books & Stories</a>
+        <a href="shop.html">Shop</a>
+        <a href="animations.html">Animations</a>
+      </div>
+
+      <div class="footer-column">
+        <h2>World of BlessGlow</h2>
+        <a href="about.html">About</a>
+        <a href="find-me.html">Find Me</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="copyright">
+        © 2026 Blessing Effiong. All rights reserved.
+      </p>
+      <p class="copyright-notice">
+        All stories and other original works published on World of BlessGlow
+        are protected by applicable copyright law. No part of these works may
+        be reproduced, republished, distributed, or adapted without the
+        author's prior written permission, except as permitted by applicable law.
+      </p>
+    </div>
   </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
