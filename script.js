@@ -1,8 +1,16 @@
 
+/* MOBILE NAVIGATION */
 const toggle = document.querySelector(".menu-toggle");
 const nav = document.querySelector(".nav");
 
 if (toggle && nav) {
+  function closeMenu() {
+    nav.classList.remove("open");
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open navigation menu");
+    toggle.textContent = "☰";
+  }
+
   toggle.addEventListener("click", () => {
     const isOpen = nav.classList.toggle("open");
 
@@ -15,15 +23,17 @@ if (toggle && nav) {
   });
 
   nav.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      nav.classList.remove("open");
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.setAttribute("aria-label", "Open navigation menu");
-      toggle.textContent = "☰";
-    });
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMenu();
+    }
   });
 }
 
+/* CONTACT FORM */
 function handleContact(event) {
   event.preventDefault();
 
