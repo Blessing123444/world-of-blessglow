@@ -239,12 +239,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .genre-card:hover { border-color: var(--gold); transform: translateY(-3px); }
 .genre-card:hover::before { transform: scale(1.05); }
 .genre-romance::before { background-image: url("romance-collection.png"); }
-.genre-dark-romance::before { background-image: linear-gradient(135deg, #512137, #100910); }
-.genre-fantasy::before { background-image: linear-gradient(135deg, #243d52, #151020); }
-.genre-werewolf::before { background-image: linear-gradient(135deg, #454337, #17121b); }
-.genre-royal::before { background-image: linear-gradient(135deg, #59452a, #1c1320); }
-.genre-revenge::before { background-image: linear-gradient(135deg, #542b2d, #171016); }
-.genre-vampire::before { background-image: linear-gradient(135deg, #48232c, #171016); }
+.genre-dark-romance::before { background-image: url("dark-romance-collection.png"); }
+.genre-fantasy::before { background-image: url("fantasy-collection.png"); }
+.genre-werewolf::before { background-image: url("werewolf-collection.png"; }
+.genre-royal::before { background-image: url("royal-collection.png"); }
+.genre-revenge::before { background-image: url("revenge-collection.png"); }
+.genre-vampire::before { background-image: url("vampire-collection.png"); }
 .genre-number { align-self: flex-end; color: #eee; font-size: .85rem; }
 .genre-copy { display: flex; flex-direction: column; gap: 7px; }
 .genre-copy small { color: var(--gold); font-size: .62rem; letter-spacing: .12em; }
