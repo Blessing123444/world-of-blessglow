@@ -1,1 +1,713 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08070b">
+  <title>Discover Stories | World of BlessGlow</title>
+  <meta name="description" content="Discover your next favourite story through moods, genres and subgenres at World of BlessGlow.">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .discover-page {
+      --discover-gold: #d8b56a;
+      --discover-bg: #08070b;
+      --discover-panel: #111016;
+      --discover-muted: #aaa5ad;
+      color: #f7f1e8;
+      min-height: 100vh;
+    }
+
+    .discover-hero {
+      padding: 100px 7% 75px;
+      text-align: center;
+      background:
+        linear-gradient(rgba(8,7,11,.70), rgba(8,7,11,.96)),
+        radial-gradient(circle at 50% 10%, #51402a, #08070b 70%);
+    }
+
+    .discover-eyebrow {
+      color: var(--discover-gold);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .discover-hero h1 {
+      font-family: Georgia, serif;
+      font-size: clamp(38px, 7vw, 68px);
+      margin: 20px 0;
+      font-weight: 400;
+    }
+
+    .discover-hero p {
+      max-width: 650px;
+      margin: 0 auto;
+      color: #c5bdc4;
+      line-height: 1.8;
+    }
+
+    .discover-section {
+      width: min(1200px, 90%);
+      margin: 65px auto;
+    }
+
+    .discover-heading {
+      margin-bottom: 28px;
+    }
+
+    .discover-heading span {
+      color: var(--discover-gold);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .discover-heading h2 {
+      font: 400 clamp(27px, 4vw, 38px) Georgia, serif;
+      margin: 10px 0;
+    }
+
+    .discover-heading p {
+      color: var(--discover-muted);
+      line-height: 1.7;
+    }
+
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .mood-card {
+      background: linear-gradient(145deg, #1c1820, #100e14);
+      border: 1px solid rgba(216,181,106,.19);
+      border-radius: 14px;
+      padding: 24px;
+      color: #f7f1e8;
+      text-align: left;
+      cursor: pointer;
+      transition: .25s ease;
+      min-height: 145px;
+    }
+
+    .mood-card:hover,
+    .mood-card.active {
+      border-color: var(--discover-gold);
+      transform: translateY(-3px);
+      background: #211b20;
+    }
+
+    .mood-icon {
+      display: block;
+      font-size: 27px;
+      margin-bottom: 12px;
+    }
+
+    .mood-card strong {
+      display: block;
+      font-family: Georgia, serif;
+      font-size: 18px;
+      margin-bottom: 7px;
+    }
+
+    .mood-card small {
+      color: #b9b1b8;
+      line-height: 1.5;
+    }
+
+    .discover-search {
+      display: flex;
+      gap: 12px;
+      margin: 25px 0 35px;
+    }
+
+    .discover-search input {
+      flex: 1;
+      min-width: 0;
+      padding: 15px 18px;
+      border: 1px solid #39313a;
+      border-radius: 8px;
+      background: #111016;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .discover-search input:focus {
+      border-color: var(--discover-gold);
+    }
+
+    .discover-search button,
+    .clear-filter {
+      border: 1px solid var(--discover-gold);
+      background: var(--discover-gold);
+      color: #100d08;
+      padding: 13px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .genre-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 17px;
+    }
+
+    .genre-card {
+      background: linear-gradient(145deg, #1b1720, #100e14);
+      border: 1px solid #302a32;
+      border-radius: 13px;
+      padding: 23px;
+      cursor: pointer;
+      color: #f7f1e8;
+      text-align: left;
+      transition: .25s ease;
+    }
+
+    .genre-card:hover,
+    .genre-card.active {
+      border-color: var(--discover-gold);
+      transform: translateY(-3px);
+    }
+
+    .genre-card .genre-icon {
+      font-size: 26px;
+    }
+
+    .genre-card h3 {
+      font: 400 21px Georgia, serif;
+      margin: 12px 0 8px;
+    }
+
+    .genre-card p {
+      color: #aaa2ac;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .genre-card small {
+      display: block;
+      color: var(--discover-gold);
+      margin-top: 15px;
+    }
+
+    .subgenre-panel {
+      display: none;
+      margin-top: 30px;
+      padding: 28px;
+      border: 1px solid rgba(216,181,106,.3);
+      background: #111016;
+      border-radius: 13px;
+    }
+
+    .subgenre-panel.show {
+      display: block;
+    }
+
+    .subgenre-panel h3 {
+      font: 400 25px Georgia, serif;
+      margin: 0 0 8px;
+    }
+
+    .subgenre-panel p {
+      color: var(--discover-muted);
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    .subgenre-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .subgenre-chip {
+      padding: 10px 15px;
+      border: 1px solid #39313a;
+      border-radius: 30px;
+      color: #e8d9bc;
+      background: #19151d;
+      font-size: 13px;
+    }
+
+    .subgenre-chip:hover {
+      border-color: var(--discover-gold);
+    }
+
+    .discover-empty {
+      display: none;
+      padding: 30px;
+      border: 1px dashed #554630;
+      border-radius: 12px;
+      text-align: center;
+      color: #bcb3bd;
+      line-height: 1.7;
+    }
+
+    .discover-empty.show {
+      display: block;
+    }
+
+    .discover-note {
+      padding: 28px;
+      border-left: 2px solid var(--discover-gold);
+      background: #121016;
+      color: #bdb5bd;
+      line-height: 1.8;
+    }
+
+    .discover-note strong {
+      color: var(--discover-gold);
+    }
+
+    @media(max-width: 800px) {
+      .mood-grid,
+      .genre-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width: 520px) {
+      .discover-hero {
+        padding: 75px 6% 55px;
+      }
+
+      .mood-grid,
+      .genre-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .discover-search {
+        flex-direction: column;
+      }
+
+      .discover-search button {
+        width: 100%;
+      }
+
+      .discover-section {
+        margin: 48px auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="discover-page">
+
+  <header class="site-header">
+    <a href="index.html" class="logo">World of <span>BlessGlow</span></a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="books.html">Library</a>
+      <a href="discover.html" class="active">Discover</a>
+      <a href="shop.html">Shop</a>
+      <a href="animations.html">Animations</a>
+      <a href="about.html">About</a>
+      <a href="find-me.html">Find Me</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="discover-hero">
+    <span class="discover-eyebrow">World of BlessGlow</span>
+    <h1>Find Your Next Story</h1>
+    <p>
+      Every reader has a different feeling, a different curiosity
+      and a different world they want to escape into.
+      Discover a story that speaks to you.
+    </p>
+  </section>
+
+  <main>
+
+    <section class="discover-section">
+      <div class="discover-heading">
+        <span>Start with a feeling</span>
+        <h2>What Are You in the Mood to Read?</h2>
+        <p>Choose a mood and explore stories that match the experience you're looking for.</p>
+      </div>
+
+      <div class="mood-grid" id="moodGrid">
+
+        <button class="mood-card" data-mood="love">
+          <span class="mood-icon">💗</span>
+          <strong>In the Mood for Love</strong>
+          <small>Romance, chemistry and heartfelt connections.</small>
+        </button>
+
+        <button class="mood-card" data-mood="power">
+          <span class="mood-icon">🔥</span>
+          <strong>Ready for a Comeback</strong>
+          <small>Transformation, strength and second chances.</small>
+        </button>
+
+        <button class="mood-card" data-mood="mystery">
+          <span class="mood-icon">🔎</span>
+          <strong>Craving a Mystery</strong>
+          <small>Secrets, hidden truths and unexpected discoveries.</small>
+        </button>
+
+        <button class="mood-card" data-mood="escape">
+          <span class="mood-icon">🐉</span>
+          <strong>Want an Escape</strong>
+          <small>Magic, fantasy and extraordinary worlds.</small>
+        </button>
+
+        <button class="mood-card" data-mood="suspense">
+          <span class="mood-icon">🌑</span>
+          <strong>Want Some Suspense</strong>
+          <small>Plot twists, tension and gripping stories.</small>
+        </button>
+
+        <button class="mood-card" data-mood="healing">
+          <span class="mood-icon">🌅</span>
+          <strong>Need Something Uplifting</strong>
+          <small>Healing, hope and fresh beginnings.</small>
+        </button>
+
+        <button class="mood-card" data-mood="drama">
+          <span class="mood-icon">🎭</span>
+          <strong>In the Mood for Drama</strong>
+          <small>Relationships, family conflicts and scandals.</small>
+        </button>
+
+        <button class="mood-card" data-mood="intense">
+          <span class="mood-icon">🖤</span>
+          <strong>Want Something Intense</strong>
+          <small>Dark secrets, complicated relationships and gothic worlds.</small>
+        </button>
+
+        <button class="mood-card" data-mood="supernatural">
+          <span class="mood-icon">🩸</span>
+          <strong>Craving the Supernatural</strong>
+          <small>Immortals, vampires and supernatural mysteries.</small>
+        </button>
+
+      </div>
+    </section>
+
+    <section class="discover-section">
+      <div class="discover-heading">
+        <span>Explore the collections</span>
+        <h2>Discover by Genre</h2>
+        <p>Explore our 12 main genres. Select any collection to reveal its subgenres.</p>
+      </div>
+
+      <div class="discover-search">
+        <input
+          type="search"
+          id="genreSearch"
+          placeholder="Search genres or subgenres..."
+          aria-label="Search genres or subgenres"
+        >
+        <button type="button" id="searchButton">Search</button>
+      </div>
+
+      <div class="genre-grid" id="genreGrid"></div>
+
+      <div class="discover-empty" id="emptyMessage">
+        No matching genres or subgenres found. Try another search.
+      </div>
+
+      <div class="subgenre-panel" id="subgenrePanel">
+        <h3 id="subgenreTitle"></h3>
+        <p id="subgenreDescription"></p>
+        <div class="subgenre-list" id="subgenreList"></div>
+      </div>
+    </section>
+
+    <section class="discover-section">
+      <div class="discover-heading">
+        <span>Your reading journey</span>
+        <h2>Every Story Has a World</h2>
+      </div>
+
+      <div class="discover-note">
+        <strong>Welcome to World of BlessGlow.</strong>
+        <br>
+        Whether you're searching for romance, mystery, fantasy,
+        drama or something completely different, there's a world
+        waiting for you to explore.
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="text-align:center;padding:35px 15px;color:#aaa;border-top:1px solid #28232b;">
+    <p>World of BlessGlow | Stories. Worlds. Imagination.</p>
+    <small>© 2026 Blessing Effiong. All rights reserved.</small>
+  </footer>
+
+</div>
+
+<script>
+const genres = [
+  {
+    name: "Romance",
+    icon: "💗",
+    description: "Love stories filled with chemistry, longing, secrets, and unforgettable relationships.",
+    moods: ["love"],
+    subgenres: [
+      "Campus Romance", "Slow-Burn Romance", "Enemies to Lovers",
+      "Friends to Lovers", "Second-Chance Love", "Forbidden Love",
+      "Unrequited Love", "Billionaire Romance", "Fake Dating",
+      "Love Triangle"
+    ]
+  },
+  {
+    name: "Revenge & Comebacks",
+    icon: "🔥",
+    description: "Betrayal, revenge, transformation, and people returning stronger than ever.",
+    moods: ["power"],
+    subgenres: [
+      "Betrayed Heiress", "Revenge Against an Ex", "Family Revenge",
+      "Revenge After Rejection", "Secret Identity", "The Ultimate Comeback",
+      "Revenge and Redemption", "From Underdog to Powerful",
+      "The Heiress Returns", "The Revenge Plan"
+    ]
+  },
+  {
+    name: "Dark Romance",
+    icon: "🖤",
+    description: "Dangerous attraction, morally complicated lovers, and relationships filled with secrets.",
+    moods: ["intense", "love"],
+    subgenres: [
+      "Obsession and Attraction", "Forbidden Dark Love", "Gothic Romance",
+      "Mafia Romance", "Morally Grey Love Interests", "Rivals with Chemistry",
+      "Dangerous Secrets", "Twisted Relationships", "Possessive Love",
+      "The Dangerous Deal"
+    ]
+  },
+  {
+    name: "Royal Stories",
+    icon: "👑",
+    description: "Hidden bloodlines, palace intrigue, royal romance, and battles for the crown.",
+    moods: ["drama", "love"],
+    subgenres: [
+      "Secret Princess", "Hidden Heir", "Royal Romance",
+      "Arranged Royal Marriage", "Lost Princess", "Palace Intrigue",
+      "Crown and Succession", "Exiled Royal",
+      "Royal Bodyguard Romance", "The Secret Royal Wedding"
+    ]
+  },
+  {
+    name: "Fantasy & Magic",
+    icon: "🐉",
+    description: "Enchanted worlds, powerful magic, legendary creatures, and epic adventures.",
+    moods: ["escape", "supernatural"],
+    subgenres: [
+      "Dark Fantasy", "Magical Academy", "Witches and Wizards",
+      "Cursed Kingdoms", "Mythical Creatures", "Brutal Fantasy",
+      "Elemental Powers", "Epic Fantasy Quests", "Dragon Riders",
+      "Enchanted Realms"
+    ]
+  },
+  {
+    name: "Werewolf & Shifter",
+    icon: "🌕",
+    description: "Fated bonds, supernatural transformations, rival packs, and powerful Alphas.",
+    moods: ["escape", "supernatural", "love"],
+    subgenres: [
+      "Alpha and Luna", "Rejected Mates", "Fated Mates",
+      "Forbidden Mates", "Royal Werewolves", "Rogue Wolves",
+      "Hidden Shifter", "Human and Werewolf",
+      "The Alpha's Secret", "War of the Wolf Packs"
+    ]
+  },
+  {
+    name: "Mystery & Secrets",
+    icon: "🔎",
+    description: "Unsolved cases, hidden truths, missing people, and shocking discoveries.",
+    moods: ["mystery", "suspense"],
+    subgenres: [
+      "Murder Mystery", "The Missing Heiress", "Hidden Identity",
+      "Family Secrets", "Secret Societies", "Locked-Room Mystery",
+      "Supernatural Mystery", "Detective Investigations",
+      "The Secret Nobody Knows", "The Inheritance Mystery"
+    ]
+  },
+  {
+    name: "Thriller & Suspense",
+    icon: "🌑",
+    description: "High stakes, psychological tension, dangerous secrets, and unexpected twists.",
+    moods: ["suspense", "mystery"],
+    subgenres: [
+      "Psychological Thriller", "Crime Thriller", "Conspiracy",
+      "Survival Thriller", "Cat and Mouse", "Domestic Suspense",
+      "High-Stakes Pursuits", "Political Thriller",
+      "The Stalker Next Door", "The Dangerous Witness"
+    ]
+  },
+  {
+    name: "Drama & Scandals",
+    icon: "🎭",
+    description: "Family conflict, betrayal, social pressure, and secrets that threaten reputations.",
+    moods: ["drama", "power"],
+    subgenres: [
+      "Family Drama", "Betrayal and Lies", "Friendship Conflicts",
+      "Love Triangles", "Marriage Drama", "Social-Class Conflict",
+      "Secrets and Scandals", "Sibling Rivalry",
+      "Celebrity Scandals", "The Secret Inheritance"
+    ]
+  },
+  {
+    name: "Young Adult & Coming-of-Age",
+    icon: "🎓",
+    description: "First love, friendship, identity, school life, and the challenges of growing up.",
+    moods: ["love", "drama", "healing"],
+    subgenres: [
+      "First Love", "School Life", "University Life",
+      "Academic Rivals", "Friendship and Loyalty",
+      "Identity and Self-Discovery", "Family Expectations",
+      "Young Adult Fantasy", "Dark Academia", "The New Girl"
+    ]
+  },
+  {
+    name: "Healing & Second Chances",
+    icon: "🌅",
+    description: "Emotional recovery, rebuilding life, forgiveness, and finding a new beginning.",
+    moods: ["healing", "love"],
+    subgenres: [
+      "Healing After Heartbreak", "Starting Over", "Redemption",
+      "Forgiveness and Healing", "Rebuilding Trust", "Finding Yourself",
+      "Fresh Beginnings", "Learning to Let Go",
+      "Life After Betrayal", "Recovering from Loss"
+    ]
+  },
+  {
+    name: "Vampires & Immortals",
+    icon: "🩸",
+    description: "Ancient secrets, supernatural power, immortal relationships, and gothic mysteries.",
+    moods: ["supernatural", "intense", "mystery"],
+    subgenres: [
+      "Vampire Romance", "Ancient Vampires", "Vampire Royalty",
+      "Immortal Love", "Human and Vampire", "Vampire Hunters",
+      "Cursed Immortals", "Supernatural Clans",
+      "Vampire Academy", "The Forbidden Bloodline"
+    ]
+  }
+];
+
+const genreGrid = document.getElementById("genreGrid");
+const searchInput = document.getElementById("genreSearch");
+const searchButton = document.getElementById("searchButton");
+const emptyMessage = document.getElementById("emptyMessage");
+const subgenrePanel = document.getElementById("subgenrePanel");
+
+function renderGenres(list) {
+  genreGrid.innerHTML = "";
+
+  list.forEach(genre => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "genre-card";
+
+    const icon = document.createElement("span");
+    icon.className = "genre-icon";
+    icon.textContent = genre.icon;
+
+    const title = document.createElement("h3");
+    title.textContent = genre.name;
+
+    const description = document.createElement("p");
+    description.textContent = genre.description;
+
+    const count = document.createElement("small");
+    count.textContent = "10 subgenres · Explore collection →";
+
+    card.append(icon, title, description, count);
+    card.addEventListener("click", () => showSubgenres(genre, card));
+    genreGrid.appendChild(card);
+  });
+
+  emptyMessage.classList.toggle("show", list.length === 0);
+}
+
+function showSubgenres(genre, selectedCard) {
+  document.querySelectorAll(".genre-card").forEach(card => {
+    card.classList.remove("active");
+  });
+
+  selectedCard.classList.add("active");
+
+  document.getElementById("subgenreTitle").textContent =
+    genre.icon + " " + genre.name;
+
+  document.getElementById("subgenreDescription").textContent =
+    genre.description;
+
+  const list = document.getElementById("subgenreList");
+  list.innerHTML = "";
+
+  genre.subgenres.forEach(subgenre => {
+    const chip = document.createElement("span");
+    chip.className = "subgenre-chip";
+    chip.textContent = subgenre;
+    list.appendChild(chip);
+  });
+
+  subgenrePanel.classList.add("show");
+  subgenrePanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function searchGenres() {
+  const query = searchInput.value.trim().toLowerCase();
+
+  subgenrePanel.classList.remove("show");
+
+  if (!query) {
+    renderGenres(genres);
+    return;
+  }
+
+  const matches = genres.filter(genre =>
+    genre.name.toLowerCase().includes(query) ||
+    genre.description.toLowerCase().includes(query) ||
+    genre.subgenres.some(subgenre =>
+      subgenre.toLowerCase().includes(query)
+    )
+  );
+
+  renderGenres(matches);
+}
+
+searchButton.addEventListener("click", searchGenres);
+
+searchInput.addEventListener("input", searchGenres);
+
+document.querySelectorAll(".mood-card").forEach(button => {
+  button.addEventListener("click", () => {
+    const mood = button.dataset.mood;
+
+    document.querySelectorAll(".mood-card").forEach(card => {
+      card.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+    const matchingGenres = genres.filter(genre =>
+      genre.moods.includes(mood)
+    );
+
+    renderGenres(matchingGenres);
+    subgenrePanel.classList.remove("show");
+
+    document.getElementById("genreGrid").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+});
+
+renderGenres(genres);
+</script>
+
+</body>
+  </html>
+  
