@@ -451,3 +451,20 @@ footer, .site-footer {
   .discover-card { padding: 24px; }
                                                       }
     
+/* FEATURED BOOK COVERS — UNIFIED BLACK BACKGROUND */
+
+.featured-cover,
+.featured-cover.love-cover,
+.featured-cover.smile-cover,
+.featured-cover.library-cover {
+    background: #08070b !important;
+    background-image: none !important;
+}
+
+/* Keep actual book covers fitted neatly */
+.featured-cover img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
