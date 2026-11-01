@@ -1,8 +1,225 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Contact | World of BlessGlow</title><link rel="stylesheet" href="style.css"></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08070b">
+
+  <title>Contact | World of BlessGlow</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
 <body>
-<header class="site-header"><a class="brand" href="index.html"><span>World of</span> BlessGlow</a><button class="menu-toggle">☰</button><nav class="nav"><a href="index.html">Home</a><a href="books.html">Books</a><a href="shop.html">Shop</a><a href="animations.html">Animations</a><a href="about.html">About</a><a href="find-me.html">Find Me</a><a class="active" href="contact.html">Contact</a></nav></header>
-<main><section class="page-hero"><p class="eyebrow">LET'S CONNECT</p><h1>Get in <em>Touch</em></h1><p>For questions, collaborations, reader messages, or other enquiries.</p></section>
-<section class="section contact-layout"><div><h2>Contact</h2><p>Replace the email below with your official author email.</p><a class="email-link" href="mailto:your@email.com">your@email.com</a></div><form onsubmit="return handleContact(event)"><label>Name<input required type="text" placeholder="Your name"></label><label>Email<input required type="email" placeholder="you@example.com"></label><label>Message<textarea required rows="6" placeholder="Write your message..."></textarea></label><button class="btn btn-gold" type="submit">Send Message</button><p id="form-message"></p></form></section></main>
-<footer><div><a class="brand" href="index.html"><span>World of</span> BlessGlow</a><p>Stories. Worlds. Imagination.</p></div><div class="footer-links"><a href="books.html">Books</a><a href="shop.html">Shop</a><a href="animations.html">Animations</a><a href="contact.html">Contact</a></div><p class="copyright">© 2026 World of BlessGlow. All rights reserved.</p></footer>
-<script src="script.js"></script></body></html>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span>World of</span> BlessGlow
+    </a>
+
+    <button class="menu-toggle" aria-label="Toggle navigation">
+      ☰
+    </button>
+
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="books.html">Books</a>
+      <a href="shop.html">Shop</a>
+      <a href="animations.html">Animations</a>
+      <a href="about.html">About</a>
+      <a href="find-me.html">Find Me</a>
+      <a class="active" href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+      <p class="eyebrow">WE'D LOVE TO HEAR FROM YOU</p>
+
+      <h1>Get in <em>Touch</em></h1>
+
+      <p>
+        Have a question, a thought about one of my stories,
+        or an idea for working together? This is the place to reach me.
+      </p>
+    </section>
+
+
+    <!-- CONTACT SECTION -->
+    <section class="section contact-layout">
+
+      <!-- CONTACT INFORMATION -->
+      <div class="contact-info">
+
+        <p class="eyebrow">LET'S CONNECT</p>
+
+        <h2>Your message is welcome.</h2>
+
+        <p>
+          Whether you're a reader with something to share,
+          someone interested in a collaboration, or simply
+          reaching out with a question, I'd be happy to hear from you.
+        </p>
+
+
+        <div class="contact-option">
+          <span class="contact-label">READER MESSAGES</span>
+          <p>Questions, feedback, reviews, and thoughts about my books.</p>
+        </div>
+
+        <div class="contact-option">
+          <span class="contact-label">COLLABORATIONS</span>
+          <p>Creative partnerships, content projects, and opportunities.</p>
+        </div>
+
+        <div class="contact-option">
+          <span class="contact-label">GENERAL ENQUIRIES</span>
+          <p>Other questions about me or World of BlessGlow.</p>
+        </div>
+
+
+        <!-- OFFICIAL EMAIL -->
+        <div class="contact-email">
+          <p class="eyebrow">OFFICIAL EMAIL</p>
+
+          <a
+            class="email-link"
+            href="mailto:theworldofblessglow@gmail.com"
+          >
+            theworldofblessglow@gmail.com
+          </a>
+        </div>
+
+      </div>
+
+
+      <!-- CONTACT FORM -->
+      <div class="contact-form-container">
+
+        <p class="eyebrow">SEND A MESSAGE</p>
+
+        <h2>Write to me</h2>
+
+        <form onsubmit="return handleContact(event)">
+
+          <label for="contact-name">
+            Your Name
+
+            <input
+              id="contact-name"
+              name="name"
+              type="text"
+              placeholder="Enter your name"
+              autocomplete="name"
+              required
+            >
+          </label>
+
+
+          <label for="contact-email">
+            Your Email
+
+            <input
+              id="contact-email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            >
+          </label>
+
+
+          <label for="contact-subject">
+            Subject
+
+            <select id="contact-subject" name="subject" required>
+              <option value="" disabled selected>Select a subject</option>
+              <option value="Reader Message">Reader Message</option>
+              <option value="Book Feedback">Book Feedback</option>
+              <option value="Collaboration">Collaboration</option>
+              <option value="Business Enquiry">Business Enquiry</option>
+              <option value="General Enquiry">General Enquiry</option>
+            </select>
+          </label>
+
+
+          <label for="contact-message">
+            Your Message
+
+            <textarea
+              id="contact-message"
+              name="message"
+              rows="6"
+              placeholder="Write your message here..."
+              required
+            ></textarea>
+          </label>
+
+
+          <button class="btn btn-gold" type="submit">
+            Send Message
+          </button>
+
+          <p id="form-message" aria-live="polite"></p>
+
+        </form>
+
+      </div>
+
+    </section>
+
+
+    <!-- CLOSING MESSAGE -->
+    <section class="section contact-closing">
+
+      <p class="eyebrow">WORLD OF BLESSGLOW</p>
+
+      <h2>Every connection begins somewhere.</h2>
+
+      <p>
+        Thank you for taking the time to reach out.
+        I appreciate your interest in my work and creative journey.
+      </p>
+
+      <a href="find-me.html" class="btn">Find Me Online</a>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div>
+      <a class="brand" href="index.html">
+        <span>World of</span> BlessGlow
+      </a>
+
+      <p>Stories. Worlds. Imagination.</p>
+    </div>
+
+    <div class="footer-links">
+      <a href="books.html">Books</a>
+      <a href="shop.html">Shop</a>
+      <a href="animations.html">Animations</a>
+      <a href="about.html">About</a>
+      <a href="find-me.html">Find Me</a>
+      <a href="contact.html">Contact</a>
+    </div>
+
+    <p class="copyright">
+      © 2026 Blessing Effiong. All rights reserved.
+    </p>
+
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+          </html>
