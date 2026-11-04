@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<title>Reading | World of BlessGlow</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.reader {
+  max-width: 950px;
+  margin: 55px auto;
+  padding: 20px;
+}
+.book-heading {
+  text-align: center;
+  margin-bottom: 35px;
+}
+.book-heading img {
+  width: 155px;
+  max-height: 230px;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+.reader-status {
+  color: #d8b56a;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+.reader-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 25px 0;
+}
+.reader select, .reader button {
+  background: #151515;
+  color: #d8b56a;
+  border: 1px solid #51432c;
+  padding: 12px;
+  cursor: pointer;
+}
+.chapter-content {
+  background: #100e13;
+  border: 1px solid #302817;
+  padding: 35px;
+  line-height: 2;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-height: 250px;
+}
+.reader-message {
+  text-align: center;
+  color: #d8b56a;
+  padding: 45px 15px;
+}
+.reader-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 25px;
+}
+.reader button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+@media(max-width:600px) {
+  .chapter-content { padding: 20px; }
+  .reader-buttons button { flex: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <span>World of</span> BlessGlow
+  </a>
+
+  <button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="books.html">Books</a>
+    <a href="discover.html">Discover</a>
+    <a href="shop.html">Shop</a>
+    <a href="animations.html">Animations</a>
+    <a href="about.html">About</a>
+    <a href="find-me.html">Find Me</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main class="reader">
+
+  <div id="loading" class="reader-message">
+    Loading your story...
+  </div>
+
+  <div id="readerArea" hidden>
+
+    <section class="book-heading">
+      <img id="bookCover" hidden alt="">
+      <p class="reader-status" id="bookStatus"></p>
+      <h1 id="bookTitle"></h1>
+      <p id="bookDescription"></p>
+    </section>
+
+    <div id="chapterArea" hidden>
+
+      <div class="reader-controls">
+        <label for="chapterSelect">Choose chapter:</label>
+        <select id="chapterSelect"></select>
+      </div>
+
+      <section>
+        <h2 id="chapterTitle"></h2>
+        <article class="chapter-content" id="chapterContent"></article>
+      </section>
+
+      <div class="reader-buttons">
+        <button id="previousChapter">← Previous</button>
+        <button id="nextChapter">Next →</button>
+      </div>
+
+    </div>
+
+    <div id="emptyMessage" class="reader-message" hidden>
+      No published chapters are available yet.
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <div>
+    <a class="brand" href="index.html">
+      <span>World of</span> BlessGlow
+    </a>
+    <p>Stories. Worlds. Imagination.</p>
+  </div>
+
+  <p class="copyright">
+    © 2026 World of BlessGlow. All rights reserved.
+  </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+
+<script>
+const SUPABASE_URL = "https://zngagaolaiidgyxoldsh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const params = new URLSearchParams(location.search);
+const slug = params.get("book");
+
+const loading = document.getElementById("loading");
+const readerArea = document.getElementById("readerArea");
+const chapterArea = document.getElementById("chapterArea");
+const emptyMessage = document.getElementById("emptyMessage");
+
+let chapters = [];
+let currentIndex = 0;
+
+function showError(message) {
+  loading.hidden = false;
+  loading.textContent = message;
+}
+
+function updateChapter() {
+  const chapter = chapters[currentIndex];
+  if (!chapter) return;
+
+  document.getElementById("chapterTitle").textContent =
+    chapter.title || `Chapter ${chapter.chapter_number}`;
+
+  document.getElementById("chapterContent").textContent =
+    chapter.content || "";
+
+  document.getElementById("chapterSelect").value = chapter.id;
+
+  document.getElementById("previousChapter").disabled =
+    currentIndex === 0;
+
+  document.getElementById("nextChapter").disabled =
+    currentIndex === chapters.length - 1;
+
+  const url = new URL(location.href);
+  url.searchParams.set("chapter", chapter.chapter_number);
+  history.replaceState({}, "", url);
+}
+
+async function loadReader() {
+  if (!slug) {
+    showError("No book was selected. Please return to the library.");
+    return;
+  }
+
+  try {
+    const { data: book, error: bookError } = await db
+      .from("books")
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (bookError) throw bookError;
+
+    if (!book) {
+      showError("This book could not be found.");
+      return;
+    }
+
+    loading.hidden = true;
+    readerArea.hidden = false;
+
+    document.getElementById("bookTitle").textContent = book.title;
+    document.getElementById("bookDescription").textContent =
+      book.description || "";
+
+    const status = book.publication_status || "";
+    document.getElementById("bookStatus").textContent =
+      status.replaceAll("_", " ");
+
+    const cover = document.getElementById("bookCover");
+
+    if (book.cover_url) {
+      cover.src = book.cover_url;
+      cover.alt = `Cover of ${book.title}`;
+      cover.hidden = false;
+    }
+
+    if (status === "coming_soon") {
+      emptyMessage.textContent = "This story is coming soon.";
+      emptyMessage.hidden = false;
+      return;
+    }
+
+    const { data, error } = await db
+      .from("chapters")
+      .select("id,chapter_number,title,content")
+      .eq("book_id", book.id)
+      .eq("publication_status", "published")
+      .order("chapter_number", { ascending: true });
+
+    if (error) throw error;
+
+    chapters = data || [];
+
+    if (!chapters.length) {
+      emptyMessage.hidden = false;
+      return;
+    }
+
+    chapterArea.hidden = false;
+
+    const select = document.getElementById("chapterSelect");
+
+    chapters.forEach((chapter, index) => {
+      const option = document.createElement("option");
+      option.value = chapter.id;
+      option.textContent =
+        `Chapter ${chapter.chapter_number}: ${chapter.title || ""}`;
+      select.appendChild(option);
+    });
+
+    const requestedChapter = Number(params.get("chapter"));
+
+    const requestedIndex = chapters.findIndex(
+      chapter => Number(chapter.chapter_number) === requestedChapter
+    );
+
+    currentIndex = requestedIndex >= 0 ? requestedIndex : 0;
+
+    updateChapter();
+
+  } catch (error) {
+    console.error(error);
+    showError("Unable to load this story. Please try again later.");
+  }
+}
+
+document.getElementById("chapterSelect").addEventListener("change", event => {
+  currentIndex = chapters.findIndex(
+    chapter => chapter.id === event.target.value
+  );
+  updateChapter();
+});
+
+document.getElementById("previousChapter").addEventListener("click", () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    updateChapter();
+  }
+});
+
+document.getElementById("nextChapter").addEventListener("click", () => {
+  if (currentIndex < chapters.length - 1) {
+    currentIndex++;
+    updateChapter();
+  }
+});
+
+loadReader();
+</script>
+
+</body>
+      </html>
+      
