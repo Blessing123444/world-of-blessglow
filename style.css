@@ -1007,3 +1007,44 @@ footer,
   height: 100%;
   object-fit: cover;
   }
+
+.cover-stage{
+ width:170px;
+ height:225px;
+ margin:12px 0;
+ border:1px dashed #806b36;
+ border-radius:8px;
+ background:#090909;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ overflow:hidden;
+}
+#coverPlaceholder{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:9px;
+ color:#d4af37;
+ text-align:center;
+ padding:12px;
+}
+#coverPlaceholder span{
+ font-size:15px;
+ font-weight:bold;
+ letter-spacing:2px;
+}
+#coverPlaceholder small{
+ color:#aaa;
+ font-size:11px;
+}
+#coverPreview{
+ display:none;
+ width:100%;
+ height:100%;
+ max-width:none;
+ max-height:none;
+ object-fit:contain;
+ margin:0;
+ border-radius:0;
+}
