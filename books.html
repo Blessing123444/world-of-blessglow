@@ -7,7 +7,6 @@
 <meta name="description" content="Explore original stories at World of BlessGlow.">
 <title>Library | World of BlessGlow</title>
 <link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 .library-tools{max-width:850px;margin:35px auto 30px;padding:0 20px}
 .library-search{display:flex;gap:10px;align-items:center;padding:12px 16px;border:1px solid #51432c;background:#100e13}
@@ -26,13 +25,16 @@
 .no-results.show{display:block}
 .loading{text-align:center;padding:45px 15px;color:#d8b56a}
 .book-card .text-link{display:inline-block;margin-top:10px}
+.book-cover-placeholder{min-height:250px;display:grid;place-items:center;color:#d8b56a;padding:20px;text-align:center}
 </style>
 </head>
+
 <body>
 
 <header class="site-header">
 <a class="brand" href="index.html"><span>World of</span> BlessGlow</a>
-<button class="menu-toggle" aria-label="Toggle navigation">☰</button>
+<button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+
 <nav class="nav">
 <a href="index.html">Home</a>
 <a class="active" href="books.html">Books</a>
@@ -46,6 +48,7 @@
 </header>
 
 <main>
+
 <section class="page-hero">
 <p class="eyebrow">THE LIBRARY</p>
 <h1>Stories Written to <em>Stay</em></h1>
@@ -53,6 +56,7 @@
 </section>
 
 <section class="library-tools">
+
 <div class="library-search">
 <span>⌕</span>
 <input id="bookSearch" type="search" placeholder="Search books, authors or genres...">
@@ -76,11 +80,12 @@
 </select>
 
 <div class="library-tabs">
-<button class="active" data-status="all">All Books</button>
-<button data-status="ongoing">Ongoing</button>
-<button data-status="completed">Completed</button>
-<button data-status="coming_soon">Coming Soon</button>
+<button class="active" data-status="all" type="button">All Books</button>
+<button data-status="ongoing" type="button">Ongoing</button>
+<button data-status="completed" type="button">Completed</button>
+<button data-status="coming_soon" type="button">Coming Soon</button>
 </div>
+
 <p class="library-count" id="bookCount"></p>
 </section>
 
@@ -88,6 +93,7 @@
 <div class="book-grid" id="bookGrid">
 <p class="loading">Loading the library...</p>
 </div>
+
 <div class="no-results" id="noResults">
 <h2>No stories found</h2>
 <p>Try another search or filter.</p>
@@ -104,6 +110,7 @@
 <a class="text-link" href="animations.html">Explore Our Animations →</a>
 </div>
 </section>
+
 </main>
 
 <footer>
@@ -111,6 +118,7 @@
 <a class="brand" href="index.html"><span>World of</span> BlessGlow</a>
 <p>Stories. Worlds. Imagination.</p>
 </div>
+
 <div class="footer-links">
 <a href="books.html">Books</a>
 <a href="discover.html">Discover</a>
@@ -118,107 +126,10 @@
 <a href="animations.html">Animations</a>
 <a href="contact.html">Contact</a>
 </div>
+
 <p class="copyright">© 2026 Blessing Effiong. All rights reserved.</p>
 </footer>
 
-<script>
-const DB_URL="https://zngagaolaiidgyxoldsh.supabase.co";
-const DB_KEY="sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
-const db=supabase.createClient(DB_URL,DB_KEY);
-
-const grid=document.getElementById("bookGrid");
-const search=document.getElementById("bookSearch");
-const genre=document.getElementById("genreFilter");
-const count=document.getElementById("bookCount");
-const empty=document.getElementById("noResults");
-const tabButtons=[...document.querySelectorAll(".library-tabs button")];
-
-let allBooks=[];
-let activeStatus="all";
-
-function safe(value=""){
- return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-function statusName(status){
- return ({ongoing:"Ongoing",completed:"Completed",published:"Published",coming_soon:"Coming Soon"})[status]||status;
-}
-function searchable(book){
- return [book.title,book.description,book.main_genre,book.subgenre,"Blessing Effiong"].join(" ").toLowerCase();
-}
-function renderBooks(){
- const query=search.value.trim().toLowerCase();
- const selectedGenre=genre.value.toLowerCase();
-
- const filtered=allBooks.filter(book=>{
-  const status=book.publication_status;
-  const statusMatch=activeStatus==="all"||
-   (activeStatus==="completed"&&(status==="completed"||status==="published"))||
-   status===activeStatus;
-  const genreMatch=selectedGenre==="all"||
-   (book.main_genre||"").toLowerCase()===selectedGenre;
-  return statusMatch&&genreMatch&&searchable(book).includes(query);
- });
-
- grid.innerHTML=filtered.map(book=>{
-  const coming=book.publication_status==="coming_soon";
-  const cover=book.cover_url
-   ?`<img src="${safe(book.cover_url)}" alt="${safe(book.title)} book cover" loading="lazy">`
-   :`<div style="min-height:250px;display:grid;place-items:center;color:#d8b56a;padding:20px;text-align:center">Cover coming soon</div>`;
-
-  const link=`read.html?book=${encodeURIComponent(book.slug)}`;
-  return `
-   <article class="book-card">
-    <div class="book-cover-image">${cover}</div>
-    <div class="book-info">
-     <p class="tag">${safe(book.main_genre||"STORY")}${book.subgenre?" • "+safe(book.subgenre):""}</p>
-     <h2>${safe(book.title)}</h2>
-     <p>${safe(book.description||"Discover this story from World of BlessGlow.")}</p>
-     <span class="status">${safe(statusName(book.publication_status))}</span>
-     ${coming
-      ?'<span class="text-link">Coming Soon</span>'
-      :`<a class="text-link" href="${link}">Read Now →</a>`}
-    </div>
-   </article>`;
- }).join("");
-
- count.textContent=`${filtered.length} ${filtered.length===1?"story":"stories"} found`;
- empty.classList.toggle("show",filtered.length===0);
-}
-async function loadBooks(){
- grid.innerHTML='<p class="loading">Loading the library...</p>';
-
- const {data,error}=await db.from("books")
-  .select("id,title,slug,description,main_genre,subgenre,publication_status,cover_url,created_at")
-  .in("publication_status",["published","ongoing","completed","coming_soon"])
-  .order("title",{ascending:true});
-
- if(error){
-  grid.innerHTML=`<p class="loading">Unable to load books: ${safe(error.message)}</p>`;
-  return;
- }
- allBooks=data||[];
- renderBooks();
-}
-search.addEventListener("input",renderBooks);
-genre.addEventListener("change",renderBooks);
-document.getElementById("clearSearch").addEventListener("click",()=>{
- search.value="";
- genre.value="all";
- activeStatus="all";
- tabButtons.forEach(b=>b.classList.toggle("active",b.dataset.status==="all"));
- renderBooks();
-});
-tabButtons.forEach(button=>{
- button.addEventListener("click",()=>{
-  activeStatus=button.dataset.status;
-  tabButtons.forEach(b=>b.classList.toggle("active",b===button));
-  renderBooks();
- });
-});
-loadBooks();
-</script>
-<script src="script.js"></script>
+<script src="script.js" defer></script>
 </body>
 </html>
-
-            
