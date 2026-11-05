@@ -1,221 +1,214 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b0b0b">
-<title>Admin | World of BlessGlow</title>
+<title>World of BlessGlow | Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#0b0b0b;--panel:#151515;--gold:#d4af37;--muted:#aaa;--border:#302817}
+:root{--bg:#0b0b0b;--panel:#151515;--gold:#d4af37;--text:#eee;--muted:#aaa;--border:#302817;--red:#d65b5b;--green:#58b987}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding:20px}
-body{margin:0;background:var(--bg);color:#f5f0df;font:15px Arial;line-height:1.6}
-header,footer{text-align:center;padding:20px;border-bottom:1px solid var(--border)}
-h1,h2,.gold{color:var(--gold)}
-h1{font:27px Georgia;margin:0}
-header p,footer,.note,.meta{color:var(--muted);font-size:13px}
-main{max-width:1050px;margin:25px auto;padding:0 15px 40px}
-.panel,.stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:17px;margin-bottom:16px}
-label{display:block;color:var(--gold);margin:12px 0 5px}
-input,select,textarea{width:100%;padding:12px;background:#090909;color:white;border:1px solid #4a4028;border-radius:7px;font:15px Arial}
-textarea{min-height:100px}
-input[type=checkbox]{width:auto;accent-color:var(--gold)}
-button{padding:11px 14px;border:0;border-radius:7px;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5;cursor:wait}
-.primary{background:var(--gold);color:#111}
-.secondary{background:#292929;color:white;border:1px solid #454545}
-.approve,.restore{background:#174b35;color:#a9ffce}
-.reject,.delete{background:#512323;color:#ffc1c1}
-.trash{background:#473518;color:#ffe0a1}
-.tabs,.toolbar,.actions{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
-.tabs button,.toolbar button{flex:1}
-.active{outline:1px solid var(--gold);background:#382e15;color:var(--gold)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{padding:22px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:15px}
+header h2{color:var(--gold);margin:0;font-size:21px}
+button,input,textarea,select{font:inherit}
+button{background:var(--gold);color:#111;border:0;padding:11px 16px;border-radius:6px;cursor:pointer;font-weight:bold}
+button.secondary{background:#292929;color:#eee;border:1px solid var(--border)}
+button.danger{background:#702d2d;color:white}
+button:disabled{opacity:.5;cursor:not-allowed}
+main{max-width:1150px;margin:28px auto;padding:0 16px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:22px}
+h2,h3{color:var(--gold)}
+h3{margin-top:0}
+label{display:block;color:var(--muted);font-size:13px;margin:14px 0 6px}
+input,textarea,select{width:100%;padding:12px;background:#090909;color:white;border:1px solid #393939;border-radius:6px}
+textarea{min-height:110px;resize:vertical}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.checks{display:flex;flex-wrap:wrap;gap:18px;margin:16px 0}
+.checks label{display:flex;align-items:center;gap:7px;margin:0}
+.checks input{width:auto}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tabs button{background:#222;color:#ddd;border:1px solid var(--border)}
+.tabs button.active{background:var(--gold);color:#111}
+.item{padding:15px 0;border-bottom:1px solid var(--border)}
+.item:last-child{border:0}
+.item strong{color:var(--gold)}
+.item small{display:block;color:var(--muted);margin:6px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.status{color:var(--gold);font-size:12px;text-transform:uppercase}
 .hidden{display:none!important}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.check{display:flex;align-items:center;gap:9px;margin:12px 0}
-.check label{color:white;margin:0}
-.filename{color:var(--gold);font-size:13px;overflow-wrap:anywhere}
-.preview{width:130px;height:175px;object-fit:cover;border-radius:7px;margin-top:10px}
-.book{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--border)}
-.cover{width:75px;height:100px;object-fit:cover;background:#222;border-radius:6px}
-.book-info{flex:1;min-width:0}
-.book h3{margin:0;color:var(--gold)}
-.review{padding:17px 0;border-bottom:1px solid var(--border)}
-.answers{background:#0d0d0d;padding:12px;border-radius:8px;overflow-wrap:anywhere}
-.answers p{margin:0 0 15px}
-.answers p:last-child{margin-bottom:0}
-.review-text{white-space:pre-wrap;overflow-wrap:anywhere}
-.badge{background:#252525;border-radius:20px;padding:3px 9px;font-size:12px}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.stat{margin:0;padding:12px}
-.stat strong{display:block;color:var(--gold);font-size:22px}
-.stat span{font-size:12px;color:var(--muted)}
-.empty{text-align:center;color:var(--muted);padding:20px}
-@media(max-width:600px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+.message{color:var(--gold);margin-top:12px}
+#login{max-width:420px;margin:70px auto}
+#login h2{text-align:center}
+#coverPreview{max-width:130px;max-height:160px;object-fit:cover;margin-top:10px;display:none}
+.review-answer{margin:10px 0;padding:10px;background:#101010;border-radius:6px}
+.review-answer b{color:var(--gold)}
+@media(max-width:650px){.grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}.panel{padding:16px}}
 </style>
 </head>
-<body>
 
+<body>
 <header>
-<h1>World of BlessGlow</h1>
-<p>Private Admin Control Centre</p>
+  <h2>World of BlessGlow — Admin</h2>
+  <button id="logoutBtn" class="secondary hidden" onclick="logout()">Log Out</button>
 </header>
 
-<main>
 <section id="login" class="panel">
-<h2>Admin Sign In</h2>
-<form id="loginForm">
-<label>Email</label><input id="email" type="email" required>
-<label>Password</label><input id="password" type="password" required>
-<button class="primary" id="loginBtn" style="width:100%;margin-top:15px">Sign In</button>
-</form>
-<p id="loginMsg"></p>
+  <h2>Admin Login</h2>
+  <label>Email</label>
+  <input id="email" type="email" autocomplete="username" placeholder="Admin email">
+  <label>Password</label>
+  <input id="password" type="password" autocomplete="current-password" placeholder="Password">
+  <button style="width:100%;margin-top:18px" onclick="login()">Log In</button>
+  <p id="loginMessage" class="message"></p>
 </section>
 
-<section id="dashboard" class="hidden">
-<div class="panel">
-<h2>Welcome, Admin 👑</h2>
-<div class="actions">
-<button class="secondary" id="refresh">Refresh</button>
-<button class="secondary" id="logout">Sign Out</button>
-</div>
-<p id="message"></p>
-</div>
+<main id="dashboard" class="hidden">
+  <div class="tabs">
+    <button class="active" onclick="showTab('books',this)">Books</button>
+    <button onclick="showTab('chapters',this)">Chapters</button>
+    <button onclick="showTab('reviews',this)">Reviews</button>
+  </div>
 
-<div class="tabs">
-<button class="secondary active" id="booksTab">📚 Books</button>
-<button class="secondary" id="reviewsTab">⭐ Reviews</button>
-</div>
+  <!-- BOOKS -->
+  <section id="booksTab">
+    <div class="panel">
+      <h3 id="bookFormTitle">Add a Book</h3>
+      <input type="hidden" id="bookId">
 
-<section id="booksSection">
-<div class="panel">
-<h2>Books Management</h2>
-<div class="actions">
-<button class="secondary" id="newBook">＋ Add Book</button>
-<button class="secondary" id="refreshBooks">Refresh Books</button>
-</div>
-<p id="bookMsg"></p>
-<div id="bookList"></div>
-</div>
+      <div class="grid">
+        <div><label>Book Title</label><input id="title" placeholder="Book title"></div>
+        <div><label>Book Slug</label><input id="slug" placeholder="book-title"></div>
+        <div>
+          <label>Main Genre</label>
+          <select id="mainGenre" onchange="updateSubgenres()"></select>
+        </div>
+        <div>
+          <label>Subgenre</label>
+          <select id="subgenre"></select>
+        </div>
+        <div>
+          <label>Publication Status</label>
+          <select id="bookStatus">
+            <option value="draft">Draft — Private</option>
+            <option value="coming_soon">Coming Soon</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived — Private</option>
+          </select>
+        </div>
+        <div><label>Release Date</label><input id="releaseDate" type="date"></div>
+      </div>
 
-<div class="panel" id="bookEditor">
-<h2 id="formTitle">Add a Book</h2>
-<form id="bookForm">
-<input type="hidden" id="bookId">
+      <label>Description</label>
+      <textarea id="description" placeholder="Write the book description..."></textarea>
 
-<label>Book title *</label>
-<input id="title" required maxlength="180">
+      <label>Book Cover</label>
+      <input id="coverFile" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewCover()">
+      <img id="coverPreview" alt="Cover preview">
 
-<label>Book slug *</label>
-<input id="slug" required placeholder="book-title">
-<p class="note">Existing slugs cannot be changed.</p>
+      <div class="checks">
+        <label><input id="featured" type="checkbox"> Featured on homepage</label>
+        <label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
+        <label><input id="freeInterest" type="checkbox"> Allow Notify Me</label>
+        <label><input id="preorder" type="checkbox"> Allow Preorder</label>
+      </div>
 
-<label>Description</label>
-<textarea id="description"></textarea>
+      <div class="actions">
+        <button onclick="saveBook()">Save Book</button>
+        <button class="secondary" onclick="clearBookForm()">Clear Form</button>
+      </div>
+      <p id="bookMessage" class="message"></p>
+    </div>
 
-<div class="grid">
-<div><label>Main genre *</label><select id="genre" required></select></div>
-<div><label>Subgenre *</label><select id="subgenre" required disabled></select></div>
-</div>
+    <div class="panel">
+      <h3>Manage Books</h3>
+      <input id="bookSearch" placeholder="Search books..." oninput="renderBooks()">
+      <div id="booksList">Loading books...</div>
+    </div>
+  </section>
 
-<label>Publication status</label>
-<select id="status">
-<option value="draft">Draft</option>
-<option value="coming_soon">Coming Soon</option>
-<option value="ongoing">Ongoing</option>
-<option value="completed">Completed</option>
-<option value="published">Published</option>
-<option value="archived">Archived</option>
-</select>
+  <!-- CHAPTERS -->
+  <section id="chaptersTab" class="hidden">
+    <div class="panel">
+      <h3 id="chapterFormTitle">Add a Chapter</h3>
+      <input type="hidden" id="chapterId">
 
-<label>Release date</label>
-<input id="releaseDate" type="date">
+      <label>Select Book</label>
+      <select id="chapterBook" onchange="loadChapters()">
+        <option value="">Choose a book</option>
+      </select>
 
-<label>Book cover</label>
-<input id="coverFile" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-<div id="filename" class="filename">No image selected.</div>
-<p class="note">JPEG, PNG or WebP · Maximum 20 MB.</p>
-<img id="preview" class="preview hidden" alt="Book cover preview">
+      <div class="grid">
+        <div><label>Chapter Number</label><input id="chapterNumber" type="number" min="1" placeholder="1"></div>
+        <div><label>Chapter Title</label><input id="chapterTitle" placeholder="Chapter title"></div>
+      </div>
 
-<div class="check"><input id="interest" type="checkbox"><label for="interest">Allow free reader interest</label></div>
-<div class="check"><input id="preorder" type="checkbox"><label for="preorder">Allow paid pre-orders</label></div>
-<div class="check"><input id="featured" type="checkbox"><label for="featured">Featured book</label></div>
-<div class="check"><input id="editorsPick" type="checkbox"><label for="editorsPick">Editor's Pick</label></div>
+      <label>Chapter Content</label>
+      <textarea id="chapterContent" style="min-height:300px" placeholder="Write your chapter here..."></textarea>
 
-<div class="actions">
-<button class="primary" id="saveBook">Save Book</button>
-<button class="secondary" type="button" id="clearForm">Clear</button>
-</div>
-</form>
-</div>
-</section>
+      <label>Chapter Status</label>
+      <select id="chapterStatus">
+        <option value="draft">Draft — Only visible in Admin</option>
+        <option value="published">Published — Visible to Readers</option>
+      </select>
 
-<section id="reviewsSection" class="hidden">
-<div class="stats">
-<div class="stat"><strong id="total">0</strong><span>Active</span></div>
-<div class="stat"><strong id="pending">0</strong><span>Pending</span></div>
-<div class="stat"><strong id="approved">0</strong><span>Approved</span></div>
-<div class="stat"><strong id="rejected">0</strong><span>Rejected</span></div>
-<div class="stat"><strong id="trashCount">0</strong><span>Trash</span></div>
-</div>
+      <div class="actions">
+        <button onclick="saveChapter()">Save Chapter</button>
+        <button class="secondary" onclick="clearChapterForm()">Clear Form</button>
+      </div>
+      <p id="chapterMessage" class="message"></p>
+    </div>
 
-<div class="panel">
-<h2>Reader Reviews</h2>
-<div class="toolbar">
-<button class="secondary active" id="activeBtn">Active Reviews</button>
-<button class="secondary" id="trashBtn">Trash</button>
-</div>
+    <div class="panel">
+      <h3>Manage Chapters</h3>
+      <p style="color:var(--muted);font-size:13px">Choose a book above to view and manage its chapters.</p>
+      <div id="chaptersList">Select a book to load its chapters.</div>
+    </div>
+  </section>
 
-<label>Book</label>
-<select id="bookFilter"><option value="all">All Books</option></select>
-
-<div id="statusBox">
-<label>Status</label>
-<select id="statusFilter">
-<option value="all">All statuses</option>
-<option value="pending">Pending</option>
-<option value="approved">Approved</option>
-<option value="rejected">Rejected</option>
-</select>
-</div>
-
-<p id="reviewMsg"></p>
-<div id="reviewList"></div>
-</div>
-</section>
-</section>
+  <!-- REVIEWS -->
+  <section id="reviewsTab" class="hidden">
+    <div class="panel">
+      <h3>Reader Reviews</h3>
+      <div class="grid">
+        <div>
+          <label>Filter by Book</label>
+          <select id="reviewBookFilter" onchange="loadReviews()">
+            <option value="">All Books</option>
+          </select>
+        </div>
+        <div>
+          <label>Review Status</label>
+          <select id="reviewStatusFilter" onchange="loadReviews()">
+            <option value="">All Reviews</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div id="reviewsList">Open this tab to load reviews.</div>
+    </div>
+  </section>
 </main>
 
-<footer>World of BlessGlow · Stories. Worlds. Imagination.</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-(()=>{
-"use strict";
+const SUPABASE_URL = "https://zngagaolaiidgyxoldsh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+const ADMIN_ID = "2bd42c9f-de63-4c68-a685-2c541b1a549c";
+const REVIEW_API = "https://world-of-blessglow.pages.dev/api/admin/reviews";
 
-const SUPABASE_URL="https://zngagaolaiidgyxoldsh.supabase.co";
-const KEY="sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
-const ADMIN="2bd42c9f-de63-4c68-a685-2c541b1a549c";
-const API="https://world-of-blessglow.pages.dev/api/admin/reviews";
-const BUCKET="book-covers";
-const MAX=20*1024*1024;
-const $=id=>document.getElementById(id);
-const db=window.supabase.createClient(SUPABASE_URL,KEY,{
-  auth:{persistSession:true,autoRefreshToken:true}
-});
+const db = supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let books = [];
+let chapters = [];
+let reviews = [];
 
-let user=null,books=[],active=[],trashed=[],view="active",busy=false,previewURL=null;
-
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
-
-const say=(id,msg,bad=false)=>{
-  $(id).textContent=msg;
-  $(id).style.color=bad?"#ff7777":"var(--gold)";
-};
-
-const genres={
+const genres = {
 "Romance":["Campus Romance","Slow-Burn Romance","Enemies to Lovers","Friends to Lovers","Second-Chance Love","Forbidden Love","Unrequited Love","Billionaire Romance","Fake Dating","Love Triangle"],
 "Revenge & Comebacks":["Betrayed Heiress","Revenge Against an Ex","Family Revenge","Revenge After Rejection","Secret Identity","The Ultimate Comeback","Revenge and Redemption","From Underdog to Powerful","The Heiress Returns","The Revenge Plan"],
 "Dark Romance":["Obsession and Attraction","Forbidden Dark Love","Gothic Romance","Mafia Romance","Morally Grey Love Interests","Rivals with Chemistry","Dangerous Secrets","Twisted Relationships","Possessive Love","The Dangerous Deal"],
@@ -230,508 +223,303 @@ const genres={
 "Vampires & Immortals":["Vampire Romance","Ancient Vampires","Vampire Royalty","Immortal Love","Human and Vampire","Vampire Hunters","Cursed Immortals","Supernatural Clans","Vampire Academy","The Forbidden Bloodline"]
 };
 
-$("genre").innerHTML='<option value="">Choose genre</option>'+
-  Object.keys(genres).map(x=>`<option>${esc(x)}</option>`).join("");
-
-function fillSubgenre(value=""){
-  const list=genres[$("genre").value]||[];
-  $("subgenre").innerHTML='<option value="">Choose subgenre</option>'+
-    list.map(x=>`<option>${esc(x)}</option>`).join("");
-  $("subgenre").disabled=!list.length;
-  $("subgenre").value=value;
+function el(id){return document.getElementById(id)}
+function message(id,text){el(id).textContent=text}
+function escapeHTML(value=""){
+ return String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-$("genre").onchange=()=>fillSubgenre();
-
-/* AUTHENTICATION */
-async function token(){
-  const {data,error}=await db.auth.getSession();
-  if(error)throw error;
-  if(!data.session)throw Error("Your session has expired. Please sign in again.");
-  if(data.session.user.id!==ADMIN){
-    await db.auth.signOut();
-    throw Error("This account is not authorised.");
-  }
-  user=data.session.user;
-  return data.session.access_token;
+function showTab(tab,button){
+ ["books","chapters","reviews"].forEach(x=>el(x+"Tab").classList.toggle("hidden",x!==tab));
+ document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+ button.classList.add("active");
+ if(tab==="chapters") fillChapterBooks();
+ if(tab==="reviews") loadReviews();
 }
-
-function show(){
-  $("login").classList.add("hidden");
-  $("dashboard").classList.remove("hidden");
+function updateSubgenres(selected=""){
+ const genre=el("mainGenre").value;
+ el("subgenre").innerHTML=(genres[genre]||[]).map(s=>`<option ${s===selected?"selected":""}>${escapeHTML(s)}</option>`).join("");
 }
-
-function tab(name){
-  const isBooks=name==="books";
-  $("booksSection").classList.toggle("hidden",!isBooks);
-  $("reviewsSection").classList.toggle("hidden",isBooks);
-  $("booksTab").classList.toggle("active",isBooks);
-  $("reviewsTab").classList.toggle("active",!isBooks);
+function setupGenres(){
+ el("mainGenre").innerHTML=Object.keys(genres).map(g=>`<option>${escapeHTML(g)}</option>`).join("");
+ updateSubgenres();
 }
-$("booksTab").onclick=()=>tab("books");
-$("reviewsTab").onclick=()=>tab("reviews");
-
-$("loginForm").onsubmit=async e=>{
-  e.preventDefault();
-  $("loginBtn").disabled=true;
-  say("loginMsg","Signing in...");
-  try{
-    const {data,error}=await db.auth.signInWithPassword({
-      email:$("email").value.trim(),
-      password:$("password").value
-    });
-    if(error)throw error;
-    if(data.user.id!==ADMIN){
-      await db.auth.signOut();
-      throw Error("This account is not authorised.");
-    }
-    user=data.user;
-    show();
-    await Promise.all([loadBooks(),loadReviews()]);
-    say("message","Welcome back.");
-  }catch(e){say("loginMsg",e.message,true);}
-  finally{$("loginBtn").disabled=false;}
-};
-
-/* BOOK LIST */
+async function login(){
+ message("loginMessage","Signing in...");
+ const {error}=await db.auth.signInWithPassword({email:el("email").value,password:el("password").value});
+ if(error){message("loginMessage",error.message);return}
+ await checkSession();
+}
+async function logout(){
+ await db.auth.signOut();
+ location.reload();
+}
+async function checkSession(){
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){el("login").classList.remove("hidden");return}
+ if(session.user.id!==ADMIN_ID){
+  await db.auth.signOut();
+  message("loginMessage","This account is not authorised as an administrator.");
+  el("login").classList.remove("hidden");
+  return;
+ }
+ el("login").classList.add("hidden");
+ el("dashboard").classList.remove("hidden");
+ el("logoutBtn").classList.remove("hidden");
+ await loadBooks();
+}
 async function loadBooks(){
-  if(!user)return;
-  $("bookList").innerHTML='<p class="empty">Loading books...</p>';
-  try{
-    const {data,error}=await db.from("books").select("*").order("created_at");
-    if(error)throw error;
-    books=data||[];
+ const {data,error}=await db.from("books").select("*").order("created_at",{ascending:false});
+ if(error){el("booksList").textContent=error.message;return}
+ books=data||[];
+ renderBooks();
+ fillChapterBooks();
+ fillReviewBooks();
+}
+function renderBooks(){
+ const term=el("bookSearch").value.toLowerCase();
+ const list=books.filter(b=>(b.title||"").toLowerCase().includes(term)||(b.slug||"").toLowerCase().includes(term));
+ el("booksList").innerHTML=list.length?list.map(b=>`
+ <div class="item">
+  <strong>${escapeHTML(b.title)}</strong>
+  <small>${escapeHTML(b.main_genre||"")} · ${escapeHTML(b.subgenre||"")} · <span class="status">${escapeHTML(b.publication_status||"")}</span></small>
+  <div class="actions">
+   <button onclick="editBook('${b.id}')">Edit</button>
+   <button class="secondary" onclick="openChaptersFor('${b.id}')">Chapters</button>
+  </div>
+ </div>`).join(""):"No books found.";
+}
+function previewCover(){
+ const file=el("coverFile").files[0];
+ if(!file)return;
+ el("coverPreview").src=URL.createObjectURL(file);
+ el("coverPreview").style.display="block";
+}
+async function saveBook(){
+ const id=el("bookId").value;
+ const title=el("title").value.trim();
+ const slug=el("slug").value.trim();
+ if(!title||!slug){message("bookMessage","Enter a book title and slug.");return}
+ message("bookMessage","Saving...");
+ let cover_url=books.find(b=>b.id===id)?.cover_url||null;
+ const file=el("coverFile").files[0];
 
-    $("bookList").innerHTML=books.map(b=>`
-      <article class="book">
-        ${b.cover_url
-          ?`<img class="cover" src="${esc(b.cover_url)}" alt="Cover">`
-          :'<div class="cover"></div>'}
-        <div class="book-info">
-          <h3>${esc(b.title)}</h3>
-          <p>${esc(b.main_genre||"No genre")} · ${esc(b.subgenre||"No subgenre")}</p>
-          <p>Status: ${esc(b.publication_status)}</p>
-          <button class="secondary" data-edit="${esc(b.id)}">Edit</button>
-        </div>
-      </article>`).join("")||'<p class="empty">No books found.</p>';
+ if(file){
+  if(file.size>20*1024*1024){message("bookMessage","Cover image must be 20 MB or smaller.");return}
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
+  const path=`${slug}/${Date.now()}-${safeName}`;
+  const {error:uploadError}=await db.storage.from("book-covers").upload(path,file,{upsert:true,contentType:file.type});
+  if(uploadError){message("bookMessage",uploadError.message);return}
+  const {data}=db.storage.from("book-covers").getPublicUrl(path);
+  cover_url=data.publicUrl;
+ }
 
-    const selected=$("bookFilter").value;
-    $("bookFilter").innerHTML='<option value="all">All Books</option>'+
-      books.map(b=>`<option value="${esc(b.slug)}">${esc(b.title)}</option>`).join("");
-    $("bookFilter").value=books.some(b=>b.slug===selected)?selected:"all";
-    say("bookMsg",books.length+" books loaded.");
-  }catch(e){say("bookMsg",e.message,true);}
+ const record={
+  title,slug,description:el("description").value.trim(),
+  main_genre:el("mainGenre").value,subgenre:el("subgenre").value,
+  publication_status:el("bookStatus").value,
+  release_date:el("releaseDate").value||null,
+  cover_url,
+  is_featured:el("featured").checked,
+  is_editors_pick:el("editorsPick").checked,
+  allow_free_interest:el("freeInterest").checked,
+  allow_preorder:el("preorder").checked
+ };
+ const result=id?await db.from("books").update(record).eq("id",id):await db.from("books").insert(record);
+ if(result.error){message("bookMessage",result.error.message);return}
+ clearBookForm();
+ message("bookMessage","Book saved successfully.");
+ await loadBooks();
+}
+function editBook(id){
+ const b=books.find(x=>x.id===id);if(!b)return;
+ el("bookId").value=b.id;
+ el("title").value=b.title||"";
+ el("slug").value=b.slug||"";
+ el("description").value=b.description||"";
+ el("mainGenre").value=b.main_genre||Object.keys(genres)[0];
+ updateSubgenres(b.subgenre||"");
+ el("bookStatus").value=b.publication_status||"draft";
+ el("releaseDate").value=b.release_date||"";
+ el("featured").checked=!!b.is_featured;
+ el("editorsPick").checked=!!b.is_editors_pick;
+ el("freeInterest").checked=!!b.allow_free_interest;
+ el("preorder").checked=!!b.allow_preorder;
+ el("coverPreview").src=b.cover_url||"";
+ el("coverPreview").style.display=b.cover_url?"block":"none";
+ el("bookFormTitle").textContent="Edit Book";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function clearBookForm(){
+ ["bookId","title","slug","description","releaseDate"].forEach(id=>el(id).value="");
+ el("bookStatus").value="draft";
+ ["featured","editorsPick","freeInterest","preorder"].forEach(id=>el(id).checked=false);
+ el("coverFile").value="";
+ el("coverPreview").style.display="none";
+ el("bookFormTitle").textContent="Add a Book";
+ updateSubgenres();
 }
 
-/* BOOK FORM */
-function clearForm(){
-  $("bookForm").reset();
-  $("bookId").value="";
-  $("slug").readOnly=false;
-  $("formTitle").textContent="Add a Book";
-  $("saveBook").textContent="Save Book";
-  $("filename").textContent="No image selected.";
-  $("preview").classList.add("hidden");
-  $("preview").removeAttribute("src");
-  if(previewURL){window.URL.revokeObjectURL(previewURL);previewURL=null;}
-  fillSubgenre();
+function fillChapterBooks(selected=""){
+ el("chapterBook").innerHTML='<option value="">Choose a book</option>'+
+ books.filter(b=>!["draft","archived"].includes(b.publication_status))
+ .map(b=>`<option value="${b.id}" ${b.id===selected?"selected":""}>${escapeHTML(b.title)}</option>`).join("");
+}
+function openChaptersFor(id){
+ showTab("chapters",document.querySelectorAll(".tabs button")[1]);
+ fillChapterBooks(id);
+ loadChapters();
+}
+async function loadChapters(){
+ const bookId=el("chapterBook").value;
+ if(!bookId){el("chaptersList").textContent="Select a book to load its chapters.";return}
+ el("chaptersList").textContent="Loading chapters...";
+ const {data,error}=await db.from("chapters").select("*").eq("book_id",bookId).order("chapter_number",{ascending:true});
+ if(error){el("chaptersList").textContent=error.message;return}
+ chapters=data||[];
+ renderChapters();
+}
+function renderChapters(){
+ el("chaptersList").innerHTML=chapters.length?chapters.map(c=>`
+ <div class="item">
+  <strong>Chapter ${escapeHTML(c.chapter_number)}: ${escapeHTML(c.title)}</strong>
+  <small><span class="status">${escapeHTML(c.publication_status)}</span></small>
+  <div class="actions">
+   <button onclick="editChapter('${c.id}')">Edit</button>
+   <button class="danger" onclick="deleteChapter('${c.id}')">Delete</button>
+  </div>
+ </div>`).join(""):"No chapters have been added to this book yet.";
+}
+async function saveChapter(){
+ const id=el("chapterId").value;
+ const book_id=el("chapterBook").value;
+ const chapter_number=Number(el("chapterNumber").value);
+ const title=el("chapterTitle").value.trim();
+ const content=el("chapterContent").value.trim();
+ const publication_status=el("chapterStatus").value;
+
+ if(!book_id||!chapter_number||chapter_number<1||!title||!content){
+  message("chapterMessage","Choose a book and enter the chapter number, title and content.");return;
+ }
+ const duplicate=chapters.find(c=>Number(c.chapter_number)===chapter_number&&c.id!==id);
+ if(duplicate){message("chapterMessage","That chapter number already exists for this book.");return}
+
+ message("chapterMessage","Saving chapter...");
+ const existing=chapters.find(c=>c.id===id);
+ const record={
+  book_id,chapter_number,title,content,publication_status,
+  published_at:publication_status==="published"?(existing?.published_at||new Date().toISOString()):null,
+  updated_at:new Date().toISOString()
+ };
+ const result=id
+  ?await db.from("chapters").update(record).eq("id",id)
+  :await db.from("chapters").insert(record);
+ if(result.error){message("chapterMessage",result.error.message);return}
+ clearChapterForm();
+ message("chapterMessage","Chapter saved successfully.");
+ await loadChapters();
+}
+function editChapter(id){
+ const c=chapters.find(x=>x.id===id);if(!c)return;
+ el("chapterId").value=c.id;
+ el("chapterNumber").value=c.chapter_number;
+ el("chapterTitle").value=c.title||"";
+ el("chapterContent").value=c.content||"";
+ el("chapterStatus").value=c.publication_status||"draft";
+ el("chapterFormTitle").textContent="Edit Chapter";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+async function deleteChapter(id){
+ if(!confirm("Delete this chapter permanently?"))return;
+ const {error}=await db.from("chapters").delete().eq("id",id);
+ if(error){message("chapterMessage",error.message);return}
+ message("chapterMessage","Chapter deleted.");
+ await loadChapters();
+}
+function clearChapterForm(){
+ el("chapterId").value="";
+ el("chapterNumber").value="";
+ el("chapterTitle").value="";
+ el("chapterContent").value="";
+ el("chapterStatus").value="draft";
+ el("chapterFormTitle").textContent="Add a Chapter";
 }
 
-$("newBook").onclick=()=>{
-  clearForm();
-  $("bookEditor").scrollIntoView({behavior:"smooth"});
-  $("title").focus({preventScroll:true});
-};
-$("clearForm").onclick=clearForm;
-$("refreshBooks").onclick=loadBooks;
+function fillReviewBooks(){
+ el("reviewBookFilter").innerHTML='<option value="">All Books</option>'+
+ books.map(b=>`<option value="${escapeHTML(b.slug)}">${escapeHTML(b.title)}</option>`).join("");
+}
+async function loadReviews(){
+ const {data:{session}}=await db.auth.getSession();
+ if(!session)return;
+ el("reviewsList").textContent="Loading reviews...";
+ const params=new URLSearchParams();
+ if(el("reviewBookFilter").value)params.set("book_slug",el("reviewBookFilter").value);
+ if(el("reviewStatusFilter").value)params.set("status",el("reviewStatusFilter").value);
 
-$("bookList").onclick=e=>{
-  const button=e.target.closest("[data-edit]");
-  if(!button)return;
-  const b=books.find(x=>x.id===button.dataset.edit);
-  if(!b)return;
-
-  clearForm();
-  $("bookId").value=b.id;
-  $("title").value=b.title||"";
-  $("slug").value=b.slug||"";
-  $("slug").readOnly=true;
-  $("description").value=b.description||"";
-  $("genre").value=b.main_genre||"";
-  fillSubgenre(b.subgenre||"");
-  $("status").value=b.publication_status||"draft";
-  $("releaseDate").value=b.release_date||"";
-
-  ["interest","preorder","featured","editorsPick"].forEach((id,i)=>{
-    $(id).checked=!![
-      b.allow_free_interest,b.allow_preorder,
-      b.is_featured,b.is_editors_pick
-    ][i];
+ try{
+  const response=await fetch(`${REVIEW_API}?${params.toString()}`,{
+   headers:{Authorization:`Bearer ${session.access_token}`}
   });
-
-  $("filename").textContent="No new image selected.";
-  if(b.cover_url){
-    $("preview").src=b.cover_url;
-    $("preview").classList.remove("hidden");
-  }
-  $("formTitle").textContent="Edit Book";
-  $("saveBook").textContent="Update Book";
-  $("bookEditor").scrollIntoView({behavior:"smooth"});
-};
-
-/* COVER PREVIEW */
-$("coverFile").onchange=()=>{
-  const file=$("coverFile").files[0];
-
-  if(previewURL){
-    window.URL.revokeObjectURL(previewURL);
-    previewURL=null;
-  }
-
-  if(!file){
-    $("filename").textContent="No image selected.";
-    return;
-  }
-
-  const ext=file.name.split(".").pop().toLowerCase();
-  const allowed=["jpg","jpeg","png","webp"];
-  if(!allowed.includes(ext)||file.size>MAX){
-    $("coverFile").value="";
-    $("filename").textContent="No image selected.";
-    $("preview").classList.add("hidden");
-    say("bookMsg","Choose a JPG, PNG or WebP image under 20 MB.",true);
-    return;
-  }
-
-  $("filename").textContent="Selected: "+file.name;
-  previewURL=window.URL.createObjectURL(file);
-  $("preview").src=previewURL;
-  $("preview").classList.remove("hidden");
-};
-
-/* COVER UPLOAD */
-async function uploadCover(file,slug){
-  const ext=file.name.split(".").pop().toLowerCase();
-  const types={
-    jpg:"image/jpeg",jpeg:"image/jpeg",
-    png:"image/png",webp:"image/webp"
-  };
-  const contentType=types[ext];
-
-  if(!contentType||file.size>MAX)
-    throw Error("Invalid cover. Use JPG, PNG or WebP under 20 MB.");
-
-  const path=slug+"/"+Date.now()+"-"+Math.random().toString(36).slice(2)+"."+ext;
-
-  say("bookMsg","Uploading book cover...");
-
-  const {data,error}=await db.storage.from(BUCKET).upload(path,file,{
-    contentType,
-    cacheControl:"3600",
-    upsert:false
-  });
-
-  if(error){
-    throw Error("Cover upload failed: "+error.message+
-      ". Check the book-covers bucket and its upload policies.");
-  }
-
-  if(!data?.path)throw Error("Supabase did not confirm the cover upload.");
-
-  const {data:publicData}=db.storage.from(BUCKET).getPublicUrl(data.path);
-  if(!publicData?.publicUrl)throw Error("Could not create the public cover URL.");
-
-  return publicData.publicUrl;
+  const result=await response.json();
+  if(!response.ok)throw new Error(result.error||"Could not load reviews.");
+  reviews=Array.isArray(result)?result:(result.reviews||[]);
+  renderReviews();
+ }catch(error){el("reviewsList").textContent=error.message}
+   }
+  function renderReviews(){
+ if(!reviews.length){el("reviewsList").textContent="No reviews found.";return}
+ el("reviewsList").innerHTML=reviews.map(r=>{
+  const answers=r.discussion_answers||{};
+  const answerHTML=Object.entries(answers).map(([key,value])=>{
+   const match=String(key).match(/(\d+)/);
+   const number=match?Number(match[1]):null;
+   const displayNumber=number!==null&&number>=1&&number<=6?number+1:null;
+   return `<div class="review-answer">${displayNumber?`<b>${displayNumber}. </b>`:""}${escapeHTML(value)}</div>`;
+  }).join("");
+  return `<div class="item">
+   <strong>${escapeHTML(r.display_name||"Reader")}</strong>
+   <small>${escapeHTML(r.book_slug||"")} · ${escapeHTML(r.status||"pending")} · ${"★".repeat(Number(r.rating)||0)}</small>
+   <p>${escapeHTML(r.review_text||"")}</p>
+   ${answerHTML}
+   <div class="actions">
+    <button onclick="moderateReview('${r.id}','approved')">Approve</button>
+    <button class="secondary" onclick="moderateReview('${r.id}','rejected')">Reject</button>
+    <button class="danger" onclick="deleteReview('${r.id}')">Delete</button>
+   </div>
+  </div>`;
+ }).join("");
 }
-
-/* SAVE BOOK */
-$("bookForm").onsubmit=async e=>{
-  e.preventDefault();
-  $("saveBook").disabled=true;
-
-  try{
-    await token();
-
-    const id=$("bookId").value;
-    const slug=$("slug").value.trim().toLowerCase();
-
-    if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))
-      throw Error("Use lowercase letters, numbers and hyphens in the slug.");
-
-    if(books.some(b=>b.slug===slug&&b.id!==id))
-      throw Error("This book slug already exists.");
-
-    if(!$("genre").value||!$("subgenre").value)
-      throw Error("Please choose a genre and subgenre.");
-
-    const existing=books.find(b=>b.id===id);
-    let cover=existing?.cover_url||null;
-    const file=$("coverFile").files[0];
-
-    if(file)cover=await uploadCover(file,slug);
-
-    say("bookMsg","Saving book details...");
-
-    const record={
-      title:$("title").value.trim(),
-      slug,
-      description:$("description").value.trim()||null,
-      cover_url:cover,
-      main_genre:$("genre").value,
-      subgenre:$("subgenre").value,
-      publication_status:$("status").value,
-      release_date:$("releaseDate").value||null,
-      allow_free_interest:$("interest").checked,
-      allow_preorder:$("preorder").checked,
-      is_featured:$("featured").checked,
-      is_editors_pick:$("editorsPick").checked,
-      updated_at:new Date().toISOString()
-    };
-
-    const result=id
-      ?await db.from("books").update(record).eq("id",id)
-      :await db.from("books").insert(record);
-
-    if(result.error){
-      throw Error("Cover uploaded, but book details could not be saved: "+
-        result.error.message);
-    }
-
-    clearForm();
-    await loadBooks();
-    say("bookMsg","Book and cover saved successfully.");
-  }catch(e){
-    say("bookMsg",e.message,true);
-  }finally{
-    $("saveBook").disabled=false;
-  }
-};
-
-/* ADMIN REVIEW API */
-async function api(method,params={},body=null){
-  const accessToken=await token();
-  const url=new window.URL(API);
-
-  Object.entries(params).forEach(([k,v])=>
-    url.searchParams.set(k,String(v))
-  );
-
-  const options={
-    method,
-    headers:{Authorization:"Bearer "+accessToken}
-  };
-
-  if(body){
-    options.headers["Content-Type"]="application/json";
-    options.body=JSON.stringify(body);
-  }
-
-  const response=await fetch(url,options);
-  const result=await response.json().catch(()=>({}));
-
-  if(!response.ok)
-    throw Error(result.error||"Review request failed ("+response.status+").");
-
+async function reviewRequest(id,method,body){
+ const {data:{session}}=await db.auth.getSession();
+ const response=await fetch(REVIEW_API,{
+  method,
+  headers:{
+   "Content-Type":"application/json",
+   Authorization:`Bearer ${session.access_token}`
+  },
+  body:body?JSON.stringify(body):undefined
+ });
+ const result=await response.json();
+ if(!response.ok)throw new Error(result.error||"Review action failed.");
   return result;
 }
-
-async function fetchReviews(trash){
-  const params={status:"all",trash:String(trash)};
-  if($("bookFilter").value!=="all")
-    params.book=$("bookFilter").value;
-
-  return (await api("GET",params)).reviews||[];
+async function moderateReview(id,status){
+ try{
+  await reviewRequest(id,"PATCH",{id,status});
+  await loadReviews();
+ }catch(error){alert(error.message)}
+}
+async function deleteReview(id){
+ if(!confirm("Delete this review?"))return;
+ try{
+  await reviewRequest(id,"DELETE",{id});
+  await loadReviews();
+ }catch(error){alert(error.message)}
 }
 
-async function loadReviews(){
-  if(!user||busy)return;
-  busy=true;
-  $("reviewList").innerHTML='<p class="empty">Loading reviews...</p>';
-
-  try{
-    [active,trashed]=await Promise.all([
-      fetchReviews(false),fetchReviews(true)
-    ]);
-
-    $("total").textContent=active.length;
-    ["pending","approved","rejected"].forEach(s=>{
-      $(s).textContent=active.filter(r=>r.status===s).length;
-    });
-    $("trashCount").textContent=trashed.length;
-    renderReviews();
-    say("reviewMsg","");
-  }catch(e){say("reviewMsg",e.message,true);}
-  finally{busy=false;}
-}
-
-/* FIXED REVIEW QUESTION ORDER */
-const REVIEW_QUESTIONS={
-  "a-love-written-in-silence":[
-    ["💕 Who was your favourite character, and what made you love them?","Your Favourite Character"],
-    ["📖 What was your favourite moment or scene in the story, and why did it stand out to you?","Your Favourite Moment"],
-    ["🥹 How did the love story make you feel, and were you satisfied with the ending?","Your Feelings About the Love Story"],
-    ["💌 If you could describe A Love Written in Silence in three words, what would they be?","Describe the Book in Three Words"],
-    ["💗 Would you recommend this book to another reader? Why or why not?","Would You Recommend This Book?"],
-    ["🌷 What would you like to tell Blessing Effiong, the author?","A Message for the Author","What would you want to tell the author?","What would you like to tell the author?"]
-  ],
-  "behind-her-smile":[
-    ["🖤 What was your first impression of the story?","Your First Impression"],
-    ["👀 Which character surprised you the most, and why?","The Most Surprising Character"],
-    ["💔 What was the most emotional or unforgettable moment for you?","The Most Emotional Moment"],
-    ["🔐 What did the story teach you about trust and betrayal?","Trust and Betrayal"],
-    ["💌 Would you recommend this book to another reader? Why or why not?","Would You Recommend This Book?"],
-    ["🌷 What would you like to tell Blessing Effiong, the author?","A Message for the Author","What would you want to tell the author?","What would you like to tell the author?"]
-  ]
-};
-  function normalise(s){
-  return String(s||"").normalize("NFKC")
-    .replace(/^[\s\p{Extended_Pictographic}\uFE0F\u200D]+/gu,"")
-    .replace(/^\d+[\s.)-]*/,"")
-    .replace(/[?!.,:;'"“”‘’]/g,"")
-    .replace(/\s+/g," ").trim().toLowerCase();
-}
-
-function orderedReviewAnswers(slug,raw){
-  let data=raw||{};
-  if(typeof data==="string"){
-    try{data=JSON.parse(data);}catch{return "";}
-  }
-  if(!data||typeof data!=="object"||Array.isArray(data))return "";
-
-  const entries=Object.entries(data);
-  const used=new Set();
-
-  return (REVIEW_QUESTIONS[slug]||[]).map((names,index)=>{
-    const matchNames=names.map(normalise);
-
-    let match=entries.find(([key,value])=>
-      !used.has(key)&&matchNames.includes(normalise(key))&&
-      String(value??"").trim()
-    );
-
-    if(!match){
-      match=entries.find(([key,value])=>
-        !used.has(key)&&
-        new RegExp("^(question\\\\s*)?"+(index+1)+"[.)\\\\s:-]","i").test(key)&&
-        String(value??"").trim()
-      );
-    }
-
-    if(!match){
-      match=entries.find(([key,value])=>
-        !used.has(key)&&
-        matchNames.some(n=>normalise(key).includes(n)||n.includes(normalise(key)))&&
-        String(value??"").trim()
-      );
-    }
-
-    if(!match)return "";
-    used.add(match[0]);
-
-    return `<p><b>${esc(names[0])}</b><br>${esc(match[1])}</p>`;
-  }).join("");
-}
-
-function renderReviews(){
-  const list=(view==="trash"?trashed:active).filter(r=>
-    view==="trash"||$("statusFilter").value==="all"||
-    r.status===$("statusFilter").value
-  );
-
-  if(!list.length){
-    $("reviewList").innerHTML='<p class="empty">No reviews to display.</p>';
-    return;
-  }
-
-  $("reviewList").innerHTML=list.map(r=>{
-    const answers=orderedReviewAnswers(r.book_slug,r.discussion_answers);
-
-    const actions=view==="trash"
-      ?`<button class="restore" data-action="restore" data-id="${esc(r.id)}">Restore</button>
-        <button class="delete" data-action="permanent-delete" data-id="${esc(r.id)}">Delete Permanently</button>`
-      :`<button class="approve" data-action="approved" data-id="${esc(r.id)}">Approve</button>
-        <button class="reject" data-action="rejected" data-id="${esc(r.id)}">Reject</button>
-        <button class="trash" data-action="trash" data-id="${esc(r.id)}">Trash</button>`;
-
-    return `<article class="review">
-      <h3 class="gold">${esc(r.display_name||"Reader")}</h3>
-      <p class="meta">${esc(r.book_slug)} · ${r.created_at?new Date(r.created_at).toLocaleString():""}</p>
-      <p>Rating: <span class="gold">${"★".repeat(Math.max(0,Math.min(5,Number(r.rating)||0)))}</span> (${esc(r.rating)}/5)</p>
-      <p>Status: <span class="badge">${esc(r.status)}</span></p>
-      <div class="review-text">${esc(r.review_text)}</div>
-      ${answers?`<h4 class="gold">Review Answers</h4><div class="answers">${answers}</div>`:""}
-      <div class="actions">${actions}</div>
-    </article>`;
-  }).join("");
-}
-
-$("reviewList").onclick=async e=>{
-  const btn=e.target.closest("[data-action]");
-    if(!btn)return;
-
-  const {action,id}=btn.dataset;
-  if(action==="trash"&&!confirm("Move this review to Trash?"))return;
-  if(action==="permanent-delete"&&!confirm("Permanently delete this review?"))return;
-
-  btn.disabled=true;
-  try{
-    if(["approved","rejected"].includes(action))
-      await api("PATCH",{}, {id,action:"status",status:action});
-    else if(["trash","restore"].includes(action))
-      await api("PATCH",{}, {id,action});
-    else
-      await api("DELETE",{}, {id,action});
-
-    await loadReviews();
-  }catch(e){say("reviewMsg",e.message,true);}
-  finally{btn.disabled=false;}
-};
-
-function reviewView(value){
-  view=value;
-  $("activeBtn").classList.toggle("active",value==="active");
-  $("trashBtn").classList.toggle("active",value==="trash");
-  $("statusBox").classList.toggle("hidden",value==="trash");
-  renderReviews();
-}
-
-$("activeBtn").onclick=()=>reviewView("active");
-$("trashBtn").onclick=()=>reviewView("trash");
-$("bookFilter").onchange=loadReviews;
-$("statusFilter").onchange=renderReviews;
-
-$("refresh").onclick=()=>Promise.all([loadBooks(),loadReviews()]);
-
-$("logout").onclick=async()=>{
-  try{
-    const {error}=await db.auth.signOut();
-    if(error)throw error;
-    user=null;
-    $("dashboard").classList.add("hidden");
-    $("login").classList.remove("hidden");
-  }catch(e){say("message",e.message,true);}
-};
-
-/* RESTORE LOGIN SESSION */
-(async()=>{
-  $("loginBtn").disabled=true;
-  try{
-    const {data,error}=await db.auth.getSession();
-    if(error)throw error;
-
-    if(data.session){
-      if(data.session.user.id!==ADMIN){
-        await db.auth.signOut();
-      }else{
-        user=data.session.user;
-        show();
-        await Promise.all([loadBooks(),loadReviews()]);
-        }
-    }
-  }catch(e){say("loginMsg",e.message,true);}
-  finally{$("loginBtn").disabled=false;}
-})();
-
-})();
+setupGenres();
+db.auth.onAuthStateChange(()=>checkSession());
+checkSession();
 </script>
 </body>
 </html>
