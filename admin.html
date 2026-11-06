@@ -3,382 +3,581 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#090909">
-<title>Admin Login | World of BlessGlow</title>
+<title>World of BlessGlow | Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --bg: #090909;
-  --panel: #141414;
-  --gold: #D4AF37;
-  --gold-light: #F1D77A;
-  --text: #F5F1E8;
-  --muted: #999;
-  --border: #302817;
-  --danger: #e87878;
+  --bg:#090909;
+  --panel:#141414;
+  --panel2:#1b1b1b;
+  --gold:#D4AF37;
+  --gold2:#F1D77A;
+  --text:#f4f0e6;
+  --muted:#999;
+  --border:#302817;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* {box-sizing:border-box;margin:0;padding:0}
 
 body {
-  min-height: 100vh;
-  background:
-    radial-gradient(ellipse at top, #241d0e 0%, transparent 55%),
-    var(--bg);
-  color: var(--text);
-  font-family: Georgia, serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 22px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  min-height:100vh;
 }
 
-.login-container {
-  width: 100%;
-  max-width: 440px;
-  text-align: center;
-}
+button {font:inherit;cursor:pointer}
 
-.brand {
-  margin-bottom: 34px;
-}
+/* LOGIN */
 
-.brand-name {
-  color: var(--gold);
-  font-size: clamp(25px, 6vw, 35px);
-  letter-spacing: 3px;
-  line-height: 1.4;
-}
-
-.brand-tagline {
-  font-size: 11px;
-  color: #b8a77a;
-  letter-spacing: 3px;
-  margin-top: 9px;
-  text-transform: uppercase;
-}
-
-.brand-line {
-  width: 65px;
-  height: 1px;
-  background: var(--gold);
-  margin: 22px auto;
+#loginPage {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:radial-gradient(ellipse at top,#29200d,transparent 60%),var(--bg);
 }
 
 .login-card {
-  background: linear-gradient(145deg, #191919, #101010);
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  padding: 35px 28px;
-  box-shadow: 0 20px 70px #0009;
-  text-align: left;
+  width:100%;
+  max-width:420px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:35px 27px;
+  box-shadow:0 20px 70px #0009;
+}
+
+.brand {
+  color:var(--gold);
+  font-family:Georgia,serif;
+  font-size:clamp(23px,5vw,31px);
+  letter-spacing:2px;
+  text-align:center;
+  line-height:1.5;
+}
+
+.tagline {
+  text-align:center;
+  color:#b8a77a;
+  letter-spacing:3px;
+  font-size:10px;
+  margin:8px 0 25px;
 }
 
 .login-card h1 {
-  color: var(--gold-light);
-  font-size: 27px;
-  text-align: center;
-  font-weight: normal;
-  margin-bottom: 9px;
+  color:var(--gold2);
+  font-family:Georgia,serif;
+  font-size:26px;
+  font-weight:normal;
+  text-align:center;
+  margin-bottom:10px;
 }
 
-.subtitle {
-  text-align: center;
-  color: var(--muted);
-  font-family: Arial, sans-serif;
-  font-size: 13px;
-  margin-bottom: 30px;
-  line-height: 1.6;
+.login-card p {
+  color:var(--muted);
+  text-align:center;
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:25px;
 }
 
 label {
-  display: block;
-  color: #d5c69d;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  margin-bottom: 9px;
+  display:block;
+  color:#d5c69d;
+  font-size:12px;
+  margin-bottom:8px;
 }
 
-.field {
-  margin-bottom: 21px;
-}
+.field {margin-bottom:19px}
 
 input {
-  width: 100%;
-  height: 49px;
-  padding: 0 14px;
-  border: 1px solid #393124;
-  border-radius: 7px;
-  background: #0b0b0b;
-  color: white;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  outline: none;
+  width:100%;
+  height:47px;
+  padding:0 13px;
+  background:#090909;
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:white;
+  outline:none;
 }
 
-input:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 2px #d4af3720;
+input:focus {border-color:var(--gold)}
+
+.password-wrap {position:relative}
+.password-wrap input {padding-right:65px}
+
+#togglePassword {
+  position:absolute;
+  right:12px;
+  top:14px;
+  border:0;
+  background:none;
+  color:var(--gold);
 }
 
-.password-wrap {
-  position: relative;
+.gold-button {
+  width:100%;
+  min-height:47px;
+  background:linear-gradient(110deg,#b18a25,#e2c45e);
+  color:#100e08;
+  border:0;
+  border-radius:6px;
+  font-weight:bold;
+  letter-spacing:1px;
 }
 
-.password-wrap input {
-  padding-right: 75px;
-}
-
-.toggle-password {
-  position: absolute;
-  right: 13px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  color: var(--gold);
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.login-button {
-  width: 100%;
-  height: 49px;
-  border: 1px solid var(--gold);
-  border-radius: 7px;
-  background: linear-gradient(110deg, #b18a25, #e2c45e);
-  color: #100e08;
-  font-family: Arial, sans-serif;
-  font-weight: bold;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: .2s;
-}
-
-.login-button:hover {
-  filter: brightness(1.12);
-}
-
-.login-button:disabled {
-  opacity: .6;
-  cursor: wait;
-}
+.gold-button:disabled {opacity:.6}
 
 .message {
-  display: none;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 19px;
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  line-height: 1.6;
+  display:none;
+  padding:12px;
+  margin-bottom:18px;
+  border-radius:6px;
+  font-size:13px;
+  line-height:1.5;
 }
 
-.message.error {
-  display: block;
-  color: #ffb1b1;
-  background: #401b1b;
-  border: 1px solid #753333;
+.message.show {display:block}
+.message.error {background:#401b1b;color:#ffb1b1}
+.message.success {background:#1b301a;color:#d8edbd}
+
+/* DASHBOARD */
+
+#adminApp {display:none;min-height:100vh}
+
+.sidebar {
+  position:fixed;
+  inset:0 auto 0 0;
+  width:255px;
+  background:#101010;
+  border-right:1px solid var(--border);
+  padding:25px 15px;
+  overflow-y:auto;
+  z-index:20;
 }
 
-.message.success {
-  display: block;
-  color: #d8edbd;
-  background: #1b301a;
-  border: 1px solid #3c6234;
+.side-brand {
+  padding:8px 10px 25px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:23px;
 }
 
-.footer {
-  color: #777;
-  font-size: 11px;
-  margin-top: 25px;
-  letter-spacing: 1px;
+.side-brand h2 {
+  color:var(--gold);
+  font-family:Georgia,serif;
+  font-size:19px;
+  line-height:1.5;
 }
 
-.dashboard {
-  display: none;
-  width: 100%;
-  max-width: 850px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 30px;
-  box-shadow: 0 20px 70px #0009;
+.side-brand p {
+  color:#9d8c61;
+  font-size:10px;
+  letter-spacing:2px;
+  margin-top:5px;
 }
 
-.dashboard h2 {
-  color: var(--gold);
-  font-size: 28px;
-  font-weight: normal;
-  margin-bottom: 12px;
+.nav-label {
+  color:#777;
+  font-size:10px;
+  letter-spacing:2px;
+  padding:10px;
 }
 
-.dashboard p {
-  color: #aaa;
-  font-family: Arial, sans-serif;
-  line-height: 1.7;
-  font-size: 14px;
+.nav-item {
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  margin:3px 0;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:7px;
+  color:#bdbdbd;
+  text-align:left;
+  font-size:13px;
 }
 
-.dashboard-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
+.nav-item:hover,
+.nav-item.active {
+  background:#241e10;
+  border-color:#55421c;
+  color:var(--gold2);
+}
+
+.nav-icon {
+  width:20px;
+  text-align:center;
+  color:var(--gold);
+  font-size:16px;
+}
+
+.sidebar-bottom {
+  margin-top:30px;
+  padding-top:18px;
+  border-top:1px solid var(--border);
 }
 
 .logout {
-  background: transparent;
-  color: var(--gold);
-  border: 1px solid var(--border);
-  padding: 10px 17px;
-  border-radius: 6px;
-  cursor: pointer;
+  width:100%;
+  padding:12px;
+  border:1px solid #49332a;
+  border-radius:7px;
+  color:#e5a19b;
+  background:#211513;
 }
 
-.dashboard-notice {
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-top: 25px;
+.main {
+  margin-left:255px;
+  min-height:100vh;
 }
 
-@media(max-width:480px) {
-  .login-card {
-    padding: 28px 20px;
+.topbar {
+  height:72px;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 30px;
+  background:#0e0e0e;
+  gap:15px;
+}
+
+.topbar-title {
+  font-family:Georgia,serif;
+  color:var(--gold2);
+  font-size:19px;
+}
+
+.admin-email {
+  color:#999;
+  font-size:12px;
+  overflow-wrap:anywhere;
+}
+
+.content {padding:30px}
+
+.welcome h1 {
+  font-family:Georgia,serif;
+  font-weight:normal;
+  color:var(--gold2);
+  font-size:30px;
+  margin-bottom:9px;
+}
+
+.welcome p {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.7;
+}
+
+.section-title {
+  font-family:Georgia,serif;
+  font-size:21px;
+  color:var(--gold2);
+  margin:32px 0 16px;
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
+}
+
+.stat-card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:21px;
+  border-radius:9px;
+  min-width:0;
+}
+
+.stat-card span {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.stat-card strong {
+  display:block;
+  color:var(--gold);
+  font-family:Georgia,serif;
+  font-size:26px;
+  margin-top:13px;
+}
+
+.stat-card small {
+  display:block;
+  color:#777;
+  font-size:10px;
+  margin-top:8px;
+}
+
+.module-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:15px;
+}
+
+.module-card {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:20px;
+  text-align:left;
+  color:var(--text);
+  transition:.2s;
+}
+
+.module-card:hover {
+  border-color:var(--gold);
+  background:#1d1a12;
+}
+
+.module-card .symbol {
+  font-size:23px;
+  color:var(--gold);
+  display:block;
+  margin-bottom:15px;
+}
+
+.module-card h3 {
+  color:var(--gold2);
+  font-family:Georgia,serif;
+  font-size:17px;
+  font-weight:normal;
+  margin-bottom:9px;
+}
+
+.module-card p {
+  color:#999;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.module-status {
+  display:inline-block;
+  margin-top:15px;
+  font-size:10px;
+  color:#bba96f;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:5px 9px;
+}
+
+.page-panel {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:25px;
+  margin-top:25px;
+}
+
+.page-panel h2 {
+  font-family:Georgia,serif;
+  color:var(--gold2);
+  font-weight:normal;
+  margin-bottom:12px;
+}
+
+.page-panel p {
+  color:#aaa;
+  font-size:13px;
+  line-height:1.8;
+}
+
+#menuButton {
+  display:none;
+  background:none;
+  border:1px solid var(--border);
+  color:var(--gold);
+  padding:9px 12px;
+  border-radius:6px;
+}
+
+.overlay {
+  display:none;
+}
+
+@media(max-width:1000px) {
+  .stats {grid-template-columns:repeat(2,1fr)}
+  .module-grid {grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:700px) {
+  .sidebar {
+    transform:translateX(-100%);
+    transition:.25s;
   }
 
-  .dashboard {
-    padding: 22px;
+  .sidebar.open {transform:translateX(0)}
+
+  .main {margin-left:0}
+
+  #menuButton {display:block}
+
+  .topbar {padding:0 15px}
+
+  .content {padding:20px 15px}
+
+  .welcome h1 {font-size:25px}
+
+  .module-grid {grid-template-columns:1fr}
+
+  .overlay.show {
+    display:block;
+    position:fixed;
+    inset:0;
+    background:#0009;
+    z-index:10;
   }
 
-  .dashboard-top {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+  .admin-email {display:none}
 }
 </style>
 </head>
 
 <body>
 
-<main class="login-container" id="loginPage">
+<!-- LOGIN -->
 
-  <header class="brand">
-    <div class="brand-name">WORLD OF BLESSGLOW</div>
-    <div class="brand-tagline">Stories. Worlds. Imagination.</div>
-    <div class="brand-line"></div>
-  </header>
-
-  <section class="login-card">
+<section id="loginPage">
+  <div class="login-card">
+    <div class="brand">WORLD OF BLESSGLOW</div>
+    <div class="tagline">STORIES. WORLDS. IMAGINATION.</div>
 
     <h1>Admin Portal</h1>
+    <p>Your private publishing and administration centre.</p>
 
-    <p class="subtitle">
-      Welcome to your private publishing
-      and administration centre.
-    </p>
-
-    <div id="message" class="message" role="alert"></div>
+    <div id="loginMessage" class="message" role="alert"></div>
 
     <form id="loginForm">
-
       <div class="field">
         <label for="email">ADMIN EMAIL</label>
-        <input
-          type="email"
-          id="email"
-          placeholder="Enter your admin email"
-          autocomplete="username"
-          required
-        >
+        <input id="email" type="email"
+          autocomplete="username" required
+          placeholder="Enter your email">
       </div>
 
       <div class="field">
         <label for="password">PASSWORD</label>
-
         <div class="password-wrap">
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter your password"
+          <input id="password" type="password"
             autocomplete="current-password"
-            required
-          >
-
-          <button
-            type="button"
-            class="toggle-password"
-            id="togglePassword"
-          >Show</button>
+            required placeholder="Enter your password">
+          <button type="button" id="togglePassword">Show</button>
         </div>
       </div>
 
-      <button
-        type="submit"
-        class="login-button"
-        id="loginButton"
-      >
+      <button class="gold-button" id="loginButton" type="submit">
         SIGN IN
       </button>
-
     </form>
-  </section>
-
-  <footer class="footer">
-    WORLD OF BLESSGLOW &copy; 2026
-  </footer>
-
-</main>
-
-<section class="dashboard" id="dashboard">
-
-  <div class="dashboard-top">
-    <div>
-      <h2>Welcome, Administrator</h2>
-      <p id="adminEmail"></p>
-    </div>
-
-    <button class="logout" id="logoutButton">
-      Sign Out
-    </button>
   </div>
-
-  <div class="dashboard-notice">
-    <h3 style="color:#D4AF37;margin-bottom:12px;">
-      Admin foundation connected
-    </h3>
-
-    <p>
-      Your authenticated session is active.
-      The next stage will introduce the complete
-      publishing dashboard and its management modules.
-    </p>
-  </div>
-
 </section>
 
+<!-- ADMIN APPLICATION -->
+
+<div id="adminApp">
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="side-brand">
+      <h2>WORLD OF BLESSGLOW</h2>
+      <p>ADMIN CONTROL CENTRE</p>
+    </div>
+
+    <div class="nav-label">MAIN MENU</div>
+
+    <button class="nav-item active" data-page="overview">
+      <span class="nav-icon">⌂</span> Overview
+    </button>
+
+    <button class="nav-item" data-page="books">
+      <span class="nav-icon">▤</span> Books & Stories
+    </button>
+
+    <button class="nav-item" data-page="chapters">
+      <span class="nav-icon">▣</span> Chapter Studio
+    </button>
+
+    <button class="nav-item" data-page="frontmatter">
+      <span class="nav-icon">▧</span> Front Matter
+    </button>
+
+    <div class="nav-label">CONTENT MANAGEMENT</div>
+
+    <button class="nav-item" data-page="media">
+      <span class="nav-icon">▧</span> Media Library
+    </button>
+
+    <button class="nav-item" data-page="reviews">
+      <span class="nav-icon">☆</span> Review Centre
+    </button>
+
+    <button class="nav-item" data-page="homepage">
+      <span class="nav-icon">⌘</span> Homepage Manager
+    </button>
+
+    <button class="nav-item" data-page="genres">
+      <span class="nav-icon">◈</span> Genres & Categories
+    </button>
+
+    <button class="nav-item" data-page="notifications">
+      <span class="nav-icon">♧</span> Notifications
+    </button>
+
+    <div class="nav-label">SYSTEM</div>
+
+    <button class="nav-item" data-page="settings">
+      <span class="nav-icon">⚙</span> Website Settings
+    </button>
+
+    <button class="nav-item" data-page="security">
+      <span class="nav-icon">◇</span> Admin Security
+    </button>
+
+    <div class="sidebar-bottom">
+      <button class="logout" id="logoutButton">↪ Sign Out</button>
+    </div>
+
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:13px">
+        <button id="menuButton">☰</button>
+        <div class="topbar-title">Admin Control Centre</div>
+      </div>
+      <div class="admin-email" id="adminEmail"></div>
+    </header>
+
+    <div class="content" id="pageContent"></div>
+
+  </main>
+</div>
+
 <script>
-/* =========================================
+/* ========================================
    WORLD OF BLESSGLOW
-   ADMIN AUTHENTICATION
-========================================= */
+   ADMIN CONTROL CENTRE
+======================================== */
 
 const SUPABASE_URL =
-  "https://zngagaolaiidgyxoldsh.supabase.co";
+"https://zngagaolaiidgyxoldsh.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+"sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
 
-const client = window.supabase.createClient(
+const db = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
   {
@@ -391,188 +590,321 @@ const client = window.supabase.createClient(
 );
 
 const loginPage = document.getElementById("loginPage");
-const dashboard = document.getElementById("dashboard");
-const message = document.getElementById("message");
-const loginForm = document.getElementById("loginForm");
+const adminApp = document.getElementById("adminApp");
+const loginMessage = document.getElementById("loginMessage");
 const loginButton = document.getElementById("loginButton");
-const passwordInput = document.getElementById("password");
 
-/* Show messages */
+let currentUser = null;
+let initialized = false;
 
-function showMessage(text, type = "error") {
-  message.textContent = text;
-  message.className = "message " + type;
-}
+/* AUTHORIZATION */
 
-function clearMessage() {
-  message.textContent = "";
-  message.className = "message";
-}
+function isAdmin(user) {
+  const metadata = user?.app_metadata || {};
 
-/* Password visibility */
-
-document.getElementById("togglePassword")
-.addEventListener("click", function() {
-
-  const hidden = passwordInput.type === "password";
-
-  passwordInput.type = hidden ? "text" : "password";
-
-  this.textContent = hidden ? "Hide" : "Show";
-
-});
-
-/* Admin authorization */
-
-function isAdministrator(user) {
-
-  const metadata = user.app_metadata || {};
-
-  return (
-    metadata.role === "admin" ||
+  return metadata.role === "admin" ||
     (Array.isArray(metadata.roles) &&
-     metadata.roles.includes("admin"))
-  );
-
+     metadata.roles.includes("admin"));
 }
 
-/* Display authorized dashboard */
+function showError(text) {
+  loginMessage.textContent = text;
+  loginMessage.className = "message show error";
+}
 
-function showDashboard(user) {
-
+function showApp(user) {
+  currentUser = user;
   loginPage.style.display = "none";
-  dashboard.style.display = "block";
+  adminApp.style.display = "block";
 
   document.getElementById("adminEmail").textContent =
     user.email || "Administrator";
 
+  renderPage("overview");
 }
-
-/* Return to login */
 
 function showLogin() {
-
-  dashboard.style.display = "none";
-  loginPage.style.display = "block";
-
+  currentUser = null;
+  adminApp.style.display = "none";
+  loginPage.style.display = "flex";
 }
 
-/* Verify user and admin role */
+/* PASSWORD VISIBILITY */
 
-async function verifyAdministrator(user) {
+document.getElementById("togglePassword")
+.addEventListener("click", function() {
+  const field = document.getElementById("password");
+  const show = field.type === "password";
 
-  if (!isAdministrator(user)) {
+  field.type = show ? "text" : "password";
+  this.textContent = show ? "Hide" : "Show";
+});
 
-    await client.auth.signOut();
+/* LOGIN */
 
-    showLogin();
-
-    showMessage(
-      "Your account was authenticated, but administrator access has not been assigned. Please configure your admin role securely before continuing."
-    );
-
-    return false;
-
-  }
-
-  showDashboard(user);
-
-  return true;
-
-}
-
-/* Login */
-
-loginForm.addEventListener("submit", async function(event) {
+document.getElementById("loginForm")
+.addEventListener("submit", async event => {
 
   event.preventDefault();
 
-  clearMessage();
-
-  const email = document.getElementById("email")
-    .value.trim();
-
-  const password = passwordInput.value;
-
+  loginMessage.className = "message";
   loginButton.disabled = true;
   loginButton.textContent = "SIGNING IN...";
 
   try {
-
-    const { data, error } =
-      await client.auth.signInWithPassword({
-        email,
-        password
-      });
+    const {data,error} = await db.auth.signInWithPassword({
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("password").value
+    });
 
     if (error) throw error;
 
-    if (!data.user) {
-      throw new Error("Unable to verify your account.");
+    if (!isAdmin(data.user)) {
+      await db.auth.signOut();
+      throw new Error(
+        "Administrator access is not assigned to this account."
+      );
     }
 
-    await verifyAdministrator(data.user);
+    showApp(data.user);
 
   } catch(error) {
-
-    showMessage(error.message || "Login failed.");
-
+    showError(error.message || "Unable to sign in.");
   } finally {
-
     loginButton.disabled = false;
     loginButton.textContent = "SIGN IN";
-
   }
-
 });
 
-/* Restore existing session */
+/* SESSION */
 
-async function initializeAdmin() {
+async function initialize() {
+  const {data,error} = await db.auth.getUser();
 
-  const { data, error } = await client.auth.getUser();
-
-  if (error || !data.user) {
+  if (!error && data.user && isAdmin(data.user)) {
+    showApp(data.user);
+  } else {
     showLogin();
-    return;
   }
 
-  await verifyAdministrator(data.user);
-
+  initialized = true;
 }
 
-/* Logout */
+/* AUTH EVENTS */
 
-document.getElementById("logoutButton")
-.addEventListener("click", async function() {
+db.auth.onAuthStateChange((event,session) => {
 
-  const { error } = await client.auth.signOut();
+  if (!initialized) return;
 
-  if (error) {
-    alert("Unable to sign out: " + error.message);
-    return;
-  }
-
-  showLogin();
-  clearMessage();
-  loginForm.reset();
-
-});
-
-/* Monitor authentication changes */
-
-client.auth.onAuthStateChange((event, session) => {
-
-  if (event === "SIGNED_OUT") {
+  if (event === "SIGNED_OUT" || !session) {
     showLogin();
   }
 
+  if (event === "TOKEN_REFRESHED" && session?.user) {
+    currentUser = session.user;
+  }
+
 });
 
-initializeAdmin();
+/* NAVIGATION */
+
+const pages = {
+  overview: {
+    title:"Dashboard Overview",
+    description:"Welcome to your World of BlessGlow publishing control centre."
+  },
+  books:{
+    title:"Books & Stories",
+    description:"Manage your books, story descriptions, covers, genres and publishing status."
+  },
+  chapters:{
+    title:"Chapter Studio",
+    description:"Create, edit, organize and publish chapters for your stories."
+  },
+  frontmatter:{
+    title:"Front Matter",
+    description:"Manage title pages, introductions, copyright, disclaimers, dedications and acknowledgements."
+  },
+  media:{
+    title:"Media Library",
+    description:"Manage book covers and other images used throughout your website."
+  },
+  reviews:{
+    title:"Review Centre",
+    description:"Manage reader reviews, ratings, pending submissions and approved reviews."
+  },
+  homepage:{
+    title:"Homepage Manager",
+    description:"Control featured books, new releases, editor's picks and homepage sections."
+  },
+  genres:{
+    title:"Genres & Categories",
+    description:"Manage your main genres and their subgenres."
+  },
+  notifications:{
+    title:"Notifications",
+    description:"Manage reader interest notifications and upcoming book announcements."
+  },
+  settings:{
+    title:"Website Settings",
+    description:"Manage your website's publishing and display preferences."
+  },
+  security:{
+    title:"Admin Security",
+    description:"Manage administrator access and account security."
+  }
+};
+
+const symbols = {
+  books:"▤",
+  chapters:"▣",
+  frontmatter:"▧",
+  media:"▧",
+  reviews:"☆",
+  homepage:"⌂",
+  genres:"◈",
+  notifications:"♧",
+  settings:"⚙",
+  security:"◇"
+};
+
+function renderPage(page) {
+
+  const info = pages[page] || pages.overview;
+
+  document.querySelectorAll(".nav-item").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.page === page
+    );
+  });
+
+  const content = document.getElementById("pageContent");
+
+  if (page === "overview") {
+
+    content.innerHTML = `
+      <section class="welcome">
+        <h1>Welcome to World of BlessGlow</h1>
+        <p>Your stories, publishing tools and website management in one place.</p>
+      </section>
+
+      <h2 class="section-title">Publishing Overview</h2>
+
+      <div class="stats">
+        <div class="stat-card">
+          <span>Total Books</span>
+          <strong>—</strong>
+          <small>Database connection pending</small>
+        </div>
+        <div class="stat-card">
+          <span>Ongoing Stories</span>
+          <strong>—</strong>
+          <small>Database connection pending</small>
+        </div>
+        <div class="stat-card">
+          <span>Published Chapters</span>
+          <strong>—</strong>
+          <small>Database connection pending</small>
+        </div>
+        <div class="stat-card">
+          <span>Pending Reviews</span>
+          <strong>—</strong>
+          <small>Database connection pending</small>
+        </div>
+      </div>
+
+      <h2 class="section-title">Management Centre</h2>
+
+      <div class="module-grid">
+        ${Object.entries(pages).filter(([key]) => key !== "overview")
+          .map(([key,item]) => `
+            <button class="module-card" data-open="${key}">
+              <span class="symbol">${symbols[key]}</span>
+              <h3>${item.title}</h3>
+              <p>${item.description}</p>
+              <span class="module-status">Module setup pending</span>
+            </button>
+          `).join("")}
+      </div>
+    `;
+
+  } else {
+
+    content.innerHTML = `
+      <section class="welcome">
+        <h1>${info.title}</h1>
+        <p>${info.description}</p>
+      </section>
+
+      <div class="page-panel">
+        <h2>${info.title}</h2>
+        <p>
+          This management module has its own implementation stage.
+          Its database and storage operations will be connected and
+          tested before it is marked as ready.
+        </p>
+        <p style="margin-top:15px;color:#bba96f">
+          Status: Module not connected yet.
+        </p>
+      </div>
+    `;
+
+  }
+
+  content.querySelectorAll("[data-open]").forEach(button => {
+    button.addEventListener("click", () => {
+      renderPage(button.dataset.open);
+    });
+  });
+
+  closeMenu();
+}
+
+/* SIDEBAR EVENTS */
+
+document.querySelectorAll(".nav-item").forEach(button => {
+  button.addEventListener("click", () => {
+    renderPage(button.dataset.page);
+  });
+});
+
+/* MOBILE MENU */
+
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+function closeMenu() {
+  sidebar.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+document.getElementById("menuButton")
+.addEventListener("click", () => {
+  sidebar.classList.toggle("open");
+  overlay.classList.toggle("show");
+});
+
+overlay.addEventListener("click", closeMenu);
+
+/* LOGOUT */
+
+document.getElementById("logoutButton")
+.addEventListener("click", async () => {
+  const {error} = await db.auth.signOut();
+
+  if (error) {
+    alert("Sign out failed: " + error.message);
+  }
+});
+
+/* START */
+
+initialize();
 
 </script>
 
 </body>
- </html>
+          </html>
+  
 
