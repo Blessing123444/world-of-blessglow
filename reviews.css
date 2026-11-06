@@ -1,7 +1,8 @@
+
 /* =========================================
    WORLD OF BLESSGLOW — REVIEW DESIGN
    Elegant black and gold
-   ========================================= */
+========================================= */
 
 #book-reviews,
 #book-reviews * {
@@ -55,7 +56,7 @@
   line-height: 1.7;
 }
 
-#book-reviews .book-review-form input,
+#book-reviews .book-review-form input:not([type="checkbox"]),
 #book-reviews .book-review-form textarea {
   display: block;
   width: 100%;
@@ -98,6 +99,43 @@
   color: #bdb5a6;
   font-size: 13px;
 }
+
+/* OPTIONAL COMPLETION CHECKBOX */
+
+#book-reviews .review-completion-field {
+  width: 100%;
+  padding: 16px;
+  background: #15130e;
+  border: 1px solid #705b28;
+  border-radius: 11px;
+}
+
+#book-reviews .review-completion-field label {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  cursor: pointer;
+}
+
+#book-reviews .review-completion-field input[type="checkbox"] {
+  display: inline-block;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  min-height: 19px;
+  margin: 0;
+  padding: 0;
+  accent-color: #d4af37;
+  cursor: pointer;
+}
+
+#book-reviews .review-completion-field .review-question-prompt {
+  margin: 9px 0 0;
+  line-height: 1.7;
+}
+
+/* SUBMIT */
 
 #book-reviews .review-submit {
   width: 100%;
@@ -160,7 +198,7 @@
   width: 100%;
 }
 
-/* BEAUTIFUL LONG REVIEW BOX */
+/* REVIEW CARD */
 
 #book-reviews .review-card {
   width: 100%;
@@ -189,7 +227,21 @@
   margin: 10px 0 18px;
 }
 
-/* SECTION HEADINGS INSIDE EACH REVIEW */
+/* COMPLETED READER BADGE */
+
+#book-reviews .review-completion-badge {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 6px 11px;
+  color: #e2c36b;
+  background: #272014;
+  border: 1px solid #705b28;
+  border-radius: 20px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* REVIEW HEADINGS */
 
 #book-reviews .review-section-heading {
   margin: 22px 0 10px;
@@ -198,7 +250,7 @@
   line-height: 1.6;
 }
 
-/* OVERALL WRITTEN REVIEW */
+/* OVERALL REVIEW */
 
 #book-reviews .review-card-text {
   margin: 0;
@@ -213,7 +265,7 @@
   overflow-wrap: anywhere;
 }
 
-/* DISCUSSION ANSWERS CONTAINER */
+/* DISCUSSION ANSWERS */
 
 #book-reviews .review-discussion-answers {
   display: flex;
@@ -221,8 +273,6 @@
   gap: 13px;
   width: 100%;
 }
-
-/* EACH QUESTION AND ANSWER IN ITS OWN LONG BOX */
 
 #book-reviews .review-answer-item {
   width: 100%;
@@ -234,8 +284,6 @@
   border-radius: 10px;
 }
 
-/* QUESTION */
-
 #book-reviews .review-answer-question {
   margin: 0 0 11px;
   color: #e2c36b;
@@ -244,8 +292,6 @@
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
-
-/* ANSWER */
 
 #book-reviews .review-answer-text {
   margin: 0;
@@ -267,7 +313,7 @@
   font-size: 12px;
 }
 
-/* LOADING, EMPTY AND SUMMARY MESSAGES */
+/* LOADING AND EMPTY MESSAGES */
 
 #book-reviews .review-loading,
 #book-reviews .review-empty {
@@ -309,3 +355,4 @@
     font-size: 21px;
   }
 }
+
