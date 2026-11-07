@@ -20,20 +20,14 @@
   --muted:#999;
   --border:#302817;
 }
-
 * {box-sizing:border-box;margin:0;padding:0}
-
 body {
   background:var(--bg);
   color:var(--text);
   font-family:Arial,sans-serif;
   min-height:100vh;
 }
-
 button {font:inherit;cursor:pointer}
-
-/* LOGIN */
-
 #loginPage {
   min-height:100vh;
   display:flex;
@@ -42,7 +36,6 @@ button {font:inherit;cursor:pointer}
   padding:20px;
   background:radial-gradient(ellipse at top,#29200d,transparent 60%),var(--bg);
 }
-
 .login-card {
   width:100%;
   max-width:420px;
@@ -52,7 +45,6 @@ button {font:inherit;cursor:pointer}
   padding:35px 27px;
   box-shadow:0 20px 70px #0009;
 }
-
 .brand {
   color:var(--gold);
   font-family:Georgia,serif;
@@ -61,7 +53,6 @@ button {font:inherit;cursor:pointer}
   text-align:center;
   line-height:1.5;
 }
-
 .tagline {
   text-align:center;
   color:#b8a77a;
@@ -69,7 +60,6 @@ button {font:inherit;cursor:pointer}
   font-size:10px;
   margin:8px 0 25px;
 }
-
 .login-card h1 {
   color:var(--gold2);
   font-family:Georgia,serif;
@@ -78,7 +68,6 @@ button {font:inherit;cursor:pointer}
   text-align:center;
   margin-bottom:10px;
 }
-
 .login-card p {
   color:var(--muted);
   text-align:center;
@@ -86,32 +75,35 @@ button {font:inherit;cursor:pointer}
   line-height:1.6;
   margin-bottom:25px;
 }
-
 label {
   display:block;
   color:#d5c69d;
   font-size:12px;
   margin-bottom:8px;
 }
-
 .field {margin-bottom:19px}
-
-input {
+input,select,textarea {
   width:100%;
-  height:47px;
-  padding:0 13px;
+  padding:12px 13px;
   background:#090909;
   border:1px solid var(--border);
   border-radius:6px;
   color:white;
   outline:none;
+  font:inherit;
+  font-size:13px;
 }
-
-input:focus {border-color:var(--gold)}
-
+input {height:47px}
+textarea {min-height:110px;resize:vertical;line-height:1.6}
+select {height:47px}
+input:focus,select:focus,textarea:focus {border-color:var(--gold)}
+input[type="checkbox"] {
+  width:17px;
+  height:17px;
+  accent-color:var(--gold);
+}
 .password-wrap {position:relative}
 .password-wrap input {padding-right:65px}
-
 #togglePassword {
   position:absolute;
   right:12px;
@@ -120,7 +112,6 @@ input:focus {border-color:var(--gold)}
   background:none;
   color:var(--gold);
 }
-
 .gold-button {
   width:100%;
   min-height:47px;
@@ -131,9 +122,7 @@ input:focus {border-color:var(--gold)}
   font-weight:bold;
   letter-spacing:1px;
 }
-
-.gold-button:disabled {opacity:.6}
-
+.gold-button:disabled {opacity:.6;cursor:wait}
 .message {
   display:none;
   padding:12px;
@@ -142,7 +131,6 @@ input:focus {border-color:var(--gold)}
   font-size:13px;
   line-height:1.5;
 }
-
 .message.show {display:block}
 .message.error {background:#401b1b;color:#ffb1b1}
 .message.success {background:#1b301a;color:#d8edbd}
@@ -150,7 +138,6 @@ input:focus {border-color:var(--gold)}
 /* DASHBOARD */
 
 #adminApp {display:none;min-height:100vh}
-
 .sidebar {
   position:fixed;
   inset:0 auto 0 0;
@@ -161,34 +148,29 @@ input:focus {border-color:var(--gold)}
   overflow-y:auto;
   z-index:20;
 }
-
 .side-brand {
   padding:8px 10px 25px;
   border-bottom:1px solid var(--border);
   margin-bottom:23px;
 }
-
 .side-brand h2 {
   color:var(--gold);
   font-family:Georgia,serif;
   font-size:19px;
   line-height:1.5;
 }
-
 .side-brand p {
   color:#9d8c61;
   font-size:10px;
   letter-spacing:2px;
   margin-top:5px;
 }
-
 .nav-label {
   color:#777;
   font-size:10px;
   letter-spacing:2px;
   padding:10px;
 }
-
 .nav-item {
   width:100%;
   display:flex;
@@ -203,27 +185,22 @@ input:focus {border-color:var(--gold)}
   text-align:left;
   font-size:13px;
 }
-
-.nav-item:hover,
-.nav-item.active {
+.nav-item:hover,.nav-item.active {
   background:#241e10;
   border-color:#55421c;
   color:var(--gold2);
 }
-
 .nav-icon {
   width:20px;
   text-align:center;
   color:var(--gold);
   font-size:16px;
 }
-
 .sidebar-bottom {
   margin-top:30px;
   padding-top:18px;
   border-top:1px solid var(--border);
 }
-
 .logout {
   width:100%;
   padding:12px;
@@ -232,14 +209,9 @@ input:focus {border-color:var(--gold)}
   color:#e5a19b;
   background:#211513;
 }
-
-.main {
-  margin-left:255px;
-  min-height:100vh;
-}
-
+.main {margin-left:255px;min-height:100vh}
 .topbar {
-  height:72px;
+  min-height:72px;
   border-bottom:1px solid var(--border);
   display:flex;
   justify-content:space-between;
@@ -248,21 +220,17 @@ input:focus {border-color:var(--gold)}
   background:#0e0e0e;
   gap:15px;
 }
-
 .topbar-title {
   font-family:Georgia,serif;
   color:var(--gold2);
   font-size:19px;
 }
-
 .admin-email {
   color:#999;
   font-size:12px;
   overflow-wrap:anywhere;
 }
-
 .content {padding:30px}
-
 .welcome h1 {
   font-family:Georgia,serif;
   font-weight:normal;
@@ -270,26 +238,22 @@ input:focus {border-color:var(--gold)}
   font-size:30px;
   margin-bottom:9px;
 }
-
 .welcome p {
   color:var(--muted);
   font-size:13px;
   line-height:1.7;
 }
-
 .section-title {
   font-family:Georgia,serif;
   font-size:21px;
   color:var(--gold2);
   margin:32px 0 16px;
 }
-
 .stats {
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:15px;
 }
-
 .stat-card {
   background:var(--panel);
   border:1px solid var(--border);
@@ -297,12 +261,7 @@ input:focus {border-color:var(--gold)}
   border-radius:9px;
   min-width:0;
 }
-
-.stat-card span {
-  color:var(--muted);
-  font-size:12px;
-}
-
+.stat-card span {color:var(--muted);font-size:12px}
 .stat-card strong {
   display:block;
   color:var(--gold);
@@ -310,20 +269,17 @@ input:focus {border-color:var(--gold)}
   font-size:26px;
   margin-top:13px;
 }
-
 .stat-card small {
   display:block;
   color:#777;
   font-size:10px;
   margin-top:8px;
 }
-
 .module-grid {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:15px;
 }
-
 .module-card {
   background:var(--panel);
   border:1px solid var(--border);
@@ -333,19 +289,16 @@ input:focus {border-color:var(--gold)}
   color:var(--text);
   transition:.2s;
 }
-
 .module-card:hover {
   border-color:var(--gold);
   background:#1d1a12;
 }
-
 .module-card .symbol {
   font-size:23px;
   color:var(--gold);
   display:block;
   margin-bottom:15px;
 }
-
 .module-card h3 {
   color:var(--gold2);
   font-family:Georgia,serif;
@@ -353,13 +306,11 @@ input:focus {border-color:var(--gold)}
   font-weight:normal;
   margin-bottom:9px;
 }
-
 .module-card p {
   color:#999;
   font-size:12px;
   line-height:1.6;
 }
-
 .module-status {
   display:inline-block;
   margin-top:15px;
@@ -369,7 +320,6 @@ input:focus {border-color:var(--gold)}
   border-radius:20px;
   padding:5px 9px;
 }
-
 .page-panel {
   background:var(--panel);
   border:1px solid var(--border);
@@ -377,20 +327,17 @@ input:focus {border-color:var(--gold)}
   padding:25px;
   margin-top:25px;
 }
-
 .page-panel h2 {
   font-family:Georgia,serif;
   color:var(--gold2);
   font-weight:normal;
   margin-bottom:12px;
 }
-
 .page-panel p {
   color:#aaa;
   font-size:13px;
   line-height:1.8;
 }
-
 #menuButton {
   display:none;
   background:none;
@@ -399,36 +346,265 @@ input:focus {border-color:var(--gold)}
   padding:9px 12px;
   border-radius:6px;
 }
+.overlay {display:none}
 
-.overlay {
+/* BOOKS MODULE */
+
+.books-toolbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:25px 0 18px;
+}
+.books-actions {
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+}
+.action-button {
+  border:1px solid #59451d;
+  background:#211b0e;
+  color:var(--gold2);
+  padding:11px 15px;
+  border-radius:6px;
+  font-size:12px;
+}
+.action-button:hover {border-color:var(--gold)}
+.action-button.primary {
+  background:linear-gradient(110deg,#b18a25,#e2c45e);
+  color:#100e08;
+  font-weight:bold;
+  border:0;
+}
+.action-button.danger {
+  border-color:#65332e;
+  background:#281614;
+  color:#e9aaa3;
+}
+.action-button:disabled {opacity:.5;cursor:wait}
+.books-filter {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.books-filter select {min-width:150px}
+.books-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+}
+.book-card {
+  display:flex;
+  gap:15px;
+  padding:15px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  min-width:0;
+}
+.book-cover {
+  width:105px;
+  min-width:105px;
+  height:145px;
+  object-fit:cover;
+  background:#080808;
+  border:1px solid #40351e;
+  border-radius:5px;
+}
+.book-cover-empty {
+  width:105px;
+  min-width:105px;
+  height:145px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#806c37;
+  background:#0a0a0a;
+  border:1px solid var(--border);
+  border-radius:5px;
+  font-family:Georgia,serif;
+  font-size:12px;
+  padding:8px;
+}
+.book-info {min-width:0;flex:1}
+.book-info h3 {
+  color:var(--gold2);
+  font-family:Georgia,serif;
+  font-size:17px;
+  font-weight:normal;
+  overflow-wrap:anywhere;
+  margin:3px 0 7px;
+}
+.book-info p {
+  color:#999;
+  font-size:11px;
+  line-height:1.6;
+  overflow-wrap:anywhere;
+}
+.book-tags {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin:9px 0;
+}
+.book-tag {
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:4px 7px;
+  color:#c5b47f;
+  font-size:9px;
+}
+.book-buttons {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.book-buttons button {
+  padding:7px 9px;
+  font-size:10px;
+  border-radius:5px;
+  border:1px solid var(--border);
+  color:var(--gold2);
+  background:#1c190f;
+}
+.book-buttons button.trash {
+  color:#e9aaa3;
+  border-color:#54302b;
+  background:#211413;
+}
+.book-empty {
+  grid-column:1/-1;
+  padding:35px 20px;
+  text-align:center;
+  color:#999;
+  background:var(--panel);
+  border:1px dashed var(--border);
+  border-radius:9px;
+  font-size:13px;
+  line-height:1.8;
+}
+.module-message {
+  display:none;
+  padding:12px 14px;
+  border-radius:6px;
+  font-size:12px;
+  line-height:1.6;
+  margin:15px 0;
+}
+.module-message.show {display:block}
+.module-message.error {background:#401b1b;color:#ffb1b1}
+.module-message.success {background:#1b301a;color:#d8edbd}
+.module-message.info {background:#252014;color:#e4d19a}
+
+/* BOOK EDITOR */
+
+.editor-panel {
+  display:none;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:22px;
+  margin-top:20px;
+}
+.editor-panel.open {display:block}
+.editor-heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:20px;
+}
+.editor-heading h2 {
+  font-family:Georgia,serif;
+  color:var(--gold2);
+  font-weight:normal;
+  font-size:21px;
+}
+.editor-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+}
+.editor-field {min-width:0}
+.editor-field.full {grid-column:1/-1}
+.editor-field small {
+  display:block;
+  color:#888;
+  font-size:10px;
+  line-height:1.6;
+  margin-top:6px;
+}
+.editor-field input[type="file"] {
+  height:auto;
+  padding:10px;
+}
+.cover-preview-wrap {
+  display:flex;
+  align-items:flex-start;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+#coverPreview {
+  width:110px;
+  height:150px;
+  object-fit:cover;
+  background:#080808;
+  border:1px solid var(--border);
+  border-radius:5px;
   display:none;
 }
+.check-options {
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  margin-top:7px;
+}
+.check-option {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#d5c69d;
+  font-size:12px;
+}
+.check-option label {margin:0}
+.editor-footer {
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:22px;
+  flex-wrap:wrap;
+}
+.editor-footer button {width:auto;min-width:130px}
+.loading-note {
+  color:#bba96f;
+  font-size:12px;
+  padding:15px 0;
+}
 
+@media(max-width:1100px) {
+  .books-grid {grid-template-columns:1fr}
+}
 @media(max-width:1000px) {
   .stats {grid-template-columns:repeat(2,1fr)}
   .module-grid {grid-template-columns:repeat(2,1fr)}
 }
-
 @media(max-width:700px) {
   .sidebar {
     transform:translateX(-100%);
     transition:.25s;
   }
-
   .sidebar.open {transform:translateX(0)}
-
   .main {margin-left:0}
-
   #menuButton {display:block}
-
   .topbar {padding:0 15px}
-
   .content {padding:20px 15px}
-
   .welcome h1 {font-size:25px}
-
   .module-grid {grid-template-columns:1fr}
-
   .overlay.show {
     display:block;
     position:fixed;
@@ -436,21 +612,27 @@ input:focus {border-color:var(--gold)}
     background:#0009;
     z-index:10;
   }
-
   .admin-email {display:none}
+  .editor-grid {grid-template-columns:1fr}
+  .editor-field.full {grid-column:auto}
+  .book-card {gap:10px;padding:11px}
+  .book-cover,.book-cover-empty {
+    width:85px;
+    min-width:85px;
+    height:120px;
+  }
+  .book-info h3 {font-size:15px}
+  .editor-panel {padding:15px}
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-
 <section id="loginPage">
   <div class="login-card">
     <div class="brand">WORLD OF BLESSGLOW</div>
     <div class="tagline">STORIES. WORLDS. IMAGINATION.</div>
-
     <h1>Admin Portal</h1>
     <p>Your private publishing and administration centre.</p>
 
@@ -459,9 +641,8 @@ input:focus {border-color:var(--gold)}
     <form id="loginForm">
       <div class="field">
         <label for="email">ADMIN EMAIL</label>
-        <input id="email" type="email"
-          autocomplete="username" required
-          placeholder="Enter your email">
+        <input id="email" type="email" autocomplete="username"
+          required placeholder="Enter your email">
       </div>
 
       <div class="field">
@@ -481,14 +662,10 @@ input:focus {border-color:var(--gold)}
   </div>
 </section>
 
-<!-- ADMIN APPLICATION -->
-
 <div id="adminApp">
-
   <div class="overlay" id="overlay"></div>
 
   <aside class="sidebar" id="sidebar">
-
     <div class="side-brand">
       <h2>WORLD OF BLESSGLOW</h2>
       <p>ADMIN CONTROL CENTRE</p>
@@ -499,15 +676,12 @@ input:focus {border-color:var(--gold)}
     <button class="nav-item active" data-page="overview">
       <span class="nav-icon">⌂</span> Overview
     </button>
-
     <button class="nav-item" data-page="books">
       <span class="nav-icon">▤</span> Books & Stories
     </button>
-
     <button class="nav-item" data-page="chapters">
       <span class="nav-icon">▣</span> Chapter Studio
     </button>
-
     <button class="nav-item" data-page="frontmatter">
       <span class="nav-icon">▧</span> Front Matter
     </button>
@@ -517,19 +691,15 @@ input:focus {border-color:var(--gold)}
     <button class="nav-item" data-page="media">
       <span class="nav-icon">▧</span> Media Library
     </button>
-
     <button class="nav-item" data-page="reviews">
       <span class="nav-icon">☆</span> Review Centre
     </button>
-
     <button class="nav-item" data-page="homepage">
       <span class="nav-icon">⌘</span> Homepage Manager
     </button>
-
     <button class="nav-item" data-page="genres">
       <span class="nav-icon">◈</span> Genres & Categories
     </button>
-
     <button class="nav-item" data-page="notifications">
       <span class="nav-icon">♧</span> Notifications
     </button>
@@ -539,7 +709,6 @@ input:focus {border-color:var(--gold)}
     <button class="nav-item" data-page="settings">
       <span class="nav-icon">⚙</span> Website Settings
     </button>
-
     <button class="nav-item" data-page="security">
       <span class="nav-icon">◇</span> Admin Security
     </button>
@@ -547,11 +716,9 @@ input:focus {border-color:var(--gold)}
     <div class="sidebar-bottom">
       <button class="logout" id="logoutButton">↪ Sign Out</button>
     </div>
-
   </aside>
 
   <main class="main">
-
     <header class="topbar">
       <div style="display:flex;align-items:center;gap:13px">
         <button id="menuButton">☰</button>
@@ -559,9 +726,7 @@ input:focus {border-color:var(--gold)}
       </div>
       <div class="admin-email" id="adminEmail"></div>
     </header>
-
     <div class="content" id="pageContent"></div>
-
   </main>
 </div>
 
@@ -581,10 +746,10 @@ const db = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
   {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
     }
   }
 );
@@ -596,8 +761,12 @@ const loginButton = document.getElementById("loginButton");
 
 let currentUser = null;
 let initialized = false;
+let currentBookRows = [];
+let currentBookFilter = "active";
+let coverFile = null;
+let coverPreviewReader = null;
 
-/* AUTHORIZATION */
+/* ADMIN AUTHORIZATION */
 
 function isAdmin(user) {
   const metadata = user?.app_metadata || {};
@@ -616,10 +785,8 @@ function showApp(user) {
   currentUser = user;
   loginPage.style.display = "none";
   adminApp.style.display = "block";
-
   document.getElementById("adminEmail").textContent =
     user.email || "Administrator";
-
   renderPage("overview");
 }
 
@@ -629,32 +796,25 @@ function showLogin() {
   loginPage.style.display = "flex";
 }
 
-/* PASSWORD VISIBILITY */
-
 document.getElementById("togglePassword")
-.addEventListener("click", function() {
+.addEventListener("click",function() {
   const field = document.getElementById("password");
   const show = field.type === "password";
-
   field.type = show ? "text" : "password";
   this.textContent = show ? "Hide" : "Show";
 });
 
-/* LOGIN */
-
 document.getElementById("loginForm")
-.addEventListener("submit", async event => {
-
+.addEventListener("submit",async event => {
   event.preventDefault();
-
   loginMessage.className = "message";
   loginButton.disabled = true;
   loginButton.textContent = "SIGNING IN...";
 
   try {
     const {data,error} = await db.auth.signInWithPassword({
-      email: document.getElementById("email").value.trim(),
-      password: document.getElementById("password").value
+      email:document.getElementById("email").value.trim(),
+      password:document.getElementById("password").value
     });
 
     if (error) throw error;
@@ -667,7 +827,6 @@ document.getElementById("loginForm")
     }
 
     showApp(data.user);
-
   } catch(error) {
     showError(error.message || "Unable to sign in.");
   } finally {
@@ -675,8 +834,6 @@ document.getElementById("loginForm")
     loginButton.textContent = "SIGN IN";
   }
 });
-
-/* SESSION */
 
 async function initialize() {
   const {data,error} = await db.auth.getUser();
@@ -690,10 +847,7 @@ async function initialize() {
   initialized = true;
 }
 
-/* AUTH EVENTS */
-
 db.auth.onAuthStateChange((event,session) => {
-
   if (!initialized) return;
 
   if (event === "SIGNED_OUT" || !session) {
@@ -703,13 +857,12 @@ db.auth.onAuthStateChange((event,session) => {
   if (event === "TOKEN_REFRESHED" && session?.user) {
     currentUser = session.user;
   }
-
 });
 
-/* NAVIGATION */
+/* PAGE INFORMATION */
 
 const pages = {
-  overview: {
+  overview:{
     title:"Dashboard Overview",
     description:"Welcome to your World of BlessGlow publishing control centre."
   },
@@ -768,8 +921,866 @@ const symbols = {
   security:"◇"
 };
 
-function renderPage(page) {
+/* GENRES AND SUBGENRES */
 
+const genreData = {
+  "Romance":[
+       "Campus Romance","Slow-Burn Romance","Enemies to Lovers",
+    "Friends to Lovers","Second-Chance Love","Forbidden Love",
+    "Unrequited Love","Billionaire Romance","Fake Dating","Love Triangle"
+  ],
+  "Revenge & Comebacks":[
+    "Betrayed Heiress","Revenge Against an Ex","Family Revenge",
+    "Revenge After Rejection","Secret Identity","The Ultimate Comeback",
+    "Revenge and Redemption","From Underdog to Powerful",
+    "The Heiress Returns","The Revenge Plan"
+  ],
+  "Dark Romance":[
+    "Obsession and Attraction","Forbidden Dark Love","Gothic Romance",
+    "Mafia Romance","Morally Grey Love Interests","Rivals with Chemistry",
+    "Dangerous Secrets","Twisted Relationships","Possessive Love",
+    "The Dangerous Deal"
+  ],
+  "Royal Stories":[
+    "Secret Princess","Hidden Heir","Royal Romance",
+    "Arranged Royal Marriage","Lost Princess","Palace Intrigue",
+    "Crown and Succession","Exiled Royal","Royal Bodyguard Romance",
+    "The Secret Royal Wedding"
+  ],
+  "Fantasy & Magic":[
+    "Dark Fantasy","Magical Academy","Witches and Wizards",
+    "Cursed Kingdoms","Mythical Creatures","Brutal Fantasy",
+    "Elemental Powers","Epic Fantasy Quests","Dragon Riders",
+    "Enchanted Realms"
+  ],
+    "Werewolf & Shifter":[
+    "Alpha and Luna","Rejected Mates","Fated Mates","Forbidden Mates",
+    "Royal Werewolves","Rogue Wolves","Hidden Shifter",
+    "Human and Werewolf","The Alpha's Secret","War of the Wolf Packs"
+  ],
+  "Mystery & Secrets":[
+    "Murder Mystery","The Missing Heiress","Hidden Identity",
+    "Family Secrets","Secret Societies","Locked-Room Mystery",
+    "Supernatural Mystery","Detective Investigations",
+    "The Secret Nobody Knows","The Inheritance Mystery"
+  ],
+  "Thriller & Suspense":[
+    "Psychological Thriller","Crime Thriller","Conspiracy",
+    "Survival Thriller","Cat and Mouse","Domestic Suspense",
+    "High-Stakes Pursuits","Political Thriller",
+    "The Stalker Next Door","The Dangerous Witness"
+  ],
+  "Drama & Scandals":[
+    "Family Drama","Betrayal and Lies","Friendship Conflicts",
+    "Love Triangles","Marriage Drama","Social-Class Conflict",
+    "Secrets and Scandals","Sibling Rivalry","Celebrity Scandals",
+    "The Secret Inheritance"
+  ],
+  "Young Adult & Coming-of-Age":[
+    "First Love","School Life","University Life","Academic Rivals",
+    "Friendship and Loyalty","Identity and Self-Discovery",
+    "Family Expectations","Young Adult Fantasy","Dark Academia",
+    "The New Girl"
+  ],
+  "Healing & Second Chances":[
+    "Healing After Heartbreak","Starting Over","Redemption",
+    "Forgiveness and Healing","Rebuilding Trust","Finding Yourself",
+    "Fresh Beginnings","Learning to Let Go","Life After Betrayal",
+    "Recovering from Loss"
+  ],
+  "Vampires & Immortals":[
+    "Vampire Romance","Ancient Vampires","Vampire Royalty",
+    "Immortal Love","Human and Vampire","Vampire Hunters",
+    "Cursed Immortals","Supernatural Clans","Vampire Academy",   "The Forbidden Bloodline"
+  ]
+};
+
+const genreDescriptions = {
+  "Romance":"Love stories filled with chemistry, longing, secrets, and unforgettable relationships.",
+  "Revenge & Comebacks":"Betrayal, revenge, transformation, and people returning stronger than ever.",
+  "Dark Romance":"Dangerous attraction, morally complicated lovers, and relationships filled with secrets.",
+  "Royal Stories":"Hidden bloodlines, palace intrigue, royal romance, and battles for the crown.",
+  "Fantasy & Magic":"Enchanted worlds, powerful magic, legendary creatures, and epic adventures.",
+  "Werewolf & Shifter":"Fated bonds, supernatural transformations, rival packs, and powerful Alphas.",
+  "Mystery & Secrets":"Unsolved cases, hidden truths, missing people, and shocking discoveries.",
+  "Thriller & Suspense":"High stakes, psychological tension, dangerous secrets, and unexpected twists.",
+  "Drama & Scandals":"Family conflict, betrayal, social pressure, and secrets that threaten reputations.",
+  "Young Adult & Coming-of-Age":"First love, friendship, identity, school life, and the challenges of growing up.",
+  "Healing & Second Chances":"Emotional recovery, rebuilding life, forgiveness, and finding a new beginning.",
+  "Vampires & Immortals":"Ancient secrets, supernatural power, immortal relationships, and gothic mysteries."
+};
+  const genreNames = Object.keys(genreData);
+
+/* GENERAL HELPERS */
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g,char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function slugify(value) {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-+|-+$/g,"");
+}
+
+function formatStatus(status) {
+  const labels = {
+    draft:"Draft",
+    coming_soon:"Coming Soon",
+    ongoing:"Ongoing",
+    completed:"Completed",
+    published:"Published",
+    archived:"Archived"
+  };
+  return labels[status] || status || "Unknown";
+}
+
+function showBookMessage(message,type="info") {
+  const box = document.getElementById("booksMessage");
+  if (!box) return;
+  box.textContent = message;
+  box.className = "module-message show " + type;
+  }
+  function clearBookMessage() {
+  const box = document.getElementById("booksMessage");
+  if (box) box.className = "module-message";
+}
+
+function getGenreOptions(selected="") {
+  return genreNames.map(name =>
+    `<option value="${escapeHTML(name)}"
+      ${name === selected ? "selected" : ""}>
+      ${escapeHTML(name)}
+    </option>`
+  ).join("");
+}
+
+function getSubgenreOptions(genre,selected="") {
+  const options = genreData[genre] || [];
+  let html = `<option value="">Select a subgenre</option>`;
+
+  if (selected && !options.includes(selected)) {
+    html += `<option value="${escapeHTML(selected)}" selected>
+      ${escapeHTML(selected)} (existing value)
+    </option>`;
+  }
+    html += options.map(name =>
+    `<option value="${escapeHTML(name)}"
+      ${name === selected ? "selected" : ""}>
+      ${escapeHTML(name)}
+    </option>`
+  ).join("");
+
+  return html;
+}
+
+/* BOOKS PAGE */
+
+async function renderBooksPage(content) {
+  content.innerHTML = `
+    <section class="welcome">
+      <h1>Books & Stories</h1>
+      <p>Manage your books, story descriptions, covers, genres and publishing status.</p>
+    </section>
+
+    <div id="booksMessage" class="module-message"></div>
+
+    <div class="books-toolbar">
+      <div class="books-actions">
+        <button class="action-button primary" id="addBookButton">
+          + Add New Book
+        </button>
+        <button class="action-button" id="toggleTrashButton">
+          View Trash
+        </button>
+        <button class="action-button" id="refreshBooksButton">
+          ↻ Refresh
+        </button>
+      </div>
+  <div class="books-filter">
+        <select id="bookStatusFilter" aria-label="Filter by status">
+          <option value="">All statuses</option>
+          <option value="draft">Draft</option>
+          <option value="coming_soon">Coming Soon</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="completed">Completed</option>
+          <option value="published">Published</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+    </div>
+
+    <section class="editor-panel" id="bookEditor">
+      <div class="editor-heading">
+        <h2 id="editorTitle">Add a New Book</h2>
+        <button class="action-button" id="closeEditorButton">Close</button>
+      </div>
+
+      <form id="bookForm">
+        <input type="hidden" id="bookId">
+
+        <div class="editor-grid">
+          <div class="editor-field">
+            <label for="bookTitle">BOOK TITLE *</label>
+            <input id="bookTitle" required maxlength="200"
+              placeholder="Enter book title">
+          </div>
+     <div class="editor-field">
+            <label for="bookSlug">BOOK SLUG *</label>
+            <input id="bookSlug" required maxlength="220"
+              placeholder="book-title">
+            <small>Used in your website's book URL. Keep it unique.</small>
+          </div>
+
+          <div class="editor-field full">
+            <label for="bookShortDescription">SHORT DESCRIPTION</label>
+            <textarea id="bookShortDescription" rows="2"
+              placeholder="A short introduction for book cards and homepage sections."></textarea>
+          </div>
+
+          <div class="editor-field full">
+            <label for="bookDescription">FULL DESCRIPTION</label>
+            <textarea id="bookDescription" rows="5"
+              placeholder="Write the full book description..."></textarea>
+          </div>
+
+          <div class="editor-field">
+            <label for="bookGenre">MAIN GENRE *</label>
+            <select id="bookGenre" required>
+              <option value="">Select a main genre</option>
+              ${getGenreOptions()}
+            </select>
+          </div>
+
+          <div class="editor-field">
+            <label for="bookSubgenre">SUBGENRE *</label> <select id="bookSubgenre" required disabled>
+              <option value="">Select a main genre first</option>
+            </select>
+          </div>
+
+          <div class="editor-field">
+            <label for="bookStatus">PUBLICATION STATUS *</label>
+            <select id="bookStatus" required>
+              <option value="draft">Draft</option>
+              <option value="coming_soon">Coming Soon</option>
+              <option value="ongoing">Ongoing</option>
+              <option value="completed">Completed</option>
+              <option value="published">Published</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+
+          <div class="editor-field">
+            <label for="bookReleaseDate">RELEASE DATE</label>
+            <input id="bookReleaseDate" type="date">
+          </div>
+
+          <div class="editor-field">
+            <label for="bookOrder">DISPLAY ORDER</label>
+            <input id="bookOrder" type="number" value="0" step="1">
+            <small>Lower numbers appear earlier when your website uses this order.</small>
+          </div>
+  <div class="editor-field full">
+            <label for="bookCover">BOOK COVER</label>
+            <input id="bookCover" type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif">
+            <small>Maximum file size: 20 MB. Supported formats: JPG, PNG, WebP and GIF.</small>
+
+            <div class="cover-preview-wrap">
+              <img id="coverPreview" alt="Book cover preview">
+              <span id="coverPreviewNote"
+                style="color:#888;font-size:11px;line-height:1.7">
+                Choose a cover image to preview it here.
+              </span>
+            </div>
+          </div>
+
+          <div class="editor-field full">
+            <label>BOOK SETTINGS</label>
+            <div class="check-options">
+              <div class="check-option">
+                <input type="checkbox" id="bookFeatured">
+                <label for="bookFeatured">Featured Book</label>
+              </div>
+              <div class="check-option">
+                <input type="checkbox" id="bookEditorsPick">
+                <label for="bookEditorsPick">Editor's Pick</label>
+              </div>
+              <div class="check-option">
+                <input type="checkbox" id="bookFreeInterest">
+                <label for="bookFreeInterest">Allow Notify Me / Free Interest</label>
+              </div>
+              <div class="check-option">
+                <input type="checkbox" id="bookPreorder">
+                <label for="bookPreorder">Allow Preorder</label>  </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-footer">
+          <button type="button" class="action-button" id="cancelBookButton">
+            Cancel
+          </button>
+          <button type="submit" class="gold-button" id="saveBookButton">
+            SAVE BOOK
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <h2 class="section-title" id="bookListTitle">Your Books</h2>
+    <div id="booksList" class="books-grid">
+      <div class="book-empty">Loading your books...</div>
+    </div>
+  `;
+
+  document.getElementById("addBookButton")
+    .addEventListener("click",() => openBookEditor());
+
+  document.getElementById("closeEditorButton")
+    .addEventListener("click",closeBookEditor);
+
+  document.getElementById("cancelBookButton")
+    .addEventListener("click",closeBookEditor);
+  document.getElementById("refreshBooksButton")
+    .addEventListener("click",loadBooks);
+
+  document.getElementById("toggleTrashButton")
+    .addEventListener("click",() => {
+      currentBookFilter =
+        currentBookFilter === "trash" ? "active" : "trash";
+
+      document.getElementById("toggleTrashButton").textContent =
+        currentBookFilter === "trash" ? "View Active Books" : "View Trash";
+
+      document.getElementById("bookListTitle").textContent =
+        currentBookFilter === "trash" ? "Books in Trash" : "Your Books";
+
+      loadBooks();
+    });
+
+  document.getElementById("bookStatusFilter")
+    .addEventListener("change",loadBooks);
+
+  document.getElementById("bookGenre")
+    .addEventListener("change",() => {
+      const genre = document.getElementById("bookGenre").value;
+      const subgenre = document.getElementById("bookSubgenre");
+
+      subgenre.innerHTML = getSubgenreOptions(genre);
+      subgenre.disabled = !genre;
+    });
+  document.getElementById("bookTitle")
+    .addEventListener("input",() => {
+      const id = document.getElementById("bookId").value;
+      const slug = document.getElementById("bookSlug");
+
+      if (!id || !slug.dataset.manuallyEdited) {
+        slug.value = slugify(
+          document.getElementById("bookTitle").value
+        );
+      }
+    });
+
+  document.getElementById("bookSlug")
+    .addEventListener("input",event => {
+      event.target.dataset.manuallyEdited = "true";
+    });
+
+  document.getElementById("bookCover")
+    .addEventListener("change",previewSelectedCover);
+
+  document.getElementById("bookForm")
+    .addEventListener("submit",saveBook);
+
+  await loadBooks();
+}
+
+/* LOAD BOOKS */
+
+async function loadBooks() {
+  const list = document.getElementById("booksList");
+  if (!list) return;list.innerHTML = `<div class="book-empty">Loading books...</div>`;
+  clearBookMessage();
+
+  try {
+    let query = db.from("books").select("*");
+
+    if (currentBookFilter === "trash") {
+      query = query.not("deleted_at","is",null);
+    } else {
+      query = query.is("deleted_at",null);
+    }
+
+    const {data,error} = await query
+      .order("display_order",{ascending:true})
+      .order("created_at",{ascending:true});
+
+    if (error) throw error;
+
+    currentBookRows = data || [];
+
+    const statusFilter =
+      document.getElementById("bookStatusFilter")?.value || "";
+
+    let visibleBooks = currentBookRows;
+
+    if (statusFilter) {
+      visibleBooks = visibleBooks.filter(book =>
+        book.Publication_status === statusFilter
+      );
+  }
+     if (!visibleBooks.length) {
+      list.innerHTML = `
+        <div class="book-empty">
+          ${currentBookFilter === "trash"
+            ? "Your Trash is empty."
+            : "No books found. Select Add New Book to create your first book."}
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = visibleBooks.map(book => {
+      const cover = book.Cover_url
+        ? `<img class="book-cover"
+             src="${escapeHTML(book.Cover_url)}"
+             alt="${escapeHTML(book.Title)} cover"
+             loading="lazy">`
+        : `<div class="book-cover-empty">World of BlessGlow</div>`;
+
+      const buttons = currentBookFilter === "trash"
+        ? `<button data-restore="${escapeHTML(book.id)}">Restore</button>`
+        : `
+          <button data-edit="${escapeHTML(book.id)}">Edit</button>
+          <button class="trash" data-trash="${escapeHTML(book.id)}">Move to Trash</button>
+        `;
+
+      return `
+        <article class="book-card">
+          ${cover}
+          <div class="book-info">
+            <h3>${escapeHTML(book.Title || "Untitled Book")}</h3>
+            <p>${escapeHTML(book.short_description || book.Description || "No description added yet.")}</p>
+            <div class="book-tags">
+              <span class="book-tag">${escapeHTML(formatStatus(book.Publication_status))}</span>
+              <span class="book-tag">${escapeHTML(book.main_genre || "No genre")}</span> ${book.Subgenre
+                ? `<span class="book-tag">${escapeHTML(book.Subgenre)}</span>`
+                : ""}
+              ${book.is_featured ? `<span class="book-tag">Featured</span>` : ""}
+              ${book.is_editors_pick ? `<span class="book-tag">Editor's Pick</span>` : ""}
+            </div>
+            <p>Slug: ${escapeHTML(book.Slug || "")}</p>
+            <div class="book-buttons">${buttons}</div>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    list.querySelectorAll("[data-edit]").forEach(button => {
+      button.addEventListener("click",() => {
+        const book = currentBookRows.find(
+          item => item.id === button.dataset.edit
+        );
+        if (book) openBookEditor(book);
+      });
+    });
+  list.querySelectorAll("[data-trash]").forEach(button => {
+      button.addEventListener("click",() => {
+        const book = currentBookRows.find(
+          item => item.id === button.dataset.trash
+        );
+        if (book) moveBookToTrash(book);
+      });
+    });
+
+    list.querySelectorAll("[data-restore]").forEach(button => {
+      button.addEventListener("click",() => {
+        const book = currentBookRows.find(
+          item => item.id === button.dataset.restore
+        );
+        if (book) restoreBook(book);
+      });
+    });
+
+  } catch(error) {
+    list.innerHTML = `
+      <div class="book-empty">
+        Could not load books.<br>
+        ${escapeHTML(error.message || "Please try again.")}
+      </div>`;
+  }
+}
+  /* OPEN BOOK EDITOR */
+
+function openBookEditor(book=null) {
+  const panel = document.getElementById("bookEditor");
+  const form = document.getElementById("bookForm");
+
+  form.reset();
+  coverFile = null;
+
+  const preview = document.getElementById("coverPreview");
+  preview.removeAttribute("src");
+  preview.style.display = "none";
+
+  document.getElementById("coverPreviewNote").textContent =
+    "Choose a cover image to preview it here.";
+
+  const slugInput = document.getElementById("bookSlug");
+  delete slugInput.dataset.manuallyEdited;
+
+  if (book) {
+    document.getElementById("editorTitle").textContent = "Edit Book";
+    document.getElementById("bookId").value = book.id;
+    document.getElementById("bookTitle").value = book.Title || "";
+    document.getElementById("bookSlug").value = book.Slug || "";
+    document.getElementById("bookShortDescription").value =
+      book.short_description || "";
+    document.getElementById("bookDescription").value =
+      book.Description || "";
+
+    document.getElementById("bookGenre").value =
+      book.main_genre || "";
+
+    const subgenreSelect = document.getElementById("bookSubgenre");
+    subgenreSelect.innerHTML = getSubgenreOptions(book.main_genre || "",
+      book.Subgenre || ""
+    );
+    subgenreSelect.disabled = !book.main_genre;
+
+    document.getElementById("bookStatus").value =
+      book.Publication_status || "draft";
+
+    document.getElementById("bookReleaseDate").value =
+      book.Release_date || "";
+
+    document.getElementById("bookOrder").value =
+      book.display_order ?? 0;
+
+    document.getElementById("bookFeatured").checked =
+      !!book.is_featured;
+
+    document.getElementById("bookEditorsPick").checked =
+      !!book.is_editors_pick;
+
+    document.getElementById("bookFreeInterest").checked =
+      !!book.Allow_free_interest;
+
+    document.getElementById("bookPreorder").checked =
+      !!book.allow_preorder;
+
+    if (book.Cover_url) {
+      preview.src = book.Cover_url;
+      preview.style.display = "block";
+      document.getElementById("coverPreviewNote").textContent =
+        "Current saved cover. Choose another image to replace it.";
+    }
+  } else {
+    document.getElementById("editorTitle").textContent =
+      "Add a New Book";
+
+    document.getElementById("bookId").value = "";
+    document.getElementById("bookStatus").value = "draft";
+    document.getElementById("bookOrder").value =
+      currentBookRows.length;
+    document.getElementById("bookSubgenre").innerHTML =
+      `<option value="">Select a main genre first</option>`;
+    document.getElementById("bookSubgenre").disabled = true;
+  }
+
+  panel.classList.add("open");
+  panel.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function closeBookEditor() {
+  const panel = document.getElementById("bookEditor");
+  if (panel) panel.classList.remove("open");
+
+  coverFile = null;
+}
+
+/* COVER PREVIEW */
+
+function previewSelectedCover(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const allowedTypes = [
+    "image/jpeg","image/png","image/webp","image/gif"
+  ];
+  if (!allowedTypes.includes(file.type)) {
+    showBookMessage(
+      "Please choose a JPG, PNG, WebP or GIF image.",
+      "error"
+    );
+    event.target.value = "";
+    return;
+  }
+
+  if (file.size > 20 * 1024 * 1024) {
+    showBookMessage("The cover image must not exceed 20 MB.","error");
+    event.target.value = "";
+    return;
+  }
+
+  coverFile = file;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    const preview = document.getElementById("coverPreview");
+    preview.src = reader.result;
+    preview.style.display = "block";
+
+    document.getElementById("coverPreviewNote").textContent =
+      "New cover preview. It will be uploaded when you save the book.";
+  };
+  reader.onerror = () => {
+    showBookMessage("Could not preview this image. Try another file.","error");
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/* UPLOAD COVER */
+
+async function uploadBookCover(file) {
+  const safeName = file.name
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]/g,"-")
+    .replace(/-+/g,"-");
+
+  const path =
+    "covers/" + Date.now() + "-" + safeName;
+
+  const {data,error} = await db.storage
+    .from("book-covers")
+    .upload(path,file,{
+      cacheControl:"3600",
+      upsert:false,
+      contentType:file.type
+    });
+
+  if (error) throw error;
+
+  const publicResult = db.storage
+    .from("book-covers")
+    .getPublicUrl(data.path);
+
+  const publicUrl = publicResult?.data?.publicUrl;
+
+  if (!publicUrl) {
+    throw new Error("The cover uploaded, but its public URL could not be created.");
+  }
+
+  return {
+    path:data.path,
+    url:publicUrl
+  };
+  }
+  /* SAVE BOOK */
+
+async function saveBook(event) {
+  event.preventDefault();
+
+  const saveButton = document.getElementById("saveBookButton");
+  saveButton.disabled = true;
+  saveButton.textContent = "SAVING...";
+
+  let uploadedCoverPath = null;
+
+  try {
+    const id = document.getElementById("bookId").value;
+    const title = document.getElementById("bookTitle").value.trim();
+    const slug = slugify(
+      document.getElementById("bookSlug").value
+    );
+
+    const genre = document.getElementById("bookGenre").value;
+    const subgenre = document.getElementById("bookSubgenre").value;
+
+    if (!title) throw new Error("Please enter the book title.");
+    if (!slug) throw new Error("Please enter a valid book slug.");
+    if (!genre) throw new Error("Please select a main genre.");
+    if (!subgenre) throw new Error("Please select a subgenre.");
+
+    const existingBook = id
+      ? currentBookRows.find(book => book.id === id)
+      : null;
+
+    let coverUrl = existingBook?.Cover_url || null;
+
+    if (coverFile) {
+      showBookMessage("Uploading your book cover...","info");const uploaded = await uploadBookCover(coverFile);
+      uploadedCoverPath = uploaded.path;
+      coverUrl = uploaded.url;
+    }
+
+    const bookData = {
+      Title:title,
+      Slug:slug,
+      Description:document.getElementById("bookDescription").value.trim(),
+      short_description:document.getElementById("bookShortDescription").value.trim(),
+      Cover_url:coverUrl,
+      main_genre:genre,
+      Subgenre:subgenre,
+      Publication_status:document.getElementById("bookStatus").value,
+      Release_date:document.getElementById("bookReleaseDate").value || null,
+      Allow_free_interest:document.getElementById("bookFreeInterest").checked,
+      allow_preorder:document.getElementById("bookPreorder").checked,
+      is_featured:document.getElementById("bookFeatured").checked,
+      is_editors_pick:document.getElementById("bookEditorsPick").checked,
+      display_order:Number(
+        document.getElementById("bookOrder").value || 0
+      ),
+      updated_at:new Date().toISOString()
+    };
+  let result;
+
+    if (id) {
+      result = await db.from("books")
+        .update(bookData)
+        .eq("id",id)
+        .select()
+        .single();
+    } else {
+      result = await db.from("books")
+        .insert(bookData)
+        .select()
+        .single();
+    }
+
+    if (result.error) throw result.error;
+
+    showBookMessage(
+      id ? "Book updated successfully." : "New book saved successfully.",
+      "success"
+    );
+
+    closeBookEditor();
+    await loadBooks();
+
+  } catch(error) {
+    if (uploadedCoverPath) {
+      await db.storage.from("book-covers").remove([uploadedCoverPath]);
+    }
+
+    showBookMessage(
+      error.message || "Could not save the book. Please try again.",
+      "error"
+    );
+    } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = "SAVE BOOK";
+    coverFile = null;
+  }
+}
+
+/* MOVE BOOK AND ITS ACTIVE CHAPTERS TO TRASH */
+
+async function moveBookToTrash(book) {
+  const confirmed = confirm(
+    `Move "${book.Title}" to Trash?\n\nIts active chapters will also be moved to Trash. You can restore the book later.`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const deletionTime = new Date().toISOString();
+
+    const chapterResult = await db.from("chapters")
+      .update({deleted_at:deletionTime})
+      .eq("book_id",book.id)
+      .is("deleted_at",null);
+
+    if (chapterResult.error) {
+      throw new Error(
+        "The chapters could not be moved to Trash. The book was not moved. " +
+        chapterResult.error.message
+      );
+    }
+
+    const bookResult = await db.from("books")
+      .update({deleted_at:deletionTime})
+      .eq("id",book.id);
+
+    if (bookResult.error) {
+      await db.from("chapters")
+        .update({deleted_at:null})
+        .eq("book_id",book.id)
+        .eq("deleted_at",deletionTime);
+   throw bookResult.error;
+    }
+
+    showBookMessage(
+      "Book and its active chapters moved to Trash.",
+      "success"
+    );
+
+    await loadBooks();
+
+  } catch(error) {
+    showBookMessage(
+      error.message || "Could not move the book to Trash.",
+      "error"
+    );
+  }
+}
+
+/* RESTORE BOOK AND CHAPTERS MOVED WITH IT */
+
+async function restoreBook(book) {
+  const confirmed = confirm(
+    `Restore "${book.Title}" and the chapters moved to Trash with it?`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const deletionTime = book.deleted_at;
+
+    const bookResult = await db.from("books")
+      .update({deleted_at:null})
+      .eq("id",book.id);
+
+    if (bookResult.error) throw bookResult.error;
+
+    const chapterResult = await db.from("chapters")
+      .update({deleted_at:null})
+      .eq("book_id",book.id)
+      .eq("deleted_at",deletionTime);
+
+    if (chapterResult.error) {
+      showBookMessage(
+        "The book was restored, but some chapters could not be restored: " +
+        chapterResult.error.message,
+        "error"
+      );
+      await loadBooks();
+      return;
+  }
+  showBookMessage("Book and its associated chapters restored.","success");
+    await loadBooks();
+
+  } catch(error) {
+    showBookMessage(
+      error.message || "Could not restore the book.",
+      "error"
+    );
+  }
+}
+
+/* PAGE RENDERING */
+
+function renderPage(page) {
   const info = pages[page] || pages.overview;
 
   document.querySelectorAll(".nav-item").forEach(button => {
@@ -782,7 +1793,6 @@ function renderPage(page) {
   const content = document.getElementById("pageContent");
 
   if (page === "overview") {
-
     content.innerHTML = `
       <section class="welcome">
         <h1>Welcome to World of BlessGlow</h1>
@@ -790,27 +1800,26 @@ function renderPage(page) {
       </section>
 
       <h2 class="section-title">Publishing Overview</h2>
-
-      <div class="stats">
+   <div class="stats">
         <div class="stat-card">
           <span>Total Books</span>
           <strong>—</strong>
-          <small>Database connection pending</small>
+          <small>Overview connection pending</small>
         </div>
         <div class="stat-card">
           <span>Ongoing Stories</span>
           <strong>—</strong>
-          <small>Database connection pending</small>
+          <small>Overview connection pending</small>
         </div>
         <div class="stat-card">
           <span>Published Chapters</span>
           <strong>—</strong>
-          <small>Database connection pending</small>
+          <small>Overview connection pending</small>
         </div>
         <div class="stat-card">
           <span>Pending Reviews</span>
           <strong>—</strong>
-          <small>Database connection pending</small>
+          <small>Overview connection pending</small>
         </div>
       </div>
 
@@ -823,14 +1832,18 @@ function renderPage(page) {
               <span class="symbol">${symbols[key]}</span>
               <h3>${item.title}</h3>
               <p>${item.description}</p>
-              <span class="module-status">Module setup pending</span>
+              <span class="module-status">
+                ${key === "books" ? "Connected module" : "Module setup pending"}
+              </span>
             </button>
           `).join("")}
       </div>
     `;
+  
+  } else if (page === "books") {
+    renderBooksPage(content);
 
   } else {
-
     content.innerHTML = `
       <section class="welcome">
         <h1>${info.title}</h1>
@@ -849,11 +1862,10 @@ function renderPage(page) {
         </p>
       </div>
     `;
-
   }
 
   content.querySelectorAll("[data-open]").forEach(button => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click",() => {
       renderPage(button.dataset.open);
     });
   });
@@ -861,11 +1873,10 @@ function renderPage(page) {
   closeMenu();
 }
 
-/* SIDEBAR EVENTS */
+/* SIDEBAR */
 
 document.querySelectorAll(".nav-item").forEach(button => {
-  button.addEventListener("click", () => {
-    renderPage(button.dataset.page);
+  button.addEventListener("click",() => {renderPage(button.dataset.page);
   });
 });
 
@@ -880,31 +1891,31 @@ function closeMenu() {
 }
 
 document.getElementById("menuButton")
-.addEventListener("click", () => {
+.addEventListener("click",() => {
   sidebar.classList.toggle("open");
   overlay.classList.toggle("show");
 });
 
-overlay.addEventListener("click", closeMenu);
+overlay.addEventListener("click",closeMenu);
 
 /* LOGOUT */
 
 document.getElementById("logoutButton")
-.addEventListener("click", async () => {
+.addEventListener("click",async () => {
   const {error} = await db.auth.signOut();
 
   if (error) {
     alert("Sign out failed: " + error.message);
   }
 });
-
-/* START */
+  /* START */
 
 initialize();
 
 </script>
-
 </body>
-          </html>
+</html>
+
+            
   
 
