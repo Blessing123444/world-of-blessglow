@@ -429,56 +429,31 @@ if(!$("bookId").value)$("slug").value=slugify($("title").value);
 
 /* COVER SELECTION */
 
-$("chooseCover").onclick=()=>{
-$("coverFile").click();
-};
+let selectedCoverFile = null;
 
-$("coverFile").addEventListener("change",function(){
-const file=this.files&&this.files[0];
-if(!file)return;
+$("coverFile").addEventListener("change", function () {
+  const file = this.files?.[0];
 
-if(!file.type.startsWith("image/")||file.size>20*1024*1024){
-alert("Choose an image no larger than 20 MB.");
-this.value="";
-selectedCoverFile=null;
-return;
-}
+  if (!file) {
+    console.log("No file returned by picker");
+    return;
+  }
 
-selectedCoverFile=file;
-$("coverFileName").textContent="Selected: "+file.name;
+  selectedCoverFile = file;
 
-const reader=new FileReader();
+  $("coverFileName").textContent = "Selected: " + file.name;
 
-reader.onload=function(){
-$("coverPreview").src=reader.result;
-$("coverPreview").style.display="block";
-};
+  const reader = new FileReader();
 
-reader.onerror=function(){
-alert("Could not preview this image.");
-};
+  reader.onload = function (e) {
+    $("coverPreview").src = e.target.result;
+    $("coverPreview").style.display = "block";
+  };
 
-reader.readAsDataURL(file);
+  reader.readAsDataURL(file);
+
+  console.log("Selected file:", file.name, file.size);
 });
-
-async function uploadCover(){
-if(!selectedCoverFile)return currentCover;
-
-const file=selectedCoverFile;
-const path="covers/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
-
-const {data,error}=await db.storage
-.from("book-covers")
-.upload(path,file,{
-upsert:false,
-contentType:file.type
-});
-
-if(error)throw error;
-
-return db.storage.from("book-covers")
-.getPublicUrl(data.path).data.publicUrl;
-}
 
 /* SAVE BOOK */
 
