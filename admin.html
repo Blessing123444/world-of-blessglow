@@ -47,7 +47,9 @@ h1{font-size:23px}
 .checks{display:flex;gap:15px;flex-wrap:wrap;margin:10px 0 20px}
 .checks label{display:flex;align-items:center;gap:7px}
 .checks input{width:auto;margin:0}
-#coverPreview{display:none;width:110px;height:145px;object-fit:cover}
+#coverPreview{display:none;width:110px;height:145px;object-fit:cover;margin-top:12px}
+#coverFile{display:none}
+#coverFileName{margin:12px 0;color:var(--gold)}
 #loginMessage,#message{color:var(--gold);margin:12px 0}
 @media(max-width:700px){
 #app{display:block}
@@ -172,6 +174,7 @@ main{padding:14px}
 
 <label>Book Cover</label>
 <input id="coverFile" type="file" accept="image/*">
+<button type="button" class="secondary" id="chooseCover">Choose Cover Image</button>
 <p id="coverFileName" class="note">No image selected.</p>
 <img id="coverPreview" alt="Cover preview">
 <p class="note">Maximum image size: 20 MB.</p>
@@ -213,7 +216,7 @@ function slugify(t){
 return t.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 }
 
-/* LOGIN - PRESERVED FROM YOUR WORKING VERSION */
+/* LOGIN */
 
 async function verifyAdmin(){
 const {data,error}=await db.auth.getUser();
@@ -424,40 +427,44 @@ $("title").oninput=()=>{
 if(!$("bookId").value)$("slug").value=slugify($("title").value);
 };
 
-/* COVER UPLOAD */
+/* COVER SELECTION */
 
-$("coverFile").onchange=()=>{
-const file=$("coverFile").files?.[0];
+$("chooseCover").onclick=()=>{
+$("coverFile").click();
+};
+
+$("coverFile").addEventListener("change",function(){
+const file=this.files&&this.files[0];
 if(!file)return;
 
 if(!file.type.startsWith("image/")||file.size>20*1024*1024){
 alert("Choose an image no larger than 20 MB.");
-$("coverFile").value="";
+this.value="";
 selectedCoverFile=null;
 return;
 }
 
 selectedCoverFile=file;
-$("coverFileName").textContent=file.name;
+$("coverFileName").textContent="Selected: "+file.name;
 
 const reader=new FileReader();
 
-reader.onload=()=>{
+reader.onload=function(){
 $("coverPreview").src=reader.result;
 $("coverPreview").style.display="block";
 };
 
-reader.onerror=()=>{
+reader.onerror=function(){
 alert("Could not preview this image.");
 };
 
 reader.readAsDataURL(file);
-};
+});
 
 async function uploadCover(){
-const file=selectedCoverFile;
-if(!file)return currentCover;
+if(!selectedCoverFile)return currentCover;
 
+const file=selectedCoverFile;
 const path="covers/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
 
 const {data,error}=await db.storage
@@ -469,7 +476,8 @@ contentType:file.type
 
 if(error)throw error;
 
-return db.storage.from("book-covers").getPublicUrl(data.path).data.publicUrl;
+return db.storage.from("book-covers")
+.getPublicUrl(data.path).data.publicUrl;
 }
 
 /* SAVE BOOK */
@@ -602,6 +610,5 @@ $("placeholderTitle").textContent=btn.textContent.trim();
 };
 });
 </script>
-
 </body>
 </html>
