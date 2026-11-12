@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>World of BlessGlow Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 :root{--bg:#09090c;--panel:#15151b;--gold:#d4af37;--text:#f5f3ed}
 *{box-sizing:border-box}
@@ -14,8 +13,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px Arial}
 button,input,select,textarea{font:inherit}
 button{padding:11px 15px;border:0;border-radius:7px;background:var(--gold);color:#111;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5}
-.secondary{background:#292932;color:white}
-.danger{background:#963a3a;color:white}
+.secondary{background:#292932;color:white}.danger{background:#963a3a;color:white}
 .hidden{display:none!important}
 input,select,textarea{width:100%;padding:12px;margin:7px 0 15px;background:#0d0d12;color:white;border:1px solid #393943;border-radius:7px}
 #login{max-width:400px;margin:12vh auto;padding:25px;background:var(--panel);border:1px solid #333;border-radius:12px}
@@ -31,8 +29,7 @@ h1{font-size:23px}
 .panel,.book{background:var(--panel);padding:18px;border:1px solid #303039;border-radius:12px;margin-bottom:15px}
 .book{display:flex;gap:14px;align-items:center}
 .cover{width:70px;height:95px;object-fit:cover;background:#25252b}
-.book-info{flex:1;min-width:0}
-.book-info h3{margin:0 0 8px}
+.book-info{flex:1;min-width:0}.book-info h3{margin:0 0 8px}
 .actions button{padding:8px 10px;font-size:12px}
 .status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px}
 .status-published{background:#164c30;color:#85e6a9}
@@ -65,7 +62,7 @@ main{padding:14px}.form-grid{grid-template-columns:1fr}
 <form id="loginForm">
 <label>Email</label><input id="email" type="email" autocomplete="username" required>
 <label>Password</label><input id="password" type="password" autocomplete="current-password" required>
-<button id="loginButton" type="submit">Sign In</button>
+<button id="loginButton">Sign In</button>
 </form>
 <p id="loginMessage"></p>
 </section>
@@ -115,52 +112,42 @@ main{padding:14px}.form-grid{grid-template-columns:1fr}
 <h2 id="editorTitle">Add Book</h2>
 <form id="bookForm">
 <input type="hidden" id="bookId">
-
 <div class="form-grid">
 <div><label>Book Title</label><input id="title" required></div>
 <div><label>Book Slug</label><input id="slug" required></div>
 <div><label>Main Genre</label>
 <select id="genre" required>
 <option value="">Select genre</option>
-<option>Romance</option>
-<option>Revenge & Comebacks</option>
-<option>Dark Romance</option>
-<option>Royal Stories</option>
-<option>Fantasy & Magic</option>
-<option>Werewolf & Shifter</option>
-<option>Mystery & Secrets</option>
-<option>Thriller & Suspense</option>
-<option>Drama & Scandals</option>
-<option>Young Adult & Coming-of-Age</option>
-<option>Healing & Second Chances</option>
-<option>Vampires & Immortals</option>
+<option>Romance</option><option>Revenge & Comebacks</option>
+<option>Dark Romance</option><option>Royal Stories</option>
+<option>Fantasy & Magic</option><option>Werewolf & Shifter</option>
+<option>Mystery & Secrets</option><option>Thriller & Suspense</option>
+<option>Drama & Scandals</option><option>Young Adult & Coming-of-Age</option>
+<option>Healing & Second Chances</option><option>Vampires & Immortals</option>
 </select></div>
 <div><label>Subgenre</label><input id="subgenre"></div>
 <div><label>Status</label>
 <select id="publicationStatus">
-<option value="draft">Draft</option>
-<option value="coming_soon">Coming Soon</option>
-<option value="ongoing">Ongoing</option>
-<option value="completed">Completed</option>
-<option value="published">Published</option>
-<option value="archived">Archived</option>
+<option value="draft">Draft</option><option value="coming_soon">Coming Soon</option>
+<option value="ongoing">Ongoing</option><option value="completed">Completed</option>
+<option value="published">Published</option><option value="archived">Archived</option>
 </select></div>
 <div><label>Release Date</label><input id="releaseDate" type="date"></div>
 <div><label>Display Order</label><input id="displayOrder" type="number" min="1"></div>
 </div>
-
 <label>Description</label><textarea id="description" rows="4"></textarea>
-<label>Book Cover</label><input id="coverFile" type="file" accept="image/*">
+<label>Book Cover</label>
+<input id="coverFile" type="file" accept="image/*">
+<p id="coverFileName" class="note">No image selected.</p>
 <img id="coverPreview" alt="Cover preview">
 <p class="note">Maximum image size: 20 MB.</p>
-
 <div class="checks">
 <label><input id="featured" type="checkbox"> Featured</label>
 <label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
 <label><input id="freeInterest" type="checkbox"> Notify Me</label>
 <label><input id="preorder" type="checkbox"> Preorder</label>
 </div>
-<button id="saveBook" type="submit">Save Book</button>
+<button id="saveBook">Save Book</button>
 <button id="cancelEdit" type="button" class="secondary">Cancel</button>
 </form>
 </section>
@@ -173,20 +160,16 @@ main{padding:14px}.form-grid{grid-template-columns:1fr}
 </div>
 
 <script>
-const SUPABASE_URL="https://zngagaolaiidgyxoldsh.supabase.co";
-const SUPABASE_KEY="sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const URL="https://zngagaolaiidgyxoldsh.supabase.co";
+const KEY="sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+const db=supabase.createClient(URL,KEY);
 const $=id=>document.getElementById(id);
 
-let books=[],trashMode=false,currentCover="",loading=false;
+let books=[],trashMode=false,currentCover="",selectedCoverFile=null,loading=false;
 
-const labels={
-draft:"Draft",coming_soon:"Coming Soon",ongoing:"Ongoing",
-completed:"Completed",published:"Published",archived:"Archived"
-};
-
-function message(t){$("message").textContent=t}
-function slugify(t){return t.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+const labels={draft:"Draft",coming_soon:"Coming Soon",ongoing:"Ongoing",completed:"Completed",published:"Published",archived:"Archived"};
+const msg=t=>$("message").textContent=t;
+const slugify=t=>t.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 
 /* LOGIN */
 async function verifyAdmin(){
@@ -194,78 +177,59 @@ const {data,error}=await db.auth.getUser();
 if(error)throw error;
 const user=data.user;
 if(!user)throw Error("No active login session.");
-
 const meta=user.app_metadata||{};
-const allowed=meta.role==="admin"||
-(Array.isArray(meta.roles)&&meta.roles.includes("admin"));
-
-if(!allowed)throw Error("Login succeeded, but administrator access was not confirmed. Check your Supabase admin role.");
+if(meta.role!=="admin"&&!(meta.roles||[]).includes("admin"))
+throw Error("Administrator access was not confirmed. Check your Supabase admin role.");
 }
 
 async function enterAdmin(){
 if(loading)return;
 loading=true;
 try{
-$("loginMessage").textContent="Verifying administrator access...";
+$("loginMessage").textContent="Verifying access...";
 await verifyAdmin();
 $("login").classList.add("hidden");
 $("app").classList.remove("hidden");
 await loadBooks();
-}catch(e){
-$("loginMessage").textContent=e.message;
-}finally{loading=false}
+}catch(e){$("loginMessage").textContent=e.message}
+finally{loading=false}
 }
 
-$("loginForm").addEventListener("submit",async e=>{
+$("loginForm").onsubmit=async e=>{
 e.preventDefault();
 if(loading)return;
 loading=true;
-const btn=$("loginButton");
-btn.disabled=true;
-btn.textContent="Signing In...";
-$("loginMessage").textContent="Connecting...";
+$("loginButton").disabled=true;
+$("loginButton").textContent="Signing In...";
 try{
-const {error}=await db.auth.signInWithPassword({
-email:$("email").value.trim(),
-password:$("password").value
-});
+const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
 if(error)throw error;
 loading=false;
 await enterAdmin();
-}catch(e){
-$("loginMessage").textContent="Login failed: "+e.message;
-}finally{
-loading=false;
-btn.disabled=false;
-btn.textContent="Sign In";
-}
-});
+}catch(e){$("loginMessage").textContent="Login failed: "+e.message}
+finally{loading=false;$("loginButton").disabled=false;$("loginButton").textContent="Sign In"}
+};
 
 (async()=>{
-try{
 const {data,error}=await db.auth.getSession();
-if(error)throw error;
-if(data.session)await enterAdmin();
-}catch(e){$("loginMessage").textContent=e.message}
+if(error)$("loginMessage").textContent=error.message;
+else if(data.session)await enterAdmin();
 })();
 
-$("logout").onclick=async()=>{
-await db.auth.signOut();
-location.reload();
-};
+$("logout").onclick=async()=>{await db.auth.signOut();location.reload()};
 
 /* BOOKS */
 async function loadBooks(){
-message("Loading books...");
+msg("Loading books...");
 let q=db.from("books").select("*")
 .order("display_order",{ascending:true})
 .order("created_at",{ascending:true});
 q=trashMode?q.not("deleted_at","is",null):q.is("deleted_at",null);
 const {data,error}=await q;
-if(error){message("Could not load books: "+error.message);return}
+if(error){msg(error.message);return}
 books=data||[];
 renderBooks();
-message("");
+msg("");
 }
 
 function makeButton(text,cls,fn){
@@ -276,50 +240,40 @@ b.textContent=text;b.className=cls;b.onclick=fn;return b;
 function renderBooks(){
 const filter=$("statusFilter").value;
 const list=books.filter(b=>trashMode||filter==="all"||b.publication_status===filter);
-const area=$("bookList");
-area.innerHTML="";
+const area=$("bookList");area.innerHTML="";
 if(!list.length){area.textContent="No books found.";return}
-
 list.forEach(book=>{
-const card=document.createElement("article");
-card.className="book";
+const card=document.createElement("article");card.className="book";
 const img=document.createElement("img");
-img.className="cover";img.src=book.cover_url||"";
-img.alt=book.title+" cover";
+img.className="cover";img.src=book.cover_url||"";img.alt=book.title+" cover";
 img.onerror=()=>img.style.display="none";
-
-const info=document.createElement("div");
-info.className="book-info";
-const title=document.createElement("h3");
-title.textContent=book.title;
+const info=document.createElement("div");info.className="book-info";
+const title=document.createElement("h3");title.textContent=book.title;
 const badge=document.createElement("span");
 badge.className="status status-"+book.publication_status;
 badge.textContent=labels[book.publication_status]||book.publication_status;
-
-const order=document.createElement("p");
-order.className="note";order.textContent="Position: "+book.display_order;
-const actions=document.createElement("div");
-actions.className="actions";
-
-if(trashMode){
-actions.append(makeButton("Restore","secondary",()=>restoreBook(book)));
-}else{
-actions.append(
+const order=document.createElement("p");order.className="note";
+order.textContent="Position: "+book.display_order;
+const actions=document.createElement("div");actions.className="actions";
+if(trashMode)actions.append(makeButton("Restore","secondary",()=>restoreBook(book)));
+else actions.append(
 makeButton("Edit","secondary",()=>openEditor(book)),
 makeButton("↑","secondary",()=>moveBook(book,-1)),
 makeButton("↓","secondary",()=>moveBook(book,1)),
 makeButton("Trash","danger",()=>trashBook(book))
 );
-}
-info.append(title,badge,order,actions);
-card.append(img,info);area.append(card);
+info.append(title,badge,order,actions);card.append(img,info);area.append(card);
 });
 }
 
+/* EDITOR */
 function openEditor(book=null){
 $("bookForm").reset();
 $("bookId").value=book?.id||"";
 currentCover=book?.cover_url||"";
+selectedCoverFile=null;
+$("coverFile").value="";
+$("coverFileName").textContent="No image selected.";
 $("editorTitle").textContent=book?"Edit Book":"Add Book";
 $("title").value=book?.title||"";
 $("slug").value=book?.slug||"";
@@ -333,7 +287,6 @@ $("featured").checked=!!book?.is_featured;
 $("editorsPick").checked=!!book?.is_editors_pick;
 $("freeInterest").checked=!!book?.allow_free_interest;
 $("preorder").checked=!!book?.allow_preorder;
-$("coverFile").value="";
 $("coverPreview").src=currentCover;
 $("coverPreview").style.display=currentCover?"block":"none";
 $("editor").classList.remove("hidden");
@@ -348,38 +301,47 @@ $("booksPage").classList.remove("hidden");
 };
 $("title").oninput=()=>{if(!$("bookId").value)$("slug").value=slugify($("title").value)};
 
-/* COVER */
-$("coverFile").onchange=()=>{
+/* COVER SELECTION */
+$("coverFile").addEventListener("change",()=>{
 const file=$("coverFile").files?.[0];
-if(!file)return;
-if(!file.type.startsWith("image/")||file.size>20*1024*1024){
-alert("Choose an image no larger than 20 MB.");
-$("coverFile").value="";
+if(!file){
+selectedCoverFile=null;
+$("coverFileName").textContent="No image selected.";
 return;
 }
+if(!file.type.startsWith("image/")||file.size>20*1024*1024){
+alert("Choose a valid image no larger than 20 MB.");
+$("coverFile").value="";
+selectedCoverFile=null;
+return;
+}
+selectedCoverFile=file;
+$("coverFileName").textContent="Selected: "+file.name;
 const reader=new FileReader();
 reader.onload=()=>{
 $("coverPreview").src=reader.result;
 $("coverPreview").style.display="block";
 };
-reader.onerror=()=>alert("Could not preview this image.");
+reader.onerror=()=>alert("Could not preview image.");
 reader.readAsDataURL(file);
-};
+});
 
 async function uploadCover(){
-const file=$("coverFile").files?.[0];
-if(!file)return currentCover;
-const path="covers/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
-const {data,error}=await db.storage.from("book-covers").upload(path,file,{upsert:false,contentType:file.type});
+if(!selectedCoverFile)return currentCover;
+const file=selectedCoverFile;
+const name=file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
+const path="covers/"+Date.now()+"-"+name;
+const {data,error}=await db.storage.from("book-covers").upload(path,file,{
+upsert:false,contentType:file.type
+});
 if(error)throw error;
 return db.storage.from("book-covers").getPublicUrl(data.path).data.publicUrl;
 }
 
-/* SAVE */
+/* SAVE BOOK */
 $("bookForm").onsubmit=async e=>{
 e.preventDefault();
-const btn=$("saveBook");
-btn.disabled=true;btn.textContent="Saving...";
+const btn=$("saveBook");btn.disabled=true;btn.textContent="Saving...";
 try{
 const payload={
 title:$("title").value.trim(),
@@ -396,29 +358,30 @@ is_editors_pick:$("editorsPick").checked,
 allow_free_interest:$("freeInterest").checked,
 allow_preorder:$("preorder").checked
 };
-if(!payload.title||!payload.slug||!payload.main_genre)throw Error("Complete title, slug and genre.");
-
+if(!payload.title||!payload.slug||!payload.main_genre)
+throw Error("Complete title, slug and genre.");
 const id=$("bookId").value;
 const result=id
 ?await db.from("books").update(payload).eq("id",id)
 :await db.from("books").insert(payload);
 if(result.error)throw result.error;
-
 $("editor").classList.add("hidden");
 $("booksPage").classList.remove("hidden");
+selectedCoverFile=null;
 await loadBooks();
-message("Book saved successfully.");
+msg("Book saved successfully.");
 }catch(e){alert("Could not save: "+e.message)}
 finally{btn.disabled=false;btn.textContent="Save Book"}
 };
 
 /* ORDER */
 async function moveBook(book,direction){
-const index=books.findIndex(b=>b.id===book.id);
-const other=books[index+direction];
+const i=books.findIndex(b=>b.id===book.id),other=books[i+direction];
 if(!other)return;
 const a=Number(book.display_order)||0,b=Number(other.display_order)||0;
-let {error}=await db.from("books").update({display_order:Math.max(...books.map(x=>Number(x.display_order)||0))+1000}).eq("id",book.id);
+let {error}=await db.from("books").update({
+display_order:Math.max(...books.map(x=>Number(x.display_order)||0))+1000
+}).eq("id",book.id);
 if(error){alert(error.message);return}
 ({error}=await db.from("books").update({display_order:a}).eq("id",other.id));
 if(error){alert(error.message);await loadBooks();return}
@@ -463,5 +426,4 @@ $("placeholderTitle").textContent=btn.textContent.trim();
 });
 </script>
 </body>
- </html>
- 
+</html>
