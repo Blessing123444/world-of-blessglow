@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>World of BlessGlow | Admin</title>
+<title>World of BlessGlow Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -12,68 +12,60 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:15px Arial}
 button,input,select,textarea{font:inherit}
-button{cursor:pointer;border:0;border-radius:7px;padding:11px 15px;background:var(--gold);color:#111;font-weight:bold}
+button{padding:11px 15px;border:0;border-radius:7px;background:var(--gold);color:#111;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.5}
 .secondary{background:#292932;color:white}
 .danger{background:#963a3a;color:white}
 .hidden{display:none!important}
 input,select,textarea{width:100%;padding:12px;margin:7px 0 15px;background:#0d0d12;color:white;border:1px solid #393943;border-radius:7px}
 #login{max-width:400px;margin:12vh auto;padding:25px;background:var(--panel);border:1px solid #333;border-radius:12px}
 #app{display:flex;min-height:100vh}
-aside{width:230px;background:#101014;padding:18px;border-right:1px solid #292929}
-.brand{color:var(--gold);font-weight:bold;font-size:18px;margin-bottom:20px}
-nav button{display:block;width:100%;text-align:left;background:transparent;color:#ddd;margin:4px 0}
+aside{width:230px;background:#101014;padding:18px}
+.brand{color:var(--gold);font-weight:bold;margin-bottom:20px}
+nav button{display:block;width:100%;text-align:left;background:none;color:#ddd;margin:4px 0}
 nav button.active{background:#29251a;color:var(--gold)}
 main{flex:1;min-width:0;padding:24px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px}
-h1{font-size:23px;margin:0}
-.panel{background:var(--panel);padding:20px;border:1px solid #303039;border-radius:12px;margin-bottom:18px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
-.toolbar select{width:auto;min-width:150px;margin:0}
-.book-list{display:grid;gap:12px}
-.book{display:flex;align-items:center;gap:14px;background:#101014;border:1px solid #303039;border-radius:10px;padding:12px}
-.cover{width:75px;height:100px;object-fit:cover;background:#25252b;border-radius:5px;flex-shrink:0}
+header,.toolbar,.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header{justify-content:space-between;margin-bottom:25px}
+h1{font-size:23px}
+.panel,.book{background:var(--panel);padding:18px;border:1px solid #303039;border-radius:12px;margin-bottom:15px}
+.book{display:flex;gap:14px;align-items:center}
+.cover{width:70px;height:95px;object-fit:cover;background:#25252b}
 .book-info{flex:1;min-width:0}
-.book-info h3{margin:0 0 9px}
-.book-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.book-actions button{padding:8px 11px;font-size:12px}
-.status{display:inline-block;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:bold}
+.book-info h3{margin:0 0 8px}
+.actions button{padding:8px 10px;font-size:12px}
+.status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px}
 .status-published{background:#164c30;color:#85e6a9}
 .status-ongoing{background:#153f65;color:#8bcaff}
 .status-completed{background:#49316c;color:#d5b4ff}
 .status-coming_soon{background:#624716;color:#ffda83}
-.status-draft{background:#393943;color:#ddd}
+.status-draft{background:#393943}
 .status-archived{background:#642d32;color:#ffaaaa}
+.note{color:#aaa;font-size:13px}
 #editor{max-width:750px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 .checks{display:flex;gap:15px;flex-wrap:wrap;margin:10px 0 20px}
 .checks label{display:flex;align-items:center;gap:7px}
 .checks input{width:auto;margin:0}
-#coverPreview{display:none;width:110px;height:145px;object-fit:cover;margin:10px 0}
-.note{color:#aaa;font-size:13px}
-#message{color:var(--gold);margin:12px 0}
+#coverPreview{display:none;width:110px;height:145px;object-fit:cover}
+#loginMessage,#message{color:var(--gold);margin:12px 0}
 @media(max-width:700px){
- #app{display:block}
- aside{width:100%;padding:12px}
- nav{display:flex;overflow-x:auto;gap:5px}
- nav button{white-space:nowrap;width:auto}
- main{padding:14px}
- .form-grid{grid-template-columns:1fr}
- .book{align-items:flex-start}
- .cover{width:62px;height:85px}
- header{align-items:flex-start}
+#app{display:block}aside{width:100%;padding:12px}
+nav{display:flex;overflow-x:auto}nav button{white-space:nowrap;width:auto}
+main{padding:14px}.form-grid{grid-template-columns:1fr}
+.book{align-items:flex-start}.cover{width:60px;height:85px}
 }
 </style>
 </head>
-
 <body>
 
 <section id="login">
 <h2>World of BlessGlow</h2>
 <p class="note">Admin Control Centre</p>
 <form id="loginForm">
-<label>Email</label><input id="email" type="email" required>
-<label>Password</label><input id="password" type="password" required>
-<button>Sign In</button>
+<label>Email</label><input id="email" type="email" autocomplete="username" required>
+<label>Password</label><input id="password" type="password" autocomplete="current-password" required>
+<button id="loginButton" type="submit">Sign In</button>
 </form>
 <p id="loginMessage"></p>
 </section>
@@ -97,10 +89,7 @@ h1{font-size:23px;margin:0}
 
 <main>
 <header>
-<div>
-<h1 id="pageTitle">Books & Stories</h1>
-<p class="note">Manage your story library.</p>
-</div>
+<div><h1 id="pageTitle">Books & Stories</h1><p class="note">Manage your story library.</p></div>
 <button class="secondary" id="logout">Sign Out</button>
 </header>
 
@@ -118,8 +107,8 @@ h1{font-size:23px;margin:0}
 </select>
 <button class="secondary" id="showTrash">Trash</button>
 </div>
-<div id="message"></div>
-<div id="bookList" class="book-list"></div>
+<p id="message"></p>
+<div id="bookList"></div>
 </section>
 
 <section id="editor" class="panel hidden">
@@ -130,7 +119,6 @@ h1{font-size:23px;margin:0}
 <div class="form-grid">
 <div><label>Book Title</label><input id="title" required></div>
 <div><label>Book Slug</label><input id="slug" required></div>
-
 <div><label>Main Genre</label>
 <select id="genre" required>
 <option value="">Select genre</option>
@@ -147,10 +135,8 @@ h1{font-size:23px;margin:0}
 <option>Healing & Second Chances</option>
 <option>Vampires & Immortals</option>
 </select></div>
-
 <div><label>Subgenre</label><input id="subgenre"></div>
-
-<div><label>Publication Status</label>
+<div><label>Status</label>
 <select id="publicationStatus">
 <option value="draft">Draft</option>
 <option value="coming_soon">Coming Soon</option>
@@ -159,26 +145,21 @@ h1{font-size:23px;margin:0}
 <option value="published">Published</option>
 <option value="archived">Archived</option>
 </select></div>
-
 <div><label>Release Date</label><input id="releaseDate" type="date"></div>
 <div><label>Display Order</label><input id="displayOrder" type="number" min="1"></div>
 </div>
 
-<label>Book Description</label>
-<textarea id="description" rows="4"></textarea>
-
-<label>Book Cover</label>
-<input id="coverFile" type="file" accept="image/*">
-<img id="coverPreview" alt="Selected book cover">
-<p class="note">Select a picture from your phone. Maximum size: 20 MB. The preview should appear before saving.</p>
+<label>Description</label><textarea id="description" rows="4"></textarea>
+<label>Book Cover</label><input id="coverFile" type="file" accept="image/*">
+<img id="coverPreview" alt="Cover preview">
+<p class="note">Maximum image size: 20 MB.</p>
 
 <div class="checks">
 <label><input id="featured" type="checkbox"> Featured</label>
 <label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
-<label><input id="freeInterest" type="checkbox"> Allow Notify Me</label>
-<label><input id="preorder" type="checkbox"> Allow Preorder</label>
+<label><input id="freeInterest" type="checkbox"> Notify Me</label>
+<label><input id="preorder" type="checkbox"> Preorder</label>
 </div>
-
 <button id="saveBook" type="submit">Save Book</button>
 <button id="cancelEdit" type="button" class="secondary">Cancel</button>
 </form>
@@ -192,328 +173,295 @@ h1{font-size:23px;margin:0}
 </div>
 
 <script>
-const URL="https://zngagaolaiidgyxoldsh.supabase.co";
-const KEY="sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
-const db=window.supabase.createClient(URL,KEY);
+const SUPABASE_URL="https://zngagaolaiidgyxoldsh.supabase.co";
+const SUPABASE_KEY="sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id);
 
 let books=[],trashMode=false,currentCover="",loading=false;
 
-const names={
- draft:"Draft",coming_soon:"Coming Soon",ongoing:"Ongoing",
- completed:"Completed",published:"Published",archived:"Archived"
+const labels={
+draft:"Draft",coming_soon:"Coming Soon",ongoing:"Ongoing",
+completed:"Completed",published:"Published",archived:"Archived"
 };
 
-function msg(t){$("message").textContent=t}
+function message(t){$("message").textContent=t}
 function slugify(t){return t.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 
-async function checkAdmin(){
- const {data:{user}}=await db.auth.getUser();
- if(!user)return false;
- return user.app_metadata?.role==="admin"||
- (user.app_metadata?.roles||[]).includes("admin");
+/* LOGIN */
+async function verifyAdmin(){
+const {data,error}=await db.auth.getUser();
+if(error)throw error;
+const user=data.user;
+if(!user)throw Error("No active login session.");
+
+const meta=user.app_metadata||{};
+const allowed=meta.role==="admin"||
+(Array.isArray(meta.roles)&&meta.roles.includes("admin"));
+
+if(!allowed)throw Error("Login succeeded, but administrator access was not confirmed. Check your Supabase admin role.");
 }
 
 async function enterAdmin(){
- if(loading)return;
- loading=true;
- if(!await checkAdmin()){
-  await db.auth.signOut();
-  $("loginMessage").textContent="This account has no admin access.";
-  loading=false;return;
- }
- $("login").classList.add("hidden");
- $("app").classList.remove("hidden");
- await loadBooks();
- loading=false;
+if(loading)return;
+loading=true;
+try{
+$("loginMessage").textContent="Verifying administrator access...";
+await verifyAdmin();
+$("login").classList.add("hidden");
+$("app").classList.remove("hidden");
+await loadBooks();
+}catch(e){
+$("loginMessage").textContent=e.message;
+}finally{loading=false}
 }
 
-$("loginForm").onsubmit=async e=>{
- e.preventDefault();
- $("loginMessage").textContent="Signing in...";
- const {error}=await db.auth.signInWithPassword({
-  email:$("email").value,password:$("password").value
- });
- if(error){$("loginMessage").textContent=error.message;return}
- await enterAdmin();
-};
+$("loginForm").addEventListener("submit",async e=>{
+e.preventDefault();
+if(loading)return;
+loading=true;
+const btn=$("loginButton");
+btn.disabled=true;
+btn.textContent="Signing In...";
+$("loginMessage").textContent="Connecting...";
+try{
+const {error}=await db.auth.signInWithPassword({
+email:$("email").value.trim(),
+password:$("password").value
+});
+if(error)throw error;
+loading=false;
+await enterAdmin();
+}catch(e){
+$("loginMessage").textContent="Login failed: "+e.message;
+}finally{
+loading=false;
+btn.disabled=false;
+btn.textContent="Sign In";
+}
+});
+
+(async()=>{
+try{
+const {data,error}=await db.auth.getSession();
+if(error)throw error;
+if(data.session)await enterAdmin();
+}catch(e){$("loginMessage").textContent=e.message}
+})();
 
 $("logout").onclick=async()=>{
- await db.auth.signOut();location.reload();
+await db.auth.signOut();
+location.reload();
 };
 
+/* BOOKS */
 async function loadBooks(){
- msg("Loading books...");
- let q=db.from("books").select("*")
- .order("display_order",{ascending:true})
- .order("created_at",{ascending:true});
-
- q=trashMode?q.not("deleted_at","is",null):q.is("deleted_at",null);
-
- const {data,error}=await q;
- if(error){msg("Loading failed: "+error.message);return}
-
- books=data||[];
- renderBooks();
- msg("");
+message("Loading books...");
+let q=db.from("books").select("*")
+.order("display_order",{ascending:true})
+.order("created_at",{ascending:true});
+q=trashMode?q.not("deleted_at","is",null):q.is("deleted_at",null);
+const {data,error}=await q;
+if(error){message("Could not load books: "+error.message);return}
+books=data||[];
+renderBooks();
+message("");
 }
 
-function button(text,cls,fn){
- const b=document.createElement("button");
- b.textContent=text;b.className=cls;b.onclick=fn;return b;
+function makeButton(text,cls,fn){
+const b=document.createElement("button");
+b.textContent=text;b.className=cls;b.onclick=fn;return b;
 }
 
 function renderBooks(){
- const filter=$("statusFilter").value;
- const list=books.filter(b=>trashMode||filter==="all"||b.publication_status===filter);
- const area=$("bookList");
- area.innerHTML="";
+const filter=$("statusFilter").value;
+const list=books.filter(b=>trashMode||filter==="all"||b.publication_status===filter);
+const area=$("bookList");
+area.innerHTML="";
+if(!list.length){area.textContent="No books found.";return}
 
- if(!list.length){
-  area.textContent="No books found.";
-  return;
- }
+list.forEach(book=>{
+const card=document.createElement("article");
+card.className="book";
+const img=document.createElement("img");
+img.className="cover";img.src=book.cover_url||"";
+img.alt=book.title+" cover";
+img.onerror=()=>img.style.display="none";
 
- list.forEach(book=>{
-  const card=document.createElement("article");
-  card.className="book";
+const info=document.createElement("div");
+info.className="book-info";
+const title=document.createElement("h3");
+title.textContent=book.title;
+const badge=document.createElement("span");
+badge.className="status status-"+book.publication_status;
+badge.textContent=labels[book.publication_status]||book.publication_status;
 
-  const img=document.createElement("img");
-  img.className="cover";
-  img.src=book.cover_url||"";
-  img.alt=book.title+" cover";
-  img.onerror=()=>img.style.display="none";
+const order=document.createElement("p");
+order.className="note";order.textContent="Position: "+book.display_order;
+const actions=document.createElement("div");
+actions.className="actions";
 
-  const info=document.createElement("div");
-  info.className="book-info";
-
-  const title=document.createElement("h3");
-  title.textContent=book.title;
-
-  const badge=document.createElement("span");
-  badge.className="status status-"+book.publication_status;
-  badge.textContent=names[book.publication_status]||book.publication_status;
-
-  const position=document.createElement("p");
-  position.className="note";
-  position.textContent="Position: "+book.display_order;
-
-  const actions=document.createElement("div");
-  actions.className="book-actions";
-
-  if(trashMode){
-   actions.append(button("Restore","secondary",()=>restoreBook(book)));
-  }else{
-   actions.append(
-    button("Edit","secondary",()=>openEditor(book)),
-    button("↑","secondary",()=>moveBook(book,-1)),
-    button("↓","secondary",()=>moveBook(book,1)),
-    button("Trash","danger",()=>trashBook(book))
-   );
-  }
-
-  info.append(title,badge,position,actions);
-  card.append(img,info);
-  area.append(card);
- });
+if(trashMode){
+actions.append(makeButton("Restore","secondary",()=>restoreBook(book)));
+}else{
+actions.append(
+makeButton("Edit","secondary",()=>openEditor(book)),
+makeButton("↑","secondary",()=>moveBook(book,-1)),
+makeButton("↓","secondary",()=>moveBook(book,1)),
+makeButton("Trash","danger",()=>trashBook(book))
+);
+}
+info.append(title,badge,order,actions);
+card.append(img,info);area.append(card);
+});
 }
 
 function openEditor(book=null){
- $("bookForm").reset();
- $("bookId").value=book?.id||"";
- currentCover=book?.cover_url||"";
-
- $("editorTitle").textContent=book?"Edit Book":"Add Book";
- $("title").value=book?.title||"";
- $("slug").value=book?.slug||"";
- $("genre").value=book?.main_genre||"";
- $("subgenre").value=book?.subgenre||"";
- $("description").value=book?.description||"";
- $("publicationStatus").value=book?.publication_status||"draft";
- $("releaseDate").value=book?.release_date||"";
- $("displayOrder").value=book?.display_order??(books.length?Math.max(...books.map(b=>Number(b.display_order)||0))+1:1);
-
- $("featured").checked=!!book?.is_featured;
- $("editorsPick").checked=!!book?.is_editors_pick;
- $("freeInterest").checked=!!book?.allow_free_interest;
- $("preorder").checked=!!book?.allow_preorder;
-
- $("coverFile").value="";
- $("coverPreview").src=currentCover;
- $("coverPreview").style.display=currentCover?"block":"none";
-
- $("editor").classList.remove("hidden");
- $("booksPage").classList.add("hidden");
- window.scrollTo(0,0);
+$("bookForm").reset();
+$("bookId").value=book?.id||"";
+currentCover=book?.cover_url||"";
+$("editorTitle").textContent=book?"Edit Book":"Add Book";
+$("title").value=book?.title||"";
+$("slug").value=book?.slug||"";
+$("genre").value=book?.main_genre||"";
+$("subgenre").value=book?.subgenre||"";
+$("description").value=book?.description||"";
+$("publicationStatus").value=book?.publication_status||"draft";
+$("releaseDate").value=book?.release_date||"";
+$("displayOrder").value=book?.display_order??(books.length?Math.max(...books.map(b=>Number(b.display_order)||0))+1:1);
+$("featured").checked=!!book?.is_featured;
+$("editorsPick").checked=!!book?.is_editors_pick;
+$("freeInterest").checked=!!book?.allow_free_interest;
+$("preorder").checked=!!book?.allow_preorder;
+$("coverFile").value="";
+$("coverPreview").src=currentCover;
+$("coverPreview").style.display=currentCover?"block":"none";
+$("editor").classList.remove("hidden");
+$("booksPage").classList.add("hidden");
+window.scrollTo(0,0);
 }
 
 $("addBook").onclick=()=>openEditor();
 $("cancelEdit").onclick=()=>{
- $("editor").classList.add("hidden");
- $("booksPage").classList.remove("hidden");
+$("editor").classList.add("hidden");
+$("booksPage").classList.remove("hidden");
 };
+$("title").oninput=()=>{if(!$("bookId").value)$("slug").value=slugify($("title").value)};
 
-$("title").oninput=()=>{
- if(!$("bookId").value)$("slug").value=slugify($("title").value);
-};
-
-/* IMAGE PREVIEW */
+/* COVER */
 $("coverFile").onchange=()=>{
- const file=$("coverFile").files?.[0];
- if(!file)return;
-
- if(!file.type.startsWith("image/")){
-  alert("Please choose an image.");
-  $("coverFile").value="";return;
- }
-
- if(file.size>20*1024*1024){
-  alert("Image must be 20 MB or smaller.");
-  $("coverFile").value="";return;
- }
-
- const reader=new FileReader();
- reader.onload=()=>{
-  $("coverPreview").src=reader.result;
-  $("coverPreview").style.display="block";
- };
- reader.onerror=()=>alert("Unable to read this image. Please try another.");
- reader.readAsDataURL(file);
+const file=$("coverFile").files?.[0];
+if(!file)return;
+if(!file.type.startsWith("image/")||file.size>20*1024*1024){
+alert("Choose an image no larger than 20 MB.");
+$("coverFile").value="";
+return;
+}
+const reader=new FileReader();
+reader.onload=()=>{
+$("coverPreview").src=reader.result;
+$("coverPreview").style.display="block";
+};
+reader.onerror=()=>alert("Could not preview this image.");
+reader.readAsDataURL(file);
 };
 
-/* COVER UPLOAD */
 async function uploadCover(){
- const file=$("coverFile").files?.[0];
- if(!file)return currentCover;
-
- const path="covers/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
-
- const {data,error}=await db.storage.from("book-covers")
- .upload(path,file,{upsert:false,contentType:file.type});
-
- if(error)throw error;
-
- const {data:publicData}=db.storage.from("book-covers").getPublicUrl(data.path);
- if(!publicData?.publicUrl)throw new Error("Could not create cover URL.");
-
- return publicData.publicUrl;
+const file=$("coverFile").files?.[0];
+if(!file)return currentCover;
+const path="covers/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
+const {data,error}=await db.storage.from("book-covers").upload(path,file,{upsert:false,contentType:file.type});
+if(error)throw error;
+return db.storage.from("book-covers").getPublicUrl(data.path).data.publicUrl;
 }
 
-/* SAVE BOOK */
+/* SAVE */
 $("bookForm").onsubmit=async e=>{
- e.preventDefault();
- const btn=$("saveBook");
- btn.disabled=true;btn.textContent="Saving...";
+e.preventDefault();
+const btn=$("saveBook");
+btn.disabled=true;btn.textContent="Saving...";
+try{
+const payload={
+title:$("title").value.trim(),
+slug:slugify($("slug").value),
+description:$("description").value.trim(),
+main_genre:$("genre").value,
+subgenre:$("subgenre").value.trim(),
+publication_status:$("publicationStatus").value,
+release_date:$("releaseDate").value||null,
+cover_url:await uploadCover(),
+display_order:Math.max(1,Number($("displayOrder").value)||1),
+is_featured:$("featured").checked,
+is_editors_pick:$("editorsPick").checked,
+allow_free_interest:$("freeInterest").checked,
+allow_preorder:$("preorder").checked
+};
+if(!payload.title||!payload.slug||!payload.main_genre)throw Error("Complete title, slug and genre.");
 
- try{
-  const cover=await uploadCover();
+const id=$("bookId").value;
+const result=id
+?await db.from("books").update(payload).eq("id",id)
+:await db.from("books").insert(payload);
+if(result.error)throw result.error;
 
-  const payload={
-   title:$("title").value.trim(),
-   slug:slugify($("slug").value),
-   description:$("description").value.trim(),
-   main_genre:$("genre").value,
-   subgenre:$("subgenre").value.trim(),
-   publication_status:$("publicationStatus").value,
-   release_date:$("releaseDate").value||null,
-   cover_url:cover,
-   display_order:Math.max(1,Number($("displayOrder").value)||1),
-   is_featured:$("featured").checked,
-   is_editors_pick:$("editorsPick").checked,
-   allow_free_interest:$("freeInterest").checked,
-   allow_preorder:$("preorder").checked
-  };
-
-  if(!payload.title||!payload.slug||!payload.main_genre)
-   throw new Error("Complete the title, slug and genre.");
-
-  const id=$("bookId").value;
-  const result=id
-   ?await db.from("books").update(payload).eq("id",id)
-   :await db.from("books").insert(payload);
-
-  if(result.error)throw result.error;
-
-  $("editor").classList.add("hidden");
-  $("booksPage").classList.remove("hidden");
-  await loadBooks();
-  msg("Book saved successfully.");
-
- }catch(error){
-  alert("Could not save: "+error.message);
- }finally{
-  btn.disabled=false;btn.textContent="Save Book";
- }
+$("editor").classList.add("hidden");
+$("booksPage").classList.remove("hidden");
+await loadBooks();
+message("Book saved successfully.");
+}catch(e){alert("Could not save: "+e.message)}
+finally{btn.disabled=false;btn.textContent="Save Book"}
 };
 
-/* REORDER */
+/* ORDER */
 async function moveBook(book,direction){
- const index=books.findIndex(b=>b.id===book.id);
- const other=books[index+direction];
- if(!other)return;
-
- const temp=Math.max(...books.map(b=>Number(b.display_order)||0))+1000;
-
- let {error}=await db.from("books").update({display_order:temp}).eq("id",book.id);
- if(error){alert(error.message);return}
-
- ({error}=await db.from("books").update({display_order:book.display_order}).eq("id",other.id));
- if(error){alert(error.message);await loadBooks();return}
-
- ({error}=await db.from("books").update({display_order:other.display_order}).eq("id",book.id));
- if(error){alert(error.message);return}
-
- await loadBooks();
+const index=books.findIndex(b=>b.id===book.id);
+const other=books[index+direction];
+if(!other)return;
+const a=Number(book.display_order)||0,b=Number(other.display_order)||0;
+let {error}=await db.from("books").update({display_order:Math.max(...books.map(x=>Number(x.display_order)||0))+1000}).eq("id",book.id);
+if(error){alert(error.message);return}
+({error}=await db.from("books").update({display_order:a}).eq("id",other.id));
+if(error){alert(error.message);await loadBooks();return}
+({error}=await db.from("books").update({display_order:b}).eq("id",book.id));
+if(error)alert(error.message);
+await loadBooks();
 }
 
 async function trashBook(book){
- if(!confirm("Move this book to Trash?"))return;
- const {error}=await db.from("books").update({
-  deleted_at:new Date().toISOString()
- }).eq("id",book.id);
-
- if(error){alert(error.message);return}
- await loadBooks();
+if(!confirm("Move this book to Trash?"))return;
+const {error}=await db.from("books").update({deleted_at:new Date().toISOString()}).eq("id",book.id);
+if(error){alert(error.message);return}
+await loadBooks();
 }
 
 async function restoreBook(book){
- const {error}=await db.from("books").update({
-  deleted_at:null
- }).eq("id",book.id);
-
- if(error){alert(error.message);return}
- await loadBooks();
+const {error}=await db.from("books").update({deleted_at:null}).eq("id",book.id);
+if(error){alert(error.message);return}
+await loadBooks();
 }
 
 $("statusFilter").onchange=renderBooks;
-
 $("showTrash").onclick=async()=>{
- trashMode=!trashMode;
- $("showTrash").textContent=trashMode?"Back to Books":"Trash";
- $("statusFilter").disabled=trashMode;
- await loadBooks();
+trashMode=!trashMode;
+$("showTrash").textContent=trashMode?"Back to Books":"Trash";
+$("statusFilter").disabled=trashMode;
+await loadBooks();
 };
 
-/* ADMIN NAVIGATION */
+/* NAVIGATION */
 document.querySelectorAll("nav button").forEach(btn=>{
- btn.onclick=()=>{
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-
-  const active=btn.dataset.page==="books";
-  $("booksPage").classList.toggle("hidden",!active);
-  $("editor").classList.add("hidden");
-  $("placeholder").classList.toggle("hidden",active);
-  $("pageTitle").textContent=btn.textContent.trim();
-  $("placeholderTitle").textContent=btn.textContent.trim();
- };
+btn.onclick=()=>{
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+const active=btn.dataset.page==="books";
+$("booksPage").classList.toggle("hidden",!active);
+$("editor").classList.add("hidden");
+$("placeholder").classList.toggle("hidden",active);
+$("pageTitle").textContent=btn.textContent.trim();
+$("placeholderTitle").textContent=btn.textContent.trim();
+};
 });
-
-/* INITIAL LOGIN CHECK */
-(async()=>{
- const {data:{session}}=await db.auth.getSession();
- if(session)await enterAdmin();
-})();
 </script>
 </body>
-</html>
+ </html>
+ 
