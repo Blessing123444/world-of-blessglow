@@ -443,7 +443,8 @@ function openEditor(book=null){
 $("bookForm").reset();selectedCoverFile=null;$("bookId").value=book?.id||"";currentCover=book?.cover_url||"";
 $("editorTitle").textContent=book?"Edit Book":"Add Book";
 $("title").value=book?.title||"";$("slug").value=book?.slug||"";
-$("genre").value=book?.main_genre||"";$("subgenre").value=book?.subgenre||"";
+$("genre").value=book?.main_genre||"";
+updateSubgenres($("genre").value,book?.subgenre||"");
 $("description").value=book?.description||"";$("publicationStatus").value=book?.publication_status||"draft";
 $("releaseDate").value=book?.release_date||"";
 $("displayOrder").value=book?.display_order??(books.length?Math.max(...books.map(b=>Number(b.display_order)||0))+1:1);
