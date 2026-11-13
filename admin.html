@@ -92,77 +92,227 @@ main{padding:14px}.form-grid{grid-template-columns:1fr}
 </nav>
 </aside>
 
+
 <main>
 <header>
-<div><h1 id="pageTitle">Books & Stories</h1><p class="note">Manage your story library.</p></div>
-<button class="secondary" id="logout">Sign Out</button>
+  <div>
+    <h1 id="pageTitle">Books & Stories</h1>
+    <p class="note">Manage your story library.</p>
+  </div>
+  <button class="secondary" id="logout">Sign Out</button>
 </header>
 
 <section id="booksPage">
-<div class="toolbar">
-<button id="addBook">+ Add Book</button>
-<select id="statusFilter">
-<option value="all">All statuses</option>
-<option value="draft">Draft</option>
-<option value="coming_soon">Coming Soon</option>
-<option value="ongoing">Ongoing</option>
-<option value="completed">Completed</option>
-<option value="published">Published</option>
-<option value="archived">Archived</option>
-</select>
-<button class="secondary" id="showTrash">Trash</button>
-</div>
-<p id="message"></p><div id="bookList"></div>
+  <div class="toolbar">
+    <button id="addBook">+ Add Book</button>
+    <select id="statusFilter">
+      <option value="all">All statuses</option>
+      <option value="draft">Draft</option>
+      <option value="coming_soon">Coming Soon</option>
+      <option value="ongoing">Ongoing</option>
+      <option value="completed">Completed</option>
+      <option value="published">Published</option>
+      <option value="archived">Archived</option>
+    </select>
+    <button class="secondary" id="showTrash">Trash</button>
+  </div>
+  <p id="message"></p>
+  <div id="bookList"></div>
 </section>
 
 <section id="editor" class="panel hidden">
-<h2 id="editorTitle">Add Book</h2>
-<form id="bookForm">
-<input type="hidden" id="bookId">
-<div class="form-grid">
-<div><label>Book Title</label><input id="title" required></div>
-<div><label>Book Slug</label><input id="slug" required></div>
-<div><label>Main Genre</label>
-<select id="genre" required>
-<option value="">Select genre</option>
-<option>Romance</option><option>Revenge & Comebacks</option>
-<option>Dark Romance</option><option>Royal Stories</option>
-<option>Fantasy & Magic</option><option>Werewolf & Shifter</option>
-<option>Mystery & Secrets</option><option>Thriller & Suspense</option>
-<option>Drama & Scandals</option><option>Young Adult & Coming-of-Age</option>
-<option>Healing & Second Chances</option><option>Vampires & Immortals</option>
-</select></div>
-<div><label>Subgenre</label><input id="subgenre"></div>
-<div><label>Status</label>
-<select id="publicationStatus">
-<option value="draft">Draft</option>
-<option value="coming_soon">Coming Soon</option>
-<option value="ongoing">Ongoing</option>
-<option value="completed">Completed</option>
-<option value="published">Published</option>
-<option value="archived">Archived</option>
-</select></div>
-<div><label>Release Date</label><input id="releaseDate" type="date"></div>
-<div><label>Display Order</label><input id="displayOrder" type="number" min="1"></div>
-</div>
-<label>Description</label><textarea id="description" rows="4"></textarea>
-<label>Book Cover</label>
-<input id="coverFile" type="file" accept="image/*">
-<button type="button" class="secondary" id="chooseCover">Choose Cover Image</button>
-<p id="coverFileName" class="note">No image selected.</p>
-<img id="coverPreview" alt="Cover preview">
-<p class="note">Maximum image size: 20 MB.</p>
-<div class="checks">
-<label><input id="featured" type="checkbox"> Featured</label>
-<label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
-<label><input id="freeInterest" type="checkbox"> Notify Me</label>
-<label><input id="preorder" type="checkbox"> Preorder</label>
-</div>
-<button id="saveBook" type="submit">Save Book</button>
-<button id="cancelEdit" type="button" class="secondary">Cancel</button>
-</form>
-</section>
+  <h2 id="editorTitle">Add Book</h2>
+  <form id="bookForm">
+    <input type="hidden" id="bookId">
 
+    <div class="form-grid">
+      <div>
+        <label>Book Title</label>
+        <input id="title" required>
+      </div>
+
+      <div>
+        <label>Book Slug</label>
+        <input id="slug" required>
+      </div>
+
+      <div>
+        <label>Main Genre</label>
+        <select id="genre" required>
+          <option value="">Select genre</option>
+          <option>Romance</option>
+          <option>Revenge & Comebacks</option>
+          <option>Dark Romance</option>
+          <option>Royal Stories</option>
+          <option>Fantasy & Magic</option>
+          <option>Werewolf & Shifter</option>
+          <option>Mystery & Secrets</option>
+          <option>Thriller & Suspense</option>
+          <option>Drama & Scandals</option>
+          <option>Young Adult & Coming-of-Age</option>
+          <option>Healing & Second Chances</option>
+          <option>Vampires & Immortals</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Subgenre</label>
+        <select id="subgenre" required disabled>
+          <option value="">Select main genre first</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Status</label>
+        <select id="publicationStatus">
+          <option value="draft">Draft</option>
+          <option value="coming_soon">Coming Soon</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="completed">Completed</option>
+          <option value="published">Published</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Release Date</label>
+        <input id="releaseDate" type="date">
+      </div>
+
+      <div>
+        <label>Display Order</label>
+        <input id="displayOrder" type="number" min="1">
+      </div>
+    </div>
+
+    <label>Description</label>
+    <textarea id="description" rows="4"></textarea>
+
+    <label>Book Cover</label>
+    <input id="coverFile" type="file" accept="image/*">
+    <button type="button" class="secondary" id="chooseCover">
+      Choose Cover Image
+    </button>
+    <p id="coverFileName" class="note">No image selected.</p>
+    <img id="coverPreview" alt="Cover preview">
+    <p class="note">Maximum image size: 20 MB.</p>
+
+    <div class="checks">
+      <label><input id="featured" type="checkbox"> Featured</label>
+      <label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
+      <label><input id="freeInterest" type="checkbox"> Notify Me</label>
+      <label><input id="preorder" type="checkbox"> Preorder</label>
+    </div>
+
+    <button id="saveBook" type="submit">Save Book</button>
+    <button id="cancelEdit" type="button" class="secondary">Cancel</button>
+  </form>
+</section>
+</main>
+
+<script>
+const subgenreLists = {
+  "Romance": [
+    "Campus Romance", "Slow-Burn Romance", "Enemies to Lovers",
+    "Friends to Lovers", "Second-Chance Love", "Forbidden Love",
+    "Unrequited Love", "Billionaire Romance", "Fake Dating", "Love Triangle"
+  ],
+  "Revenge & Comebacks": [
+    "Betrayed Heiress", "Revenge Against an Ex", "Family Revenge",
+    "Revenge After Rejection", "Secret Identity", "The Ultimate Comeback",
+    "Revenge and Redemption", "From Underdog to Powerful",
+    "The Heiress Returns", "The Revenge Plan"
+  ],
+  "Dark Romance": [
+    "Obsession and Attraction", "Forbidden Dark Love", "Gothic Romance",
+    "Mafia Romance", "Morally Grey Love Interests", "Rivals with Chemistry",
+    "Dangerous Secrets", "Twisted Relationships", "Possessive Love",
+    "The Dangerous Deal"
+  ],
+  "Royal Stories": [
+    "Secret Princess", "Hidden Heir", "Royal Romance",
+    "Arranged Royal Marriage", "Lost Princess", "Palace Intrigue",
+    "Crown and Succession", "Exiled Royal",
+    "Royal Bodyguard Romance", "The Secret Royal Wedding"
+  ],
+  "Fantasy & Magic": [
+    "Dark Fantasy", "Magical Academy", "Witches and Wizards",
+    "Cursed Kingdoms", "Mythical Creatures", "Brutal Fantasy",
+    "Elemental Powers", "Epic Fantasy Quests", "Dragon Riders",
+    "Enchanted Realms"
+  ],
+  "Werewolf & Shifter": [
+    "Alpha and Luna", "Rejected Mates", "Fated Mates",
+    "Forbidden Mates", "Royal Werewolves", "Rogue Wolves",
+    "Hidden Shifter", "Human and Werewolf", "The Alpha's Secret",
+    "War of the Wolf Packs"
+  ],
+  "Mystery & Secrets": [
+    "Murder Mystery", "The Missing Heiress", "Hidden Identity",
+    "Family Secrets", "Secret Societies", "Locked-Room Mystery",
+    "Supernatural Mystery", "Detective Investigations",
+    "The Secret Nobody Knows", "The Inheritance Mystery"
+  ],
+  "Thriller & Suspense": [
+    "Psychological Thriller", "Crime Thriller", "Conspiracy",
+    "Survival Thriller", "Cat and Mouse", "Domestic Suspense",
+    "High-Stakes Pursuits", "Political Thriller",
+    "The Stalker Next Door", "The Dangerous Witness"
+  ],
+  "Drama & Scandals": [
+    "Family Drama", "Betrayal and Lies", "Friendship Conflicts",
+    "Love Triangles", "Marriage Drama", "Social-Class Conflict",
+    "Secrets and Scandals", "Sibling Rivalry",
+    "Celebrity Scandals", "The Secret Inheritance"
+  ],
+  "Young Adult & Coming-of-Age": [
+    "First Love", "School Life", "University Life", "Academic Rivals",
+    "Friendship and Loyalty", "Identity and Self-Discovery",
+    "Family Expectations", "Young Adult Fantasy", "Dark Academia",
+    "The New Girl"
+  ],
+  "Healing & Second Chances": [
+    "Healing After Heartbreak", "Starting Over", "Redemption",
+    "Forgiveness and Healing", "Rebuilding Trust", "Finding Yourself",
+    "Fresh Beginnings", "Learning to Let Go", "Life After Betrayal",
+    "Recovering from Loss"
+  ],
+  "Vampires & Immortals": [
+    "Vampire Romance", "Ancient Vampires", "Vampire Royalty",
+    "Immortal Love", "Human and Vampire", "Vampire Hunters",
+    "Cursed Immortals", "Supernatural Clans", "Vampire Academy",
+    "The Forbidden Bloodline"
+  ]
+};
+
+const genreSelect = document.getElementById("genre");
+const subgenreSelect = document.getElementById("subgenre");
+
+function updateSubgenres(genre, selected = "") {
+  subgenreSelect.innerHTML = "";
+
+  const options = subgenreLists[genre] || [];
+
+  subgenreSelect.add(new Option(
+    options.length ? "Select subgenre" : "Select main genre first", ""
+  ));
+
+  options.forEach(name => {
+    subgenreSelect.add(new Option(name, name));
+  });
+
+  subgenreSelect.disabled = !options.length;
+
+  if (options.includes(selected)) {
+    subgenreSelect.value = selected;
+  }
+}
+
+genreSelect.addEventListener("change", () => {
+  updateSubgenres(genreSelect.value);
+});
+            </script>
+  
 <!-- CHAPTER STUDIO -->
 <section id="chaptersPage" class="hidden">
 <div class="panel">
