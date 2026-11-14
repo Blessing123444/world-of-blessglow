@@ -136,7 +136,7 @@ h2{margin-top:0}
   <h2>World of BlessGlow</h2>
   <p class="note">Admin Control Centre</p>
 
-<form id="loginForm">
+<form id="loginForm" onsubmit="event.preventDefault(); window.handleAdminLogin(event);">
     <label>Email</label>
     <input id="email" type="email" autocomplete="username" required>
 
