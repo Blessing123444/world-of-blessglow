@@ -120,6 +120,10 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
           <input id="chapterTitle" type="text" maxlength="180" required placeholder="Enter chapter title">
         </label>
         <label class="field">
+          <span>Heading emoji (optional)</span>
+          <input id="chapterHeadingEmoji" type="text" maxlength="12" placeholder="🌸" inputmode="text">
+        </label>
+        <label class="field">
           <span>Publication status</span>
           <select id="chapterStatus">
             <option value="draft">Draft</option>
@@ -192,9 +196,8 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
       </div>
     </form>
   </div>
-</section>
-
-<!-- =========================================================
+                                           </section>
+   <!-- =========================================================
      05. CHAPTERS — JAVASCRIPT
      Uses the existing `db` Supabase client, `books` collection,
      `chapters` table and `book-covers` public storage bucket.
@@ -241,7 +244,8 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   function updateHeadingPreview() {
     const number = $c("chapterNumber")?.value || "1";
     const title = $c("chapterTitle")?.value.trim() || "Your chapter title";
-    if ($c("chapterHeadingNumber")) $c("chapterHeadingNumber").textContent = chapterWords(number);
+    const emoji = ($c("chapterHeadingEmoji")?.value || "").trim();
+    if ($c("chapterHeadingNumber")) $c("chapterHeadingNumber").textContent = `${emoji ? emoji + " " : ""}${chapterWords(number)}`;
     if ($c("chapterHeadingTitle")) $c("chapterHeadingTitle").textContent = title;
   }
 
@@ -475,7 +479,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
       return;
     }
     visible.forEach((chapter, index) => {
-      const card = document.createElement("article");
+       const card = document.createElement("article");
       card.className = "manager-card";
       const info = document.createElement("div");
       info.className = "manager-card-info";
@@ -526,8 +530,9 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     $c("chapterForm").reset();
     $c("chapterId").value = chapter?.id || "";
     $c("chapterEditorHeading").textContent = chapter ? "Edit chapter" : "New chapter";
-        $c("chapterNumber").value = chapter?.chapter_number ?? (rows.filter(ch => !ch.deleted_at).length + 1);
+    $c("chapterNumber").value = chapter?.chapter_number ?? (rows.filter(ch => !ch.deleted_at).length + 1);
     $c("chapterTitle").value = chapter?.title || "";
+    $c("chapterHeadingEmoji").value = chapter?.heading_emoji || "";
     $c("chapterStatus").value = chapter?.publication_status || "draft";
     $c("chapterOrder").value = chapter?.display_order ?? rows.length;
     editor().innerHTML = chapter?.content || "";
@@ -543,6 +548,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     const id = $c("chapterId").value;
     const number = Number($c("chapterNumber").value);
     const title = $c("chapterTitle").value.trim();
+    const headingEmoji = ($c("chapterHeadingEmoji")?.value || "").trim();
     const content = cleanRichHTML(editor().innerHTML);
     const status = $c("chapterStatus").value;
     if (!bookId) return message("Choose a book first.");
@@ -551,7 +557,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     const existing = rows.find(ch => ch.id === id);
     const now = new Date().toISOString();
     const payload = {
-      book_id: bookId, chapter_number: number, title, content,
+      book_id: bookId, chapter_number: number, title, heading_emoji: headingEmoji, content,
       publication_status: status,
       display_order: Number($c("chapterOrder").value || 0),
       updated_at: now,
@@ -562,6 +568,20 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     button.disabled = true; button.textContent = "Saving...";
     message("Saving chapter...");
     try {
+      // The database enforces one chapter number per book. Check before insert
+      // so an existing chapter is not accidentally overwritten.
+      if (!id) {
+        const { data: duplicate, error: checkError } = await db.from("chapters")
+          .select("*").eq("book_id", bookId).eq("chapter_number", number).maybeSingle();
+        if (checkError) throw checkError;
+        if (duplicate) {
+          const where = duplicate.deleted_at
+            ? "It is currently in Trash, and the database still reserves its number. Restore/edit it or permanently delete it before reusing that number."
+            : "Choose Edit on the existing chapter, or change the chapter number.";
+          message(`Chapter ${number} already exists for this book. Your current writing has not been saved. ${where}`);
+          return;
+        }
+      }
       const result = id
         ? await db.from("chapters").update(payload).eq("id", id)
         : await db.from("chapters").insert(payload);
@@ -575,8 +595,9 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     } finally {
       button.disabled = false; button.textContent = "Save Chapter";
     }
-   }
-   async function moveChapter(chapter, direction) {
+  }
+
+  async function moveChapter(chapter, direction) {
     const active = rows.filter(ch => !ch.deleted_at).sort((a,b) =>
       Number(a.display_order || 0) - Number(b.display_order || 0) || Number(a.chapter_number) - Number(b.chapter_number));
     const index = active.findIndex(ch => ch.id === chapter.id);
@@ -608,14 +629,13 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     const { error } = await db.from("chapters").delete().eq("id", chapter.id);
     if (error) return message("Could not permanently delete chapter: " + error.message);
     await loadChapters();
-  }
-
-  function init() {
+         }
+           function init() {
     if (!$c("chaptersPage")) return;
     loadFontMetadata();
     refreshBookSelect();
     $c("chapterBook")?.addEventListener("focus", refreshBookSelect);
-   $c("chapterBook")?.addEventListener("change", loadChapters);
+    $c("chapterBook")?.addEventListener("change", loadChapters);
     $c("chapterForm")?.addEventListener("submit", saveChapter);
     $c("addChapter")?.addEventListener("click", () => openEditor());
     $c("cancelChapter")?.addEventListener("click", () => {
@@ -625,6 +645,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     });
     $c("chapterNumber")?.addEventListener("input", updateHeadingPreview);
     $c("chapterTitle")?.addEventListener("input", updateHeadingPreview);
+    $c("chapterHeadingEmoji")?.addEventListener("input", updateHeadingPreview);
     $c("chapterStatusTabs")?.addEventListener("click", event => {
       const button = event.target.closest("[data-chapter-filter]");
       if (!button) return;
@@ -634,9 +655,15 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     });
 
     const tools = $c("chapterFloatingTools");
-    tools?.addEventListener("mousedown", event => {
-      if (event.target.closest("button,label,select")) event.preventDefault();
+    // Save the text range before a toolbar control takes focus. Do not cancel
+    // the native pointer action on select controls: that made them unclickable.
+    tools?.addEventListener("pointerdown", event => {
       saveSelection();
+      if (event.target.closest("button")) event.preventDefault();
+    });
+    tools?.addEventListener("mousedown", event => {
+      saveSelection();
+      if (event.target.closest("button")) event.preventDefault();
     });
     tools?.querySelectorAll("[data-command]").forEach(button => {
       button.addEventListener("click", () => runCommand(button.dataset.command, button.dataset.value || null));
@@ -656,7 +683,8 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     document.addEventListener("mousedown", event => {
       if (!tools?.contains(event.target) && !editor()?.contains(event.target)) hideFloatingTools();
     });
-     $c("insertChapterImage")?.addEventListener("click", () => {
+
+    $c("insertChapterImage")?.addEventListener("click", () => {
       saveSelection();
       $c("chapterImageFile").click();
     });
@@ -678,8 +706,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   else init();
 })();
 </script>
-
-<!-- =========================================================
+    <!-- =========================================================
      05. CHAPTERS — CSS
      Add to the existing admin stylesheet, or keep this style block
      with Section 05 if your admin file permits section-local styles.
@@ -703,8 +730,8 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
 #chaptersPage .status-tabs button,#chaptersPage .chapter-floating-tools button,
 #chaptersPage .chapter-fixed-tools button,#chaptersPage .quiet-button{
   background:#191920;color:#eee;border:1px solid #34343c;border-radius:7px;padding:9px 11px;cursor:pointer
-   }
-   #chaptersPage .status-tabs button.active{background:#d4af37;color:#111;border-color:#d4af37}
+}
+#chaptersPage .status-tabs button.active{background:#d4af37;color:#111;border-color:#d4af37}
 #chaptersPage .manager-message{min-height:22px;color:#d4af37}
 #chaptersPage .manager-list{display:grid;gap:10px}
 #chaptersPage .manager-card,#chaptersPage .editor-panel{
@@ -723,7 +750,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   background:#fff;color:#222;border-radius:9px;padding:24px 15px;text-align:center;margin:16px 0 12px
 }
 #chaptersPage .chapter-heading-preview span{
-  display:block;font-family:Georgia,serif;font-size:13px;letter-spacing:2px;font-weight:700
+  display:block;font-family:Georgia,serif;font-size:15px;letter-spacing:1.5px;font-weight:700
 }
 #chaptersPage .chapter-heading-preview h2{
   font-family:Georgia,serif;font-size:25px;font-weight:600;margin:10px 0 0
@@ -747,8 +774,8 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
 #chaptersPage .rich-writing-area{
   min-height:540px;background:#fff;color:#222;border-radius:9px;padding:24px;outline:none;
   line-height:1.7;font-family:Georgia,serif;font-size:14px;overflow-wrap:anywhere
-   }
-   #chaptersPage .rich-writing-area:empty:before{content:attr(data-placeholder);color:#999;pointer-events:none}
+}
+#chaptersPage .rich-writing-area:empty:before{content:attr(data-placeholder);color:#999;pointer-events:none}
 #chaptersPage .rich-writing-area p{margin:0 0 1em}
 #chaptersPage .rich-writing-area img{max-width:100%;height:auto}
 #chaptersPage .rich-writing-area blockquote{border-left:3px solid #c5a34a;margin:1.2em 0;padding:.5em 1em;color:#555}
@@ -764,8 +791,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
 }
 </style>
     
-
-
+    
   <!-- 06. FRONT MATTER HTML -->
   <section id="frontMatterPage" class="admin-page hidden"><div class="page-head"><div><h2>Front Matter</h2><p class="muted">Manage opening and closing pages for each book.</p></div><button id="addFrontMatter" class="primary">+ Add Section</button></div>
    <div class="toolbar"><select id="frontMatterBook"><option value="">Choose a book</option></select></div><div id="frontMatterMessage" class="message"></div>
