@@ -68,12 +68,10 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   </section>
 
   <!-- 05. CHAPTERS HTML -->
-  <!-- =========================================================
-     WORLD OF BLESSGLOW — CHAPTER MANAGER HTML
-     Replace ONLY the old Chapters page HTML with this section.
-     Keep the shared admin navigation and other managers.
+<!-- =========================================================
+     05. CHAPTERS — HTML
+     Replace the old Section 05 HTML with this block only.
 ========================================================= -->
-
 <section id="chaptersPage" class="admin-page hidden">
   <div class="page-heading">
     <div>
@@ -87,9 +85,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   <div class="manager-toolbar">
     <label class="field">
       <span>Choose book</span>
-      <select id="chapterBook">
-        <option value="">Choose a book</option>
-      </select>
+      <select id="chapterBook"><option value="">Choose a book</option></select>
     </label>
     <div id="chapterStatusTabs" class="status-tabs" role="group" aria-label="Filter chapters">
       <button type="button" class="active" data-chapter-filter="all">All</button>
@@ -136,9 +132,14 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
         </label>
       </div>
 
-      <div class="writing-tools">
-        <div class="tool-row">
-          <select id="chapterFontFamily" aria-label="Font family">
+      <div class="chapter-heading-preview" aria-live="polite">
+        <span id="chapterHeadingNumber">CHAPTER ONE</span>
+        <h2 id="chapterHeadingTitle">Your chapter title</h2>
+      </div>
+
+      <div class="chapter-writing-shell">
+        <div id="chapterFloatingTools" class="chapter-floating-tools" role="toolbar" aria-label="Text formatting" hidden>
+          <select id="chapterFontFamily" aria-label="Font family" title="Font family">
             <option value="Georgia">Georgia</option>
             <option value="Magnolia Script">Magnolia Script</option>
             <option value="Canva Student">Canva Student</option>
@@ -147,35 +148,31 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
             <option value="Arial">Arial</option>
             <option value="Lora">Lora</option>
           </select>
-
-          <select id="chapterFontSize" aria-label="Font size">
-            <option value="12px">12</option>
-            <option value="14px" selected>14</option>
-            <option value="16px">16</option>
-            <option value="18px">18</option>
-            <option value="20px">20</option>
-            <option value="24px">24</option>
-            <option value="28px">28</option>
-            <option value="32px">32</option>
+          <select id="chapterFontSize" aria-label="Font size" title="Font size">
+            <option value="12px">12</option><option value="14px" selected>14</option>
+            <option value="16px">16</option><option value="18px">18</option>
+            <option value="20px">20</option><option value="24px">24</option>
+            <option value="28px">28</option><option value="32px">32</option>
           </select>
-
           <button type="button" data-command="bold" title="Bold"><strong>B</strong></button>
           <button type="button" data-command="italic" title="Italic"><em>I</em></button>
           <button type="button" data-command="underline" title="Underline"><u>U</u></button>
-          <button type="button" data-command="justifyLeft" title="Align left">≡</button>
-          <button type="button" data-command="justifyCenter" title="Center">☷</button>
-          <button type="button" data-command="justifyRight" title="Align right">≣</button>
+          <button type="button" data-command="justifyLeft" title="Align left">⇤</button>
+          <button type="button" data-command="justifyCenter" title="Centre">↔</button>
+          <button type="button" data-command="justifyRight" title="Align right">⇥</button>
           <button type="button" data-command="insertUnorderedList" title="Bulleted list">• List</button>
           <button type="button" data-command="formatBlock" data-value="blockquote" title="Quotation">Quote</button>
+          <label class="chapter-color-tool" title="Text colour">A
+            <input id="chapterTextColor" type="color" value="#222222" aria-label="Text colour">
+          </label>
           <button type="button" data-command="undo" title="Undo">↶</button>
           <button type="button" data-command="redo" title="Redo">↷</button>
-          <label class="color-tool" title="Text colour">A <input id="chapterTextColor" type="color" value="#222222" aria-label="Text colour"></label>
         </div>
 
-        <div class="tool-row secondary-tools">
+        <div class="chapter-fixed-tools">
           <button type="button" id="insertChapterImage">＋ Insert image</button>
-          <button type="button" id="uploadChapterFont">＋ Add font file</button>
-          <span class="muted small">Select text first to apply a font, size or style.</span>
+          <button type="button" id="uploadChapterFont">＋ Upload font</button>
+          <span class="muted small">Select text to show the formatting toolbar beside it.</span>
         </div>
       </div>
 
@@ -183,287 +180,327 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
       <input id="chapterFontFile" type="file" accept=".woff,.woff2,.ttf,.otf,font/woff,font/woff2,font/ttf,font/otf" hidden>
 
       <div class="editor-note">
-        Paste from Canva into the writing area. Bold, italics, paragraph breaks and supported inline font styling are retained when Canva supplies formatted clipboard content. Check the result before publishing.
+        Paste formatted text from Canva into the writing area. Clipboard formatting depends on what Canva provides, so review the pasted result. Enter starts a new paragraph; Shift + Enter inserts a line break.
       </div>
 
       <div id="chapterContent" class="rich-writing-area" contenteditable="true"
            role="textbox" aria-multiline="true" data-placeholder="Start writing or paste your formatted story from Canva..."></div>
 
       <div class="editor-footer">
-        <span class="muted small">Your formatting and inserted images are saved with the chapter.</span>
+        <span class="muted small">Formatting and inserted image links are saved with this chapter.</span>
         <button type="submit" id="saveChapter" class="primary-button">Save Chapter</button>
       </div>
     </form>
   </div>
 </section>
 
-
 <!-- =========================================================
-     WORLD OF BLESSGLOW — CHAPTER MANAGER JAVASCRIPT
-     Replace ONLY the old Chapters JavaScript section with this.
-     It expects the shared admin core to have created `db`.
+     05. CHAPTERS — JAVASCRIPT
+     Uses the existing `db` Supabase client, `books` collection,
+     `chapters` table and `book-covers` public storage bucket.
 ========================================================= -->
 <script>
 (() => {
   "use strict";
+  if (window.__blessglowChapterManagerReady) return;
+  window.__blessglowChapterManagerReady = true;
 
-  const chapter$ = id => document.getElementById(id);
-  const CHAPTER_BUCKET = "book-covers";
-  const FONT_STORAGE_KEY = "blessglowChapterFonts";
-  let chapterRows = [];
-  let chapterFilter = "all";
-  let chapterFontFaces = [];
+  const $c = id => document.getElementById(id);
+  const BUCKET = "book-covers";
+  const FONT_KEY = "blessglowChapterFonts";
+  let rows = [];
+  let filter = "all";
+  let savedRange = null;
+  let uploadedFonts = [];
 
-  const chapterMessage = text => {
-    const node = chapter$("chapterMessage");
-    if (node) node.textContent = text || "";
-  };
+  const message = text => { const el = $c("chapterMessage"); if (el) el.textContent = text || ""; };
+  const editor = () => $c("chapterContent");
 
-  const escapeChapterText = value => String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  })[char]);
-
-  function loadSavedFontFaces() {
-    try {
-      chapterFontFaces = JSON.parse(localStorage.getItem(FONT_STORAGE_KEY) || "[]");
-      if (!Array.isArray(chapterFontFaces)) chapterFontFaces = [];
-    } catch {
-      chapterFontFaces = [];
-    }
-    applyChapterFontFaces();
+  function safeText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[ch]);
   }
 
-  function applyChapterFontFaces() {
-    let style = document.getElementById("blessglowUploadedChapterFonts");
+  function chapterWords(number) {
+    const n = Number(number);
+    if (!Number.isFinite(n) || n < 1) return "CHAPTER";
+    const ones = ["","ONE","TWO","THREE","FOUR","FIVE","SIX","SEVEN","EIGHT","NINE"];
+    const teens = ["TEN","ELEVEN","TWELVE","THIRTEEN","FOURTEEN","FIFTEEN","SIXTEEN","SEVENTEEN","EIGHTEEN","NINETEEN"];
+    const tens = ["","","TWENTY","THIRTY","FORTY","FIFTY","SIXTY","SEVENTY","EIGHTY","NINETY"];
+    function words(x) {
+      if (x < 10) return ones[x];
+      if (x < 20) return teens[x - 10];
+      if (x < 100) return tens[Math.floor(x / 10)] + (x % 10 ? "-" + ones[x % 10] : "");
+      if (x < 1000) return ones[Math.floor(x / 100)] + " HUNDRED" + (x % 100 ? " " + words(x % 100) : "");
+      return String(x);
+    }
+    return "CHAPTER " + words(n);
+  }
+
+  function updateHeadingPreview() {
+    const number = $c("chapterNumber")?.value || "1";
+    const title = $c("chapterTitle")?.value.trim() || "Your chapter title";
+    if ($c("chapterHeadingNumber")) $c("chapterHeadingNumber").textContent = chapterWords(number);
+    if ($c("chapterHeadingTitle")) $c("chapterHeadingTitle").textContent = title;
+  }
+
+  function loadFontMetadata() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(FONT_KEY) || "[]");
+      uploadedFonts = Array.isArray(parsed) ? parsed : [];
+    } catch { uploadedFonts = []; }
+    applyFontFaces();
+    uploadedFonts.forEach(font => addFontOption(font.family));
+  }
+
+  function applyFontFaces() {
+    let style = document.getElementById("blessglowChapterFontFaces");
     if (!style) {
       style = document.createElement("style");
-      style.id = "blessglowUploadedChapterFonts";
+      style.id = "blessglowChapterFontFaces";
       document.head.appendChild(style);
     }
-    style.textContent = chapterFontFaces.map(font =>
-      `@font-face{font-family:"${String(font.family).replace(/["\\]/g, "")}";src:url("${String(font.url).replace(/["\\]/g, "")}");font-display:swap;}`
-    ).join("\n");
+    style.textContent = uploadedFonts.map(font => {
+      const family = String(font.family || "").replace(/["\\]/g, "");
+      const url = String(font.url || "").replace(/["\\]/g, "");
+      return `@font-face{font-family:"${family}";src:url("${url}");font-display:swap;}`;
+    }).join("\n");
   }
 
   function addFontOption(family) {
-    const select = chapter$("chapterFontFamily");
-    if (!select || [...select.options].some(option => option.value === family)) return;
+    const select = $c("chapterFontFamily");
+    if (!select || !family || [...select.options].some(o => o.value === family)) return;
     select.add(new Option(family, family));
   }
 
-  async function uploadChapterFont(file) {
+  async function uploadFont(file) {
     if (!file) return;
-    const extension = (file.name.split(".").pop() || "").toLowerCase();
-    if (!["woff", "woff2", "ttf", "otf"].includes(extension)) {
-      chapterMessage("Please choose a WOFF, WOFF2, TTF or OTF font file.");
+    const ext = (file.name.split(".").pop() || "").toLowerCase();
+    if (!["woff","woff2","ttf","otf"].includes(ext)) {
+      message("Choose a WOFF, WOFF2, TTF or OTF font file.");
       return;
     }
-
     const suggested = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
-    const family = prompt("What should this font be called in the editor?", suggested);
+    const family = prompt("Font name to show in the editor:", suggested);
     if (!family || !family.trim()) return;
-
     const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, "-");
     const path = `fonts/${Date.now()}-${safeName}`;
-
-    chapterMessage("Uploading font...");
-    const { error: uploadError } = await db.storage.from(CHAPTER_BUCKET).upload(path, file, {
-      upsert: false,
-      contentType: file.type || "font/" + extension,
-      cacheControl: "31536000"
+    message("Uploading font...");
+    const { error } = await db.storage.from(BUCKET).upload(path, file, {
+      upsert: false, contentType: file.type || `font/${ext}`, cacheControl: "31536000"
     });
-    if (uploadError) throw uploadError;
-
-    const { data } = db.storage.from(CHAPTER_BUCKET).getPublicUrl(path);
-    const font = { family: family.trim(), url: data.publicUrl, path };
-    chapterFontFaces = chapterFontFaces.filter(item => item.family !== font.family);
-    chapterFontFaces.push(font);
-    localStorage.setItem(FONT_STORAGE_KEY, JSON.stringify(chapterFontFaces));
-    addFontOption(font.family);
-    applyChapterFontFaces();
-    chapter$("chapterFontFamily").value = font.family;
-    chapterMessage(`Font "${font.family}" uploaded. It is available in this browser's editor. Add the same font to the public reader's font stylesheet so readers can see it too.`);
+    if (error) throw error;
+    const { data } = db.storage.from(BUCKET).getPublicUrl(path);
+    uploadedFonts = uploadedFonts.filter(f => f.family !== family.trim());
+    uploadedFonts.push({ family: family.trim(), url: data.publicUrl, path });
+    localStorage.setItem(FONT_KEY, JSON.stringify(uploadedFonts));
+    applyFontFaces();
+    addFontOption(family.trim());
+    $c("chapterFontFamily").value = family.trim();
+    message(`"${family.trim()}" uploaded and loaded in this browser. The public reader also needs the font-face declaration to display this custom font to readers.`);
   }
 
   function cleanRichHTML(html) {
     const parsed = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
     const root = parsed.body.firstElementChild;
-    root.querySelectorAll("script, iframe, object, embed, form, input, button, video, audio").forEach(node => node.remove());
-
+    root.querySelectorAll("script,iframe,object,embed,form,input,button,video,audio,link,meta").forEach(n => n.remove());
     root.querySelectorAll("*").forEach(node => {
-      [...node.attributes].forEach(attribute => {
-        const name = attribute.name.toLowerCase();
-        const value = attribute.value.trim().toLowerCase();
-        if (name.startsWith("on") || name === "srcdoc") node.removeAttribute(attribute.name);
-        if ((name === "href" || name === "src") && value.startsWith("javascript:")) node.removeAttribute(attribute.name);
+      [...node.attributes].forEach(attr => {
+        const name = attr.name.toLowerCase();
+        const value = attr.value.trim().toLowerCase();
+        if (name.startsWith("on") || name === "srcdoc") node.removeAttribute(attr.name);
+        if (["href","src"].includes(name) && /^(javascript:|data:text\/html)/i.test(value)) node.removeAttribute(attr.name);
+        if (name === "style") {
+          const safe = attr.value.split(";").filter(rule =>
+            /^(font-family|font-size|font-weight|font-style|text-decoration|text-align|color|background-color|line-height|margin|padding|width|max-width|height)\s*:/i.test(rule.trim())
+            && !/url\s*\(|expression\s*\(|javascript:/i.test(rule)
+          ).join(";");
+          if (safe) node.setAttribute("style", safe); else node.removeAttribute("style");
+        }
       });
       if (node.tagName === "A") {
         node.setAttribute("rel", "noopener noreferrer");
         node.setAttribute("target", "_blank");
       }
+      if (node.tagName === "IMG") {
+        node.removeAttribute("onerror");
+        node.style.maxWidth = "100%";
+        node.style.height = "auto";
+      }
     });
     return root.innerHTML;
   }
 
-  function editorCommand(command, value = null) {
-    const editor = chapter$("chapterContent");
-    editor?.focus();
-    if (command === "formatBlock") {
-      document.execCommand("formatBlock", false, value);
-    } else {
-      document.execCommand(command, false, value);
-    }
+  function saveSelection() {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    const range = sel.getRangeAt(0);
+    if (editor()?.contains(range.commonAncestorContainer)) savedRange = range.cloneRange();
   }
 
-  function applyFontToSelection(property, value) {
-    const editor = chapter$("chapterContent");
-    editor?.focus();
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0 || !editor.contains(selection.anchorNode)) {
-      chapterMessage("Select some text in your chapter first.");
+  function restoreSelection() {
+    if (!savedRange || !editor()?.contains(savedRange.commonAncestorContainer)) return false;
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedRange);
+    return true;
+  }
+
+  function showFloatingTools() {
+    const tools = $c("chapterFloatingTools");
+    const sel = window.getSelection();
+    if (!tools || !sel || !sel.rangeCount || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    if (!editor()?.contains(range.commonAncestorContainer)) return;
+    savedRange = range.cloneRange();
+    const rect = range.getBoundingClientRect();
+    tools.hidden = false;
+    const width = tools.offsetWidth || 320;
+    const left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left));
+    const top = Math.max(8, rect.top - tools.offsetHeight - 10);
+    tools.style.left = `${left}px`;
+    tools.style.top = `${top}px`;
+  }
+
+  function hideFloatingTools() {
+    const tools = $c("chapterFloatingTools");
+    if (tools && !tools.matches(":hover") && !tools.contains(document.activeElement)) tools.hidden = true;
+  }
+
+  function applyInlineStyle(property, value) {
+    const ed = editor();
+    if (!restoreSelection()) {
+      message("Select the text you want to format first.");
       return;
     }
+    const sel = window.getSelection();
+    const range = sel.getRangeAt(0);
+    if (range.collapsed) return;
     const span = document.createElement("span");
     span.style[property] = value;
     try {
-      const range = selection.getRangeAt(0);
-      if (range.collapsed) {
-        chapterMessage("Select the text you want to format first.");
-        return;
-      }
       range.surroundContents(span);
     } catch {
-      const range = selection.getRangeAt(0);
       const fragment = range.extractContents();
       span.appendChild(fragment);
       range.insertNode(span);
-      selection.removeAllRanges();
-      const next = document.createRange();
-      next.selectNodeContents(span);
-      selection.addRange(next);
     }
+    const next = document.createRange();
+    next.selectNodeContents(span);
+    sel.removeAllRanges();
+    sel.addRange(next);
+    savedRange = next.cloneRange();
+    ed.focus({ preventScroll: true });
   }
 
-  async function insertChapterImage(file) {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      chapterMessage("Please choose an image file.");
+  function runCommand(command, value = null) {
+    if (!restoreSelection()) {
+      editor()?.focus();
+      message("Select text in the writing area first.");
       return;
     }
-    if (file.size > 20 * 1024 * 1024) {
-      chapterMessage("Images must be 20 MB or smaller.");
-      return;
-    }
+    editor().focus({ preventScroll: true });
+    document.execCommand(command, false, value);
+    saveSelection();
+  }
 
-    const extension = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-    const path = `chapters/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extension}`;
-    chapterMessage("Uploading chapter image...");
-
-    const { error } = await db.storage.from(CHAPTER_BUCKET).upload(path, file, {
-      upsert: false,
-      contentType: file.type,
-      cacheControl: "31536000"
+  function insertImageAtSelection(file) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (!file || !file.type.startsWith("image/")) throw new Error("Choose an image file.");
+        if (file.size > 20 * 1024 * 1024) throw new Error("Images must be 20 MB or smaller.");
+        const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const path = `chapters/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+        message("Uploading chapter image...");
+        const { error } = await db.storage.from(BUCKET).upload(path, file, {
+          upsert: false, contentType: file.type, cacheControl: "31536000"
+        });
+        if (error) throw error;
+        const { data } = db.storage.from(BUCKET).getPublicUrl(path);
+        const img = document.createElement("img");
+        img.src = data.publicUrl;
+        img.alt = file.name.replace(/\.[^.]+$/, "");
+        img.loading = "lazy";
+        img.style.maxWidth = "100%";
+        img.style.height = "auto";
+        img.style.display = "block";
+        img.style.margin = "1.5em auto";
+        const ed = editor();
+        ed.focus();
+        if (restoreSelection()) {
+          const range = window.getSelection().getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(img);
+          range.setStartAfter(img);
+          range.collapse(true);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          savedRange = range.cloneRange();
+        } else {
+          ed.appendChild(img);
+        }
+        message("Image inserted. Save the chapter to keep it.");
+        resolve();
+      } catch (err) { reject(err); }
     });
-    if (error) throw error;
-
-    const { data } = db.storage.from(CHAPTER_BUCKET).getPublicUrl(path);
-    const image = document.createElement("img");
-    image.src = data.publicUrl;
-    image.alt = file.name.replace(/\.[^.]+$/, "");
-    image.loading = "lazy";
-    image.style.maxWidth = "100%";
-    image.style.height = "auto";
-    image.style.display = "block";
-    image.style.margin = "1.5em auto";
-
-    const editor = chapter$("chapterContent");
-    editor.focus();
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount && editor.contains(selection.anchorNode)) {
-      const range = selection.getRangeAt(0);
-      range.deleteContents();
-      range.insertNode(image);
-      range.setStartAfter(image);
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    } else {
-      editor.appendChild(image);
-    }
-    chapterMessage("Image inserted into your chapter.");
   }
 
-  function fillChapterBookSelect() {
-    const select = chapter$("chapterBook");
+  function refreshBookSelect() {
+    const select = $c("chapterBook");
     if (!select) return;
     const previous = select.value;
+    const source = typeof books !== "undefined" && Array.isArray(books) ? books : [];
     select.innerHTML = '<option value="">Choose a book</option>';
-    (typeof books !== "undefined" ? books : []).filter(book => !book.deleted_at).forEach(book => {
-      select.add(new Option(book.title, book.id));
-    });
+    source.filter(book => !book.deleted_at).forEach(book => select.add(new Option(book.title, book.id)));
     if ([...select.options].some(option => option.value === previous)) select.value = previous;
   }
+  window.refreshChapterBookSelect = refreshBookSelect;
 
-  function setChapterFilter(filter) {
-    chapterFilter = filter;
-    chapter$("chapterStatusTabs")?.querySelectorAll("[data-chapter-filter]").forEach(button => {
-      button.classList.toggle("active", button.dataset.chapterFilter === filter);
-    });
-    renderChapters();
-  }
-
-  function chapterStatusBadge(status) {
-    const label = status === "published" ? "Published" : "Draft";
-    return `<span class="status-badge status-${status}">${label}</span>`;
-  }
-
-  function chapterAction(label, action, disabled = false) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = label;
-    button.disabled = disabled;
-    button.addEventListener("click", action);
-    return button;
-  }
-
-  function renderChapters() {
-    const list = chapter$("chapterList");
+  function render() {
+    const list = $c("chapterList");
     if (!list) return;
     list.replaceChildren();
-
-    const visible = chapterRows.filter(chapter => {
-      if (chapterFilter === "trash") return !!chapter.deleted_at;
-      if (chapter.deleted_at) return false;
-      if (chapterFilter === "all") return true;
-      return chapter.publication_status === chapterFilter;
+    const visible = rows.filter(ch => {
+      if (filter === "trash") return !!ch.deleted_at;
+      if (ch.deleted_at) return false;
+      return filter === "all" || ch.publication_status === filter;
     });
-
     if (!visible.length) {
-      list.innerHTML = '<p class="empty-state">No chapters in this view yet.</p>';
+      const empty = document.createElement("p");
+      empty.className = "empty-state";
+      empty.textContent = "No chapters in this view yet.";
+      list.appendChild(empty);
       return;
     }
-
     visible.forEach((chapter, index) => {
       const card = document.createElement("article");
       card.className = "manager-card";
       const info = document.createElement("div");
       info.className = "manager-card-info";
-      info.innerHTML = `<strong>Chapter ${Number(chapter.chapter_number)}: ${escapeChapterText(chapter.title)}</strong>
-        <span class="muted small">Order ${Number(chapter.display_order || 0)} · ${chapter.deleted_at ? "In trash" : chapterStatusBadge(chapter.publication_status || "draft")}</span>`;
+      const title = document.createElement("strong");
+      title.textContent = `Chapter ${Number(chapter.chapter_number)}: ${chapter.title}`;
+      const meta = document.createElement("span");
+      meta.className = "muted small";
+      meta.textContent = chapter.deleted_at ? "In trash" : `${chapter.publication_status === "published" ? "Published" : "Draft"} · Order ${Number(chapter.display_order || 0)}`;
+      info.append(title, meta);
       card.appendChild(info);
-
       const actions = document.createElement("div");
       actions.className = "manager-card-actions";
-
+      const addAction = (label, callback, disabled = false) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.textContent = label; b.disabled = disabled;
+        b.addEventListener("click", callback); actions.appendChild(b);
+      };
       if (chapter.deleted_at) {
-        actions.append(chapterAction("Restore", () => restoreChapter(chapter)));
-        actions.append(chapterAction("Delete permanently", () => permanentlyDeleteChapter(chapter)));
+        addAction("Restore", () => restoreChapter(chapter));
+        addAction("Delete permanently", () => permanentlyDeleteChapter(chapter));
       } else {
-        actions.append(chapterAction("Edit", () => editChapter(chapter)));
-        const canReorder = chapterFilter === "all";
-        actions.append(chapterAction("↑", () => moveChapter(chapter, -1), !canReorder || index === 0));
-        actions.append(chapterAction("↓", () => moveChapter(chapter, 1), !canReorder || index === visible.length - 1));
-        actions.append(chapterAction("Move to trash", () => trashChapter(chapter)));
+        addAction("Edit", () => openEditor(chapter));
+        addAction("↑", () => moveChapter(chapter, -1), filter !== "all" || index === 0);
+        addAction("↓", () => moveChapter(chapter, 1), filter !== "all" || index === visible.length - 1);
+        addAction("Move to trash", () => trashChapter(chapter));
       }
       card.appendChild(actions);
       list.appendChild(card);
@@ -471,223 +508,263 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   }
 
   async function loadChapters() {
-    const bookId = chapter$("chapterBook")?.value;
-    if (!bookId) {
-      chapterRows = [];
-      renderChapters();
-      return;
-    }
-    chapterMessage("Loading chapters...");
+    const bookId = $c("chapterBook")?.value;
+    if (!bookId) { rows = []; render(); message(""); return; }
+    message("Loading chapters...");
     const { data, error } = await db.from("chapters").select("*")
       .eq("book_id", bookId)
       .order("display_order", { ascending: true })
       .order("chapter_number", { ascending: true });
-    if (error) {
-      chapterMessage("Could not load chapters: " + error.message);
-      return;
-    }
-    chapterRows = data || [];
-    chapterMessage(`${chapterRows.filter(item => !item.deleted_at).length} active chapter(s).`);
-    renderChapters();
+    if (error) { message("Could not load chapters: " + error.message); return; }
+    rows = data || [];
+    message(`${rows.filter(ch => !ch.deleted_at).length} active chapter(s).`);
+    render();
   }
   window.loadChapters = loadChapters;
 
-  function openChapterEditor(chapter = null) {
-    const form = chapter$("chapterForm");
-    form.reset();
-    chapter$("chapterId").value = chapter?.id || "";
-    chapter$("chapterEditorHeading").textContent = chapter ? "Edit chapter" : "New chapter";
-    chapter$("chapterNumber").value = chapter?.chapter_number ?? (chapterRows.filter(item => !item.deleted_at).length + 1);
-    chapter$("chapterTitle").value = chapter?.title || "";
-    chapter$("chapterStatus").value = chapter?.publication_status || "draft";
-    chapter$("chapterOrder").value = chapter?.display_order ?? chapterRows.length;
-    chapter$("chapterContent").innerHTML = chapter?.content || "";
-    chapter$("chapterEditor").classList.remove("hidden");
-    chapter$("chapterEditor").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function editChapter(chapter) {
-    openChapterEditor(chapter);
+  function openEditor(chapter = null) {
+    $c("chapterForm").reset();
+    $c("chapterId").value = chapter?.id || "";
+    $c("chapterEditorHeading").textContent = chapter ? "Edit chapter" : "New chapter";
+        $c("chapterNumber").value = chapter?.chapter_number ?? (rows.filter(ch => !ch.deleted_at).length + 1);
+    $c("chapterTitle").value = chapter?.title || "";
+    $c("chapterStatus").value = chapter?.publication_status || "draft";
+    $c("chapterOrder").value = chapter?.display_order ?? rows.length;
+    editor().innerHTML = chapter?.content || "";
+    $c("chapterEditor").classList.remove("hidden");
+    updateHeadingPreview();
+    $c("chapterEditor").scrollIntoView({ behavior: "smooth", block: "start" });
+    editor().focus({ preventScroll: true });
   }
 
   async function saveChapter(event) {
     event.preventDefault();
-    const bookId = chapter$("chapterBook").value;
-    const chapterId = chapter$("chapterId").value;
-    const number = Number(chapter$("chapterNumber").value);
-    const title = chapter$("chapterTitle").value.trim();
-    const content = cleanRichHTML(chapter$("chapterContent").innerHTML);
-    const status = chapter$("chapterStatus").value;
+    const bookId = $c("chapterBook").value;
+    const id = $c("chapterId").value;
+    const number = Number($c("chapterNumber").value);
+    const title = $c("chapterTitle").value.trim();
+    const content = cleanRichHTML(editor().innerHTML);
+    const status = $c("chapterStatus").value;
+    if (!bookId) return message("Choose a book first.");
+    if (!number || !title || !content.trim()) return message("Chapter number, title and content are required.");
 
-    if (!bookId) return chapterMessage("Choose a book first.");
-    if (!number || !title || !content.trim()) return chapterMessage("Chapter number, title and content are required.");
-
-    const existing = chapterRows.find(item => item.id === chapterId);
+    const existing = rows.find(ch => ch.id === id);
     const now = new Date().toISOString();
     const payload = {
-      book_id: bookId,
-      chapter_number: number,
-      title,
-      content,
+      book_id: bookId, chapter_number: number, title, content,
       publication_status: status,
-      display_order: Number(chapter$("chapterOrder").value || 0),
+      display_order: Number($c("chapterOrder").value || 0),
       updated_at: now,
       published_at: status === "published" ? (existing?.published_at || now) : null,
       deleted_at: null
     };
-
-    const button = chapter$("saveChapter");
-    button.disabled = true;
-    button.textContent = "Saving...";
-    chapterMessage("Saving chapter...");
+    const button = $c("saveChapter");
+    button.disabled = true; button.textContent = "Saving...";
+    message("Saving chapter...");
     try {
-      const result = chapterId
-        ? await db.from("chapters").update(payload).eq("id", chapterId)
+      const result = id
+        ? await db.from("chapters").update(payload).eq("id", id)
         : await db.from("chapters").insert(payload);
       if (result.error) throw result.error;
-      chapter$("chapterEditor").classList.add("hidden");
-      chapterMessage("Chapter saved successfully.");
+      $c("chapterEditor").classList.add("hidden");
+      savedRange = null;
+      message("Chapter saved successfully.");
       await loadChapters();
-    } catch (error) {
-      chapterMessage("Could not save chapter: " + error.message);
+    } catch (err) {
+      message("Could not save chapter: " + err.message);
     } finally {
-      button.disabled = false;
-      button.textContent = "Save Chapter";
+      button.disabled = false; button.textContent = "Save Chapter";
     }
-  }
-
-  async function moveChapter(chapter, direction) {
-    const active = chapterRows.filter(item => !item.deleted_at)
-      .sort((a, b) => Number(a.display_order || 0) - Number(b.display_order || 0) || Number(a.chapter_number) - Number(b.chapter_number));
-    const index = active.findIndex(item => item.id === chapter.id);
+   }
+   async function moveChapter(chapter, direction) {
+    const active = rows.filter(ch => !ch.deleted_at).sort((a,b) =>
+      Number(a.display_order || 0) - Number(b.display_order || 0) || Number(a.chapter_number) - Number(b.chapter_number));
+    const index = active.findIndex(ch => ch.id === chapter.id);
     const other = active[index + direction];
     if (!other) return;
-
     const firstOrder = Number(chapter.display_order || 0);
     const secondOrder = Number(other.display_order || 0);
-    const temporary = Math.max(...active.map(item => Number(item.display_order || 0)), 0) + 1000;
-
-    const first = await db.from("chapters").update({ display_order: temporary }).eq("id", chapter.id);
-    if (first.error) return chapterMessage(first.error.message);
-    const second = await db.from("chapters").update({ display_order: firstOrder }).eq("id", other.id);
-    if (second.error) return chapterMessage(second.error.message);
-    const third = await db.from("chapters").update({ display_order: secondOrder }).eq("id", chapter.id);
-    if (third.error) return chapterMessage(third.error.message);
+    const temporary = Math.max(0, ...active.map(ch => Number(ch.display_order || 0))) + 1000;
+    for (const [id, order] of [[chapter.id, temporary], [other.id, firstOrder], [chapter.id, secondOrder]]) {
+      const { error } = await db.from("chapters").update({ display_order: order }).eq("id", id);
+      if (error) { message("Could not reorder chapters: " + error.message); return; }
+    }
     await loadChapters();
   }
 
   async function trashChapter(chapter) {
     if (!confirm(`Move "${chapter.title}" to trash?`)) return;
     const { error } = await db.from("chapters").update({ deleted_at: new Date().toISOString() }).eq("id", chapter.id);
-    if (error) return chapterMessage("Could not move chapter to trash: " + error.message);
+    if (error) return message("Could not move chapter to trash: " + error.message);
     await loadChapters();
   }
-
   async function restoreChapter(chapter) {
     const { error } = await db.from("chapters").update({ deleted_at: null }).eq("id", chapter.id);
-    if (error) return chapterMessage("Could not restore chapter: " + error.message);
+    if (error) return message("Could not restore chapter: " + error.message);
     await loadChapters();
   }
-
   async function permanentlyDeleteChapter(chapter) {
     if (!confirm(`Permanently delete "${chapter.title}"? This cannot be undone.`)) return;
     const { error } = await db.from("chapters").delete().eq("id", chapter.id);
-    if (error) return chapterMessage("Permanent deletion failed: " + error.message);
+    if (error) return message("Could not permanently delete chapter: " + error.message);
     await loadChapters();
   }
 
-  function initChapterManager() {
-    loadSavedFontFaces();
-    chapter$("chapterBook")?.addEventListener("change", loadChapters);
-    chapter$("chapterForm")?.addEventListener("submit", saveChapter);
-    chapter$("addChapter")?.addEventListener("click", () => openChapterEditor());
-    chapter$("cancelChapter")?.addEventListener("click", () => chapter$("chapterEditor").classList.add("hidden"));
-
-    chapter$("chapterStatusTabs")?.addEventListener("click", event => {
+  function init() {
+    if (!$c("chaptersPage")) return;
+    loadFontMetadata();
+    refreshBookSelect();
+    $c("chapterBook")?.addEventListener("focus", refreshBookSelect);
+   $c("chapterBook")?.addEventListener("change", loadChapters);
+    $c("chapterForm")?.addEventListener("submit", saveChapter);
+    $c("addChapter")?.addEventListener("click", () => openEditor());
+    $c("cancelChapter")?.addEventListener("click", () => {
+      $c("chapterEditor").classList.add("hidden");
+      $c("chapterFloatingTools").hidden = true;
+      savedRange = null;
+    });
+    $c("chapterNumber")?.addEventListener("input", updateHeadingPreview);
+    $c("chapterTitle")?.addEventListener("input", updateHeadingPreview);
+    $c("chapterStatusTabs")?.addEventListener("click", event => {
       const button = event.target.closest("[data-chapter-filter]");
-      if (button) setChapterFilter(button.dataset.chapterFilter);
+      if (!button) return;
+      filter = button.dataset.chapterFilter;
+      $c("chapterStatusTabs").querySelectorAll("[data-chapter-filter]").forEach(b => b.classList.toggle("active", b === button));
+      render();
     });
 
-    document.querySelectorAll("#chapterEditor [data-command]").forEach(button => {
-      button.addEventListener("click", () => editorCommand(button.dataset.command, button.dataset.value || null));
+    const tools = $c("chapterFloatingTools");
+    tools?.addEventListener("mousedown", event => {
+      if (event.target.closest("button,label,select")) event.preventDefault();
+      saveSelection();
     });
+    tools?.querySelectorAll("[data-command]").forEach(button => {
+      button.addEventListener("click", () => runCommand(button.dataset.command, button.dataset.value || null));
+    });
+    $c("chapterFontFamily")?.addEventListener("change", event => applyInlineStyle("fontFamily", `"${event.target.value}"`));
+    $c("chapterFontSize")?.addEventListener("change", event => applyInlineStyle("fontSize", event.target.value));
+    $c("chapterTextColor")?.addEventListener("input", event => applyInlineStyle("color", event.target.value));
 
-    chapter$("chapterFontFamily")?.addEventListener("change", event => {
-      applyFontToSelection("fontFamily", `"${event.target.value}"`);
+    editor()?.addEventListener("mouseup", () => setTimeout(showFloatingTools, 0));
+    editor()?.addEventListener("keyup", () => setTimeout(showFloatingTools, 0));
+    editor()?.addEventListener("touchend", () => setTimeout(showFloatingTools, 80));
+    editor()?.addEventListener("input", saveSelection);
+    document.addEventListener("selectionchange", () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount && !sel.isCollapsed && editor()?.contains(sel.anchorNode)) showFloatingTools();
     });
-    chapter$("chapterFontSize")?.addEventListener("change", event => {
-      applyFontToSelection("fontSize", event.target.value);
+    document.addEventListener("mousedown", event => {
+      if (!tools?.contains(event.target) && !editor()?.contains(event.target)) hideFloatingTools();
     });
-    chapter$("chapterTextColor")?.addEventListener("input", event => {
-      applyFontToSelection("color", event.target.value);
+     $c("insertChapterImage")?.addEventListener("click", () => {
+      saveSelection();
+      $c("chapterImageFile").click();
     });
-
-    chapter$("insertChapterImage")?.addEventListener("click", () => chapter$("chapterImageFile").click());
-    chapter$("chapterImageFile")?.addEventListener("change", async event => {
-      try { await insertChapterImage(event.target.files[0]); }
-      catch (error) { chapterMessage("Image upload failed: " + error.message); }
+    $c("chapterImageFile")?.addEventListener("change", async event => {
+      try { await insertImageAtSelection(event.target.files[0]); }
+      catch (err) { message("Image upload failed: " + err.message); }
       event.target.value = "";
     });
-
-    chapter$("uploadChapterFont")?.addEventListener("click", () => chapter$("chapterFontFile").click());
-    chapter$("chapterFontFile")?.addEventListener("change", async event => {
-      try { await uploadChapterFont(event.target.files[0]); }
-      catch (error) { chapterMessage("Font upload failed: " + error.message); }
+    $c("uploadChapterFont")?.addEventListener("click", () => $c("chapterFontFile").click());
+    $c("chapterFontFile")?.addEventListener("change", async event => {
+      try { await uploadFont(event.target.files[0]); }
+      catch (err) { message("Font upload failed: " + err.message); }
       event.target.value = "";
     });
-
-    fillChapterBookSelect();
-    renderChapters();
+    render();
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initChapterManager, { once: true });
-  } else {
-    initChapterManager();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
+  else init();
 })();
 </script>
-    
+
 <!-- =========================================================
-     REQUIRED CSS
-     Add these rules to the existing admin <style> section.
+     05. CHAPTERS — CSS
+     Add to the existing admin stylesheet, or keep this style block
+     with Section 05 if your admin file permits section-local styles.
 ========================================================= -->
 <style>
-.page-heading,.editor-heading,.editor-footer,.manager-toolbar,.manager-card,.manager-card-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.page-heading{margin-bottom:20px}.page-heading h2,.editor-heading h3{margin:3px 0}
-.eyebrow{font-size:11px;letter-spacing:2px;color:#d4af37;font-weight:700;margin:0}
-.muted{color:#999}.small{font-size:12px}.manager-toolbar{flex-wrap:wrap;margin:18px 0}
-.field{display:flex;flex-direction:column;gap:7px;min-width:150px;flex:1}
-.field input,.field select,.tool-row select{background:#111116;color:#f5f3ed;border:1px solid #34343c;border-radius:8px;padding:11px}
-.status-tabs,.tool-row{display:flex;flex-wrap:wrap;gap:7px}
-.status-tabs button,.tool-row button,.quiet-button{background:#191920;color:#eee;border:1px solid #34343c;border-radius:7px;padding:9px 12px;cursor:pointer}
-.status-tabs button.active{background:#d4af37;color:#111;border-color:#d4af37}
-.manager-message{min-height:22px;color:#d4af37}
-.manager-list{display:grid;gap:10px}
-.manager-card,.editor-panel{background:#15151b;border:1px solid #303039;border-radius:12px;padding:15px}
-.manager-card-info{display:grid;gap:7px;min-width:0}.manager-card-actions{flex-wrap:wrap}
-.manager-card-actions button{background:#22222a;color:#eee;border:1px solid #41414a;border-radius:7px;padding:8px 10px;cursor:pointer}
-.manager-card-actions button:disabled{opacity:.35;cursor:not-allowed}
-.status-badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px}
-.status-draft{background:#4a3b19;color:#f4d27b}.status-published{background:#173d2b;color:#9ce0b4}
-.editor-panel{margin-top:22px}.editor-heading{margin-bottom:18px}
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-bottom:18px}
-.writing-tools{background:#101015;border:1px solid #34343c;border-radius:10px;padding:10px;margin:14px 0 0}
-.tool-row{align-items:center}.tool-row button:hover,.manager-card-actions button:hover{border-color:#d4af37}
-.tool-row select{max-width:190px}.secondary-tools{margin-top:9px}
-.color-tool{display:flex;align-items:center;gap:5px;color:#eee;padding:4px}
-.color-tool input{width:30px;height:28px;border:0;background:transparent}
-.editor-note{font-size:12px;line-height:1.5;color:#b5a77e;padding:10px 2px}
-.rich-writing-area{min-height:520px;background:#fff;color:#222;border-radius:9px;padding:24px;outline:none;line-height:1.7;font-family:Georgia,serif;font-size:14px;overflow-wrap:anywhere}
-.rich-writing-area:empty:before{content:attr(data-placeholder);color:#999;pointer-events:none}
-.rich-writing-area img{max-width:100%;height:auto}
-.rich-writing-area blockquote{border-left:3px solid #c5a34a;margin:1.2em 0;padding:.5em 1em;color:#555}
-.editor-footer{margin-top:14px;flex-wrap:wrap}
-.primary-button{background:#d4af37;color:#111;border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}
-.empty-state{padding:25px;text-align:center;color:#999;background:#15151b;border-radius:10px}
-@media(max-width:650px){.form-grid{grid-template-columns:1fr}.manager-card{align-items:flex-start;flex-direction:column}.manager-card-actions{width:100%}.rich-writing-area{padding:15px;min-height:420px}.tool-row select{max-width:145px}}
+#chaptersPage .page-heading,#chaptersPage .editor-heading,#chaptersPage .editor-footer,
+#chaptersPage .manager-toolbar,#chaptersPage .manager-card,#chaptersPage .manager-card-actions{
+  display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+#chaptersPage .page-heading{margin-bottom:20px}
+#chaptersPage .page-heading h2,#chaptersPage .editor-heading h3{margin:3px 0}
+#chaptersPage .eyebrow{font-size:11px;letter-spacing:2px;color:#d4af37;font-weight:700;margin:0}
+#chaptersPage .muted{color:#999}
+#chaptersPage .small{font-size:12px}
+#chaptersPage .manager-toolbar{flex-wrap:wrap;margin:18px 0}
+#chaptersPage .field{display:flex;flex-direction:column;gap:7px;min-width:150px;flex:1}
+#chaptersPage .field input,#chaptersPage .field select{
+  background:#111116;color:#f5f3ed;border:1px solid #34343c;border-radius:8px;padding:11px
+}
+#chaptersPage .status-tabs,#chaptersPage .chapter-floating-tools{display:flex;flex-wrap:wrap;gap:6px}
+#chaptersPage .status-tabs button,#chaptersPage .chapter-floating-tools button,
+#chaptersPage .chapter-fixed-tools button,#chaptersPage .quiet-button{
+  background:#191920;color:#eee;border:1px solid #34343c;border-radius:7px;padding:9px 11px;cursor:pointer
+   }
+   #chaptersPage .status-tabs button.active{background:#d4af37;color:#111;border-color:#d4af37}
+#chaptersPage .manager-message{min-height:22px;color:#d4af37}
+#chaptersPage .manager-list{display:grid;gap:10px}
+#chaptersPage .manager-card,#chaptersPage .editor-panel{
+  background:#15151b;border:1px solid #303039;border-radius:12px;padding:15px
+}
+#chaptersPage .manager-card-info{display:grid;gap:7px;min-width:0}
+#chaptersPage .manager-card-actions{flex-wrap:wrap}
+#chaptersPage .manager-card-actions button{
+  background:#22222a;color:#eee;border:1px solid #41414a;border-radius:7px;padding:8px 10px;cursor:pointer
+}
+#chaptersPage .manager-card-actions button:disabled{opacity:.35;cursor:not-allowed}
+#chaptersPage .editor-panel{margin-top:22px}
+#chaptersPage .editor-heading{margin-bottom:18px}
+#chaptersPage .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-bottom:18px}
+#chaptersPage .chapter-heading-preview{
+  background:#fff;color:#222;border-radius:9px;padding:24px 15px;text-align:center;margin:16px 0 12px
+}
+#chaptersPage .chapter-heading-preview span{
+  display:block;font-family:Georgia,serif;font-size:13px;letter-spacing:2px;font-weight:700
+}
+#chaptersPage .chapter-heading-preview h2{
+  font-family:Georgia,serif;font-size:25px;font-weight:600;margin:10px 0 0
+}
+#chaptersPage .chapter-writing-shell{position:relative;background:#101015;border:1px solid #34343c;border-radius:10px;padding:10px;margin:14px 0 0}
+#chaptersPage .chapter-fixed-tools{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+#chaptersPage .chapter-floating-tools{
+  position:fixed;z-index:99999;max-width:min(94vw,760px);max-height:45vh;overflow:auto;
+  background:#17171e;border:1px solid #c5a34a;border-radius:10px;padding:8px;
+  box-shadow:0 8px 28px rgba(0,0,0,.35)
+}
+#chaptersPage .chapter-floating-tools[hidden]{display:none}
+#chaptersPage .chapter-floating-tools select{
+  max-width:155px;background:#111116;color:#f5f3ed;border:1px solid #444;border-radius:7px;padding:8px
+}
+#chaptersPage .chapter-floating-tools button:hover,#chaptersPage .manager-card-actions button:hover,
+#chaptersPage .chapter-fixed-tools button:hover{border-color:#d4af37}
+#chaptersPage .chapter-color-tool{display:flex;align-items:center;gap:5px;color:#eee;padding:3px 5px}
+#chaptersPage .chapter-color-tool input{width:30px;height:28px;border:0;background:transparent;padding:0}
+#chaptersPage .editor-note{font-size:12px;line-height:1.5;color:#b5a77e;padding:10px 2px}
+#chaptersPage .rich-writing-area{
+  min-height:540px;background:#fff;color:#222;border-radius:9px;padding:24px;outline:none;
+  line-height:1.7;font-family:Georgia,serif;font-size:14px;overflow-wrap:anywhere
+   }
+   #chaptersPage .rich-writing-area:empty:before{content:attr(data-placeholder);color:#999;pointer-events:none}
+#chaptersPage .rich-writing-area p{margin:0 0 1em}
+#chaptersPage .rich-writing-area img{max-width:100%;height:auto}
+#chaptersPage .rich-writing-area blockquote{border-left:3px solid #c5a34a;margin:1.2em 0;padding:.5em 1em;color:#555}
+#chaptersPage .editor-footer{margin-top:14px;flex-wrap:wrap}
+#chaptersPage .primary-button{background:#d4af37;color:#111;border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}
+#chaptersPage .empty-state{padding:25px;text-align:center;color:#999;background:#15151b;border-radius:10px}
+@media(max-width:650px){
+  #chaptersPage .form-grid{grid-template-columns:1fr}
+  #chaptersPage .manager-card{align-items:flex-start;flex-direction:column}
+  #chaptersPage .manager-card-actions{width:100%}
+  #chaptersPage .rich-writing-area{padding:15px;min-height:430px}
+  #chaptersPage .chapter-floating-tools select{max-width:125px}
+}
 </style>
     
+
 
   <!-- 06. FRONT MATTER HTML -->
   <section id="frontMatterPage" class="admin-page hidden"><div class="page-head"><div><h2>Front Matter</h2><p class="muted">Manage opening and closing pages for each book.</p></div><button id="addFrontMatter" class="primary">+ Add Section</button></div>
