@@ -76,25 +76,28 @@ const subgenreLists = {
 };
 
 function updateSubgenres(genre, selected = "") {
-  const select = document.getElementById("subgenre");
+  const select = $("subgenre");
   if (!select) return;
 
-  select.innerHTML = "";
+  select.replaceChildren();
 
   const options = subgenreLists[genre] || [];
 
   select.add(new Option(
-    options.length ? "Select subgenre" : "Select main genre first", ""
+    options.length ? "Select subgenre" : "Select main genre first",
+    ""
   ));
 
-  options.forEach(name => select.add(new Option(name, name)));
+  options.forEach(name => {
+    select.add(new Option(name, name));
+  });
 
-  select.disabled = !options.length;
-
-  if (options.includes(selected)) select.value = selected;
+  select.disabled = options.length === 0;
+  select.value = options.includes(selected) ? selected : "";
 }
 
-document.getElementById("genre")?.addEventListener("change", event => {
+$("genre")?.addEventListener("change", event => {
   updateSubgenres(event.target.value);
 });
+
     
