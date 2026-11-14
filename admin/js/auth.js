@@ -1,78 +1,64 @@
 
-/* WORLD OF BLESSGLOW — ADMIN AUTH */
+/* WORLD OF BLESSGLOW — AUTHENTICATION */
 
 let authBusy = false;
 
+const loginForm = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+
 function authMessage(text) {
-  const area = $("loginMessage");
+  const area = document.getElementById("loginMessage");
   if (area) area.textContent = text;
 }
 
 function showLogin() {
-  $("app")?.classList.add("hidden");
-  $("login")?.classList.remove("hidden");
+  $("app").classList.add("hidden");
+  $("login").classList.remove("hidden");
 }
 
 function showDashboard() {
-  $("login")?.classList.add("hidden");
-  $("app")?.classList.remove("hidden");
+  $("login").classList.add("hidden");
+  $("app").classList.remove("hidden");
 }
 
-async function verifyAdmin() {
+async function checkAdmin() {
   const { data, error } = await db.auth.getUser();
   if (error) throw error;
 
   const user = data.user;
-  if (!user) throw new Error("No active login session.");
+  if (!user) throw new Error("No active session.");
 
   const meta = user.app_metadata || {};
-  const isAdmin =
-    meta.role === "admin" ||
-    (Array.isArray(meta.roles) && meta.roles.includes("admin"));
 
-  if (!isAdmin) {
-    throw new Error(
-      "Login successful, but this account has no admin role. Check its Supabase app_metadata."
-    );
+  if (
+    meta.role !== "admin" &&
+    !(meta.roles || []).includes("admin")
+  ) {
+    throw new Error("Your account does not have the admin role.");
   }
-
-  return user;
 }
 
-async function enterAdmin() {
-  if (authBusy) return;
-
-  authBusy = true;
-  authMessage("Checking administrator access...");
+async function openDashboard() {
+  showDashboard();
 
   try {
-    await verifyAdmin();
-    showDashboard();
     await loadBooks();
   } catch (error) {
-    showLogin();
-    authMessage(error.message);
-  } finally {
-    authBusy = false;
+    message("Dashboard opened, but books failed to load: " + error.message);
   }
 }
 
-/* LOGIN FORM */
+/* LOGIN */
 
-$("loginForm")?.addEventListener("submit", async event => {
+loginForm.addEventListener("submit", async event => {
   event.preventDefault();
 
   if (authBusy) return;
 
-  const button = $("loginButton");
   authBusy = true;
-
-  if (button) {
-    button.disabled = true;
-    button.textContent = "Signing In...";
-  }
-
-  authMessage("Connecting to Supabase...");
+  loginButton.disabled = true;
+  loginButton.textContent = "Signing In...";
+  authMessage("Connecting...");
 
   try {
     const { error } = await db.auth.signInWithPassword({
@@ -82,26 +68,21 @@ $("loginForm")?.addEventListener("submit", async event => {
 
     if (error) throw error;
 
-    await verifyAdmin();
-
-    showDashboard();
+    await checkAdmin();
+    await openDashboard();
     authMessage("");
-    await loadBooks();
 
   } catch (error) {
     showLogin();
-    authMessage("Login failed: " + error.message);
+    authMessage(error.message);
   } finally {
     authBusy = false;
-
-    if (button) {
-      button.disabled = false;
-      button.textContent = "Sign In";
-    }
+    loginButton.disabled = false;
+    loginButton.textContent = "Sign In";
   }
 });
 
-/* RESTORE SESSION */
+/* RESTORE EXISTING SESSION */
 
 (async () => {
   try {
@@ -109,7 +90,8 @@ $("loginForm")?.addEventListener("submit", async event => {
     if (error) throw error;
 
     if (data.session) {
-      await enterAdmin();
+      await checkAdmin();
+      await openDashboard();
     } else {
       showLogin();
     }
@@ -119,19 +101,18 @@ $("loginForm")?.addEventListener("submit", async event => {
   }
 })();
 
-/* LOGOUT */
+/* SIGN OUT */
 
-$("logout")?.addEventListener("click", async () => {
+$("logout").addEventListener("click", async () => {
   try {
     const { error } = await db.auth.signOut();
     if (error) throw error;
 
     showLogin();
-    $("email").value = "";
     $("password").value = "";
-    authMessage("You have signed out.");
+    authMessage("Signed out successfully.");
   } catch (error) {
-    alert("Logout failed: " + error.message);
+    authMessage("Sign out failed: " + error.message);
   }
 });
-
+                             
