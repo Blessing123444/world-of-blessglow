@@ -1,14 +1,20 @@
 
 /* WORLD OF BLESSGLOW — CHAPTER STUDIO */
 
+/* LOAD CHAPTERS */
 async function loadChapters() {
-  const bookId = $("chapterBook").value;
+  const bookId = $("chapterBook")?.value;
+  const area = $("chapterList");
 
-  $("chapterList").innerHTML = "";
-  $("chapterEditor").classList.add("hidden");
+  if (!area) return;
+
+  area.replaceChildren();
+  $("chapterEditor")?.classList.add("hidden");
 
   if (!bookId) {
-    $("chapterMessage").textContent = "Select a book to view its chapters.";
+    chapters = [];
+    $("chapterMessage").textContent =
+      "Select a book to view its chapters.";
     return;
   }
 
@@ -29,13 +35,17 @@ async function loadChapters() {
 
   chapters = data || [];
   renderChapters();
+  $("chapterMessage").textContent = "";
 }
 
+/* DISPLAY CHAPTERS */
 function renderChapters() {
   const area = $("chapterList");
-  area.innerHTML = "";
+  if (!area) return;
 
-  const filter = $("chapterFilter").value;
+  area.replaceChildren();
+
+  const filter = $("chapterFilter")?.value || "all";
   const list = chapters.filter(ch =>
     filter === "all" || ch.publication_status === filter
   );
@@ -82,9 +92,15 @@ function newChapter() {
   $("chapterForm").reset();
   $("chapterId").value = "";
 
+  const nextNumber = chapters.length
+    ? Math.max(...chapters.map(ch =>
+        Number(ch.chapter_number) || 0
+      )) + 1
+    : 1;
+
   $("chapterEditorTitle").textContent = "New Chapter";
-  $("chapterNumber").value = chapters.length + 1;
-  $("chapterOrder").value = chapters.length + 1;
+  $("chapterNumber").value = nextNumber;
+  $("chapterOrder").value = nextNumber;
   $("chapterStatus").value = "draft";
 
   $("chapterEditor").classList.remove("hidden");
@@ -100,7 +116,7 @@ function editChapter(ch) {
   $("chapterTitle").value = ch.title;
   $("chapterContent").value = ch.content || "";
   $("chapterStatus").value = ch.publication_status;
-  $("chapterOrder").value = ch.display_order;
+  $("chapterOrder").value = ch.display_order ?? ch.chapter_number;
 
   $("chapterEditorTitle").textContent = "Edit Chapter";
   $("chapterEditor").classList.remove("hidden");
@@ -108,32 +124,44 @@ function editChapter(ch) {
 }
 
 /* SAVE CHAPTER */
-$("chapterForm").onsubmit = async event => {
+$("chapterForm")?.addEventListener("submit", async event => {
   event.preventDefault();
 
   const button = $("saveChapter");
+  if (button.disabled) return;
+
   button.disabled = true;
   button.textContent = "Saving...";
 
   try {
+    const bookId = $("chapterBook").value;
+    const number = Number($("chapterNumber").value);
+    const title = $("chapterTitle").value.trim();
+    const content = $("chapterContent").value;
     const status = $("chapterStatus").value;
 
+    if (!bookId) throw Error("Select a book first.");
+    if (!Number.isInteger(number) || number < 1) {
+      throw Error("Enter a valid chapter number.");
+    }
+    if (!title || !content.trim()) {
+      throw Error("Enter a chapter title and content.");
+    }
+
     const payload = {
-      book_id: $("chapterBook").value,
-      chapter_number: Number($("chapterNumber").value),
-      title: $("chapterTitle").value.trim(),
-      content: $("chapterContent").value,
+      book_id: bookId,
+      chapter_number: number,
+      title,
+      content,
       publication_status: status,
       published_at: status === "published"
         ? (currentChapter?.published_at || new Date().toISOString())
         : null,
-      display_order: Math.max(0, Number($("chapterOrder").value) || 0),
+      display_order: Math.max(
+        1, Number($("chapterOrder").value) || number
+      ),
       updated_at: new Date().toISOString()
     };
-
-    if (!payload.title || !payload.content.trim()) {
-      throw Error("Enter a chapter title and content.");
-    }
 
     const id = $("chapterId").value;
 
@@ -147,7 +175,8 @@ $("chapterForm").onsubmit = async event => {
     currentChapter = null;
 
     await loadChapters();
-    $("chapterMessage").textContent = "Chapter saved successfully.";
+    $("chapterMessage").textContent =
+      "Chapter saved successfully.";
 
   } catch (error) {
     alert("Could not save chapter: " + error.message);
@@ -155,9 +184,9 @@ $("chapterForm").onsubmit = async event => {
     button.disabled = false;
     button.textContent = "Save Chapter";
   }
-};
+});
 
-/* DELETE CHAPTER */
+/* MOVE CHAPTER TO TRASH */
 async function deleteChapter(ch) {
   if (!confirm("Move this chapter to Trash?")) return;
 
@@ -166,7 +195,7 @@ async function deleteChapter(ch) {
     .eq("id", ch.id);
 
   if (error) {
-    alert(error.message);
+    alert("Could not delete chapter: " + error.message);
     return;
   }
 
@@ -175,12 +204,17 @@ async function deleteChapter(ch) {
 }
 
 /* CHAPTER EVENTS */
-$("chapterBook").onchange = loadChapters;
-$("chapterFilter").onchange = renderChapters;
-$("addChapter").onclick = newChapter;
+$("chapterBook")?.addEventListener("change", async () => {
+  currentChapter = null;
+  await loadChapters();
+});
 
-$("cancelChapter").onclick = () => {
+$("chapterFilter")?.addEventListener("change", renderChapters);
+
+$("addChapter")?.addEventListener("click", newChapter);
+
+$("cancelChapter")?.addEventListener("click", () => {
   $("chapterEditor").classList.add("hidden");
   currentChapter = null;
-};
-      
+});
+    
