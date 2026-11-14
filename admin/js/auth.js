@@ -20,7 +20,6 @@ async function verifyAdmin() {
 
 async function enterAdmin() {
   if (loading) return;
-
   loading = true;
 
   try {
@@ -39,7 +38,8 @@ async function enterAdmin() {
 }
 
 /* LOGIN */
-$("loginForm").addEventListener("submit", async event => {
+
+$("loginForm")?.addEventListener("submit", async event => {
   event.preventDefault();
   if (loading) return;
 
@@ -71,6 +71,7 @@ $("loginForm").addEventListener("submit", async event => {
 });
 
 /* RESTORE SESSION */
+
 (async () => {
   try {
     const { data, error } = await db.auth.getSession();
@@ -83,14 +84,15 @@ $("loginForm").addEventListener("submit", async event => {
 })();
 
 /* LOGOUT */
-$("logout").onclick = async () => {
-  const { error } = await db.auth.signOut();
 
-  if (error) {
+$("logout")?.addEventListener("click", async () => {
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+
+    location.reload();
+  } catch (error) {
     alert("Could not sign out: " + error.message);
-    return;
   }
+});
 
-  location.reload();
-};
-      
