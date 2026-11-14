@@ -68,12 +68,626 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   </section>
 
   <!-- 05. CHAPTERS HTML -->
-  <section id="chaptersPage" class="admin-page hidden">
-   <div class="page-head"><div><h2>Chapter Studio</h2><p class="muted">Manage chapter content and reading order.</p></div><button id="addChapter" class="primary">+ Add Chapter</button></div>
-   <div class="toolbar"><select id="chapterBook"><option value="">Choose a book</option></select></div><div id="chapterStatusTabs" class="status-tabs"></div><div id="chapterMessage" class="message"></div>
-   <form id="chapterEditor" class="panel hidden"><h3 id="chapterEditorTitle">Add Chapter</h3><input id="chapterId" type="hidden"><div class="field-grid"><div><label>Chapter number *</label><input id="chapterNumber" type="number" min="1" required></div><div><label>Title *</label><input id="chapterTitle" required></div><div><label>Status</label><select id="chapterPublicationStatus"><option value="draft">Draft</option><option value="published">Published</option></select></div><div><label>Display order</label><input id="chapterOrder" type="number" value="0"></div><div class="wide"><label>Chapter content *</label><textarea id="chapterContent" rows="12" required></textarea></div></div><div class="toolbar"><button class="primary" type="submit">Save Chapter</button><button type="button" id="cancelChapter">Cancel</button></div></form>
-   <div id="chapterList" class="card-grid"></div>
-  </section>
+  <!-- =========================================================
+     WORLD OF BLESSGLOW — CHAPTER MANAGER HTML
+     Replace ONLY the old Chapters page HTML with this section.
+     Keep the shared admin navigation and other managers.
+========================================================= -->
+
+<section id="chaptersPage" class="admin-page hidden">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">STORY MANAGEMENT</p>
+      <h2>Chapter Studio</h2>
+      <p class="muted">Write, format, illustrate and organise your chapters.</p>
+    </div>
+    <button type="button" id="addChapter" class="primary-button">＋ New Chapter</button>
+  </div>
+
+  <div class="manager-toolbar">
+    <label class="field">
+      <span>Choose book</span>
+      <select id="chapterBook">
+        <option value="">Choose a book</option>
+      </select>
+    </label>
+    <div id="chapterStatusTabs" class="status-tabs" role="group" aria-label="Filter chapters">
+      <button type="button" class="active" data-chapter-filter="all">All</button>
+      <button type="button" data-chapter-filter="draft">Draft</button>
+      <button type="button" data-chapter-filter="published">Published</button>
+      <button type="button" data-chapter-filter="trash">Trash</button>
+    </div>
+  </div>
+
+  <p id="chapterMessage" class="manager-message" aria-live="polite"></p>
+  <div id="chapterList" class="manager-list"></div>
+
+  <div id="chapterEditor" class="editor-panel hidden">
+    <div class="editor-heading">
+      <div>
+        <p class="eyebrow">CHAPTER EDITOR</p>
+        <h3 id="chapterEditorHeading">New chapter</h3>
+      </div>
+      <button type="button" id="cancelChapter" class="quiet-button">Close</button>
+    </div>
+
+    <form id="chapterForm">
+      <input type="hidden" id="chapterId">
+
+      <div class="form-grid">
+        <label class="field">
+          <span>Chapter number</span>
+          <input id="chapterNumber" type="number" min="1" required>
+        </label>
+        <label class="field">
+          <span>Chapter title</span>
+          <input id="chapterTitle" type="text" maxlength="180" required placeholder="Enter chapter title">
+        </label>
+        <label class="field">
+          <span>Publication status</span>
+          <select id="chapterStatus">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Display order</span>
+          <input id="chapterOrder" type="number" min="0" value="0">
+        </label>
+      </div>
+
+      <div class="writing-tools">
+        <div class="tool-row">
+          <select id="chapterFontFamily" aria-label="Font family">
+            <option value="Georgia">Georgia</option>
+            <option value="Magnolia Script">Magnolia Script</option>
+            <option value="Canva Student">Canva Student</option>
+            <option value="Canva Sans">Canva Sans</option>
+            <option value="Times New Roman MT">Times New Roman MT</option>
+            <option value="Arial">Arial</option>
+            <option value="Lora">Lora</option>
+          </select>
+
+          <select id="chapterFontSize" aria-label="Font size">
+            <option value="12px">12</option>
+            <option value="14px" selected>14</option>
+            <option value="16px">16</option>
+            <option value="18px">18</option>
+            <option value="20px">20</option>
+            <option value="24px">24</option>
+            <option value="28px">28</option>
+            <option value="32px">32</option>
+          </select>
+
+          <button type="button" data-command="bold" title="Bold"><strong>B</strong></button>
+          <button type="button" data-command="italic" title="Italic"><em>I</em></button>
+          <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+          <button type="button" data-command="justifyLeft" title="Align left">≡</button>
+          <button type="button" data-command="justifyCenter" title="Center">☷</button>
+          <button type="button" data-command="justifyRight" title="Align right">≣</button>
+          <button type="button" data-command="insertUnorderedList" title="Bulleted list">• List</button>
+          <button type="button" data-command="formatBlock" data-value="blockquote" title="Quotation">Quote</button>
+          <button type="button" data-command="undo" title="Undo">↶</button>
+          <button type="button" data-command="redo" title="Redo">↷</button>
+          <label class="color-tool" title="Text colour">A <input id="chapterTextColor" type="color" value="#222222" aria-label="Text colour"></label>
+        </div>
+
+        <div class="tool-row secondary-tools">
+          <button type="button" id="insertChapterImage">＋ Insert image</button>
+          <button type="button" id="uploadChapterFont">＋ Add font file</button>
+          <span class="muted small">Select text first to apply a font, size or style.</span>
+        </div>
+      </div>
+
+      <input id="chapterImageFile" type="file" accept="image/*" hidden>
+      <input id="chapterFontFile" type="file" accept=".woff,.woff2,.ttf,.otf,font/woff,font/woff2,font/ttf,font/otf" hidden>
+
+      <div class="editor-note">
+        Paste from Canva into the writing area. Bold, italics, paragraph breaks and supported inline font styling are retained when Canva supplies formatted clipboard content. Check the result before publishing.
+      </div>
+
+      <div id="chapterContent" class="rich-writing-area" contenteditable="true"
+           role="textbox" aria-multiline="true" data-placeholder="Start writing or paste your formatted story from Canva..."></div>
+
+      <div class="editor-footer">
+        <span class="muted small">Your formatting and inserted images are saved with the chapter.</span>
+        <button type="submit" id="saveChapter" class="primary-button">Save Chapter</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+
+<!-- =========================================================
+     WORLD OF BLESSGLOW — CHAPTER MANAGER JAVASCRIPT
+     Replace ONLY the old Chapters JavaScript section with this.
+     It expects the shared admin core to have created `db`.
+========================================================= -->
+<script>
+(() => {
+  "use strict";
+
+  const chapter$ = id => document.getElementById(id);
+  const CHAPTER_BUCKET = "book-covers";
+  const FONT_STORAGE_KEY = "blessglowChapterFonts";
+  let chapterRows = [];
+  let chapterFilter = "all";
+  let chapterFontFaces = [];
+
+  const chapterMessage = text => {
+    const node = chapter$("chapterMessage");
+    if (node) node.textContent = text || "";
+  };
+
+  const escapeChapterText = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[char]);
+
+  function loadSavedFontFaces() {
+    try {
+      chapterFontFaces = JSON.parse(localStorage.getItem(FONT_STORAGE_KEY) || "[]");
+      if (!Array.isArray(chapterFontFaces)) chapterFontFaces = [];
+    } catch {
+      chapterFontFaces = [];
+    }
+    applyChapterFontFaces();
+  }
+
+  function applyChapterFontFaces() {
+    let style = document.getElementById("blessglowUploadedChapterFonts");
+    if (!style) {
+      style = document.createElement("style");
+      style.id = "blessglowUploadedChapterFonts";
+      document.head.appendChild(style);
+    }
+    style.textContent = chapterFontFaces.map(font =>
+      `@font-face{font-family:"${String(font.family).replace(/["\\]/g, "")}";src:url("${String(font.url).replace(/["\\]/g, "")}");font-display:swap;}`
+    ).join("\n");
+  }
+
+  function addFontOption(family) {
+    const select = chapter$("chapterFontFamily");
+    if (!select || [...select.options].some(option => option.value === family)) return;
+    select.add(new Option(family, family));
+  }
+
+  async function uploadChapterFont(file) {
+    if (!file) return;
+    const extension = (file.name.split(".").pop() || "").toLowerCase();
+    if (!["woff", "woff2", "ttf", "otf"].includes(extension)) {
+      chapterMessage("Please choose a WOFF, WOFF2, TTF or OTF font file.");
+      return;
+    }
+
+    const suggested = file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ").trim();
+    const family = prompt("What should this font be called in the editor?", suggested);
+    if (!family || !family.trim()) return;
+
+    const safeName = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, "-");
+    const path = `fonts/${Date.now()}-${safeName}`;
+
+    chapterMessage("Uploading font...");
+    const { error: uploadError } = await db.storage.from(CHAPTER_BUCKET).upload(path, file, {
+      upsert: false,
+      contentType: file.type || "font/" + extension,
+      cacheControl: "31536000"
+    });
+    if (uploadError) throw uploadError;
+
+    const { data } = db.storage.from(CHAPTER_BUCKET).getPublicUrl(path);
+    const font = { family: family.trim(), url: data.publicUrl, path };
+    chapterFontFaces = chapterFontFaces.filter(item => item.family !== font.family);
+    chapterFontFaces.push(font);
+    localStorage.setItem(FONT_STORAGE_KEY, JSON.stringify(chapterFontFaces));
+    addFontOption(font.family);
+    applyChapterFontFaces();
+    chapter$("chapterFontFamily").value = font.family;
+    chapterMessage(`Font "${font.family}" uploaded. It is available in this browser's editor. Add the same font to the public reader's font stylesheet so readers can see it too.`);
+  }
+
+  function cleanRichHTML(html) {
+    const parsed = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
+    const root = parsed.body.firstElementChild;
+    root.querySelectorAll("script, iframe, object, embed, form, input, button, video, audio").forEach(node => node.remove());
+
+    root.querySelectorAll("*").forEach(node => {
+      [...node.attributes].forEach(attribute => {
+        const name = attribute.name.toLowerCase();
+        const value = attribute.value.trim().toLowerCase();
+        if (name.startsWith("on") || name === "srcdoc") node.removeAttribute(attribute.name);
+        if ((name === "href" || name === "src") && value.startsWith("javascript:")) node.removeAttribute(attribute.name);
+      });
+      if (node.tagName === "A") {
+        node.setAttribute("rel", "noopener noreferrer");
+        node.setAttribute("target", "_blank");
+      }
+    });
+    return root.innerHTML;
+  }
+
+  function editorCommand(command, value = null) {
+    const editor = chapter$("chapterContent");
+    editor?.focus();
+    if (command === "formatBlock") {
+      document.execCommand("formatBlock", false, value);
+    } else {
+      document.execCommand(command, false, value);
+    }
+  }
+
+  function applyFontToSelection(property, value) {
+    const editor = chapter$("chapterContent");
+    editor?.focus();
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || !editor.contains(selection.anchorNode)) {
+      chapterMessage("Select some text in your chapter first.");
+      return;
+    }
+    const span = document.createElement("span");
+    span.style[property] = value;
+    try {
+      const range = selection.getRangeAt(0);
+      if (range.collapsed) {
+        chapterMessage("Select the text you want to format first.");
+        return;
+      }
+      range.surroundContents(span);
+    } catch {
+      const range = selection.getRangeAt(0);
+      const fragment = range.extractContents();
+      span.appendChild(fragment);
+      range.insertNode(span);
+      selection.removeAllRanges();
+      const next = document.createRange();
+      next.selectNodeContents(span);
+      selection.addRange(next);
+    }
+  }
+
+  async function insertChapterImage(file) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      chapterMessage("Please choose an image file.");
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      chapterMessage("Images must be 20 MB or smaller.");
+      return;
+    }
+
+    const extension = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const path = `chapters/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extension}`;
+    chapterMessage("Uploading chapter image...");
+
+    const { error } = await db.storage.from(CHAPTER_BUCKET).upload(path, file, {
+      upsert: false,
+      contentType: file.type,
+      cacheControl: "31536000"
+    });
+    if (error) throw error;
+
+    const { data } = db.storage.from(CHAPTER_BUCKET).getPublicUrl(path);
+    const image = document.createElement("img");
+    image.src = data.publicUrl;
+    image.alt = file.name.replace(/\.[^.]+$/, "");
+    image.loading = "lazy";
+    image.style.maxWidth = "100%";
+    image.style.height = "auto";
+    image.style.display = "block";
+    image.style.margin = "1.5em auto";
+
+    const editor = chapter$("chapterContent");
+    editor.focus();
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount && editor.contains(selection.anchorNode)) {
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(image);
+      range.setStartAfter(image);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } else {
+      editor.appendChild(image);
+    }
+    chapterMessage("Image inserted into your chapter.");
+  }
+
+  function fillChapterBookSelect() {
+    const select = chapter$("chapterBook");
+    if (!select) return;
+    const previous = select.value;
+    select.innerHTML = '<option value="">Choose a book</option>';
+    (typeof books !== "undefined" ? books : []).filter(book => !book.deleted_at).forEach(book => {
+      select.add(new Option(book.title, book.id));
+    });
+    if ([...select.options].some(option => option.value === previous)) select.value = previous;
+  }
+
+  function setChapterFilter(filter) {
+    chapterFilter = filter;
+    chapter$("chapterStatusTabs")?.querySelectorAll("[data-chapter-filter]").forEach(button => {
+      button.classList.toggle("active", button.dataset.chapterFilter === filter);
+    });
+    renderChapters();
+  }
+
+  function chapterStatusBadge(status) {
+    const label = status === "published" ? "Published" : "Draft";
+    return `<span class="status-badge status-${status}">${label}</span>`;
+  }
+
+  function chapterAction(label, action, disabled = false) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.disabled = disabled;
+    button.addEventListener("click", action);
+    return button;
+  }
+
+  function renderChapters() {
+    const list = chapter$("chapterList");
+    if (!list) return;
+    list.replaceChildren();
+
+    const visible = chapterRows.filter(chapter => {
+      if (chapterFilter === "trash") return !!chapter.deleted_at;
+      if (chapter.deleted_at) return false;
+      if (chapterFilter === "all") return true;
+      return chapter.publication_status === chapterFilter;
+    });
+
+    if (!visible.length) {
+      list.innerHTML = '<p class="empty-state">No chapters in this view yet.</p>';
+      return;
+    }
+
+    visible.forEach((chapter, index) => {
+      const card = document.createElement("article");
+      card.className = "manager-card";
+      const info = document.createElement("div");
+      info.className = "manager-card-info";
+      info.innerHTML = `<strong>Chapter ${Number(chapter.chapter_number)}: ${escapeChapterText(chapter.title)}</strong>
+        <span class="muted small">Order ${Number(chapter.display_order || 0)} · ${chapter.deleted_at ? "In trash" : chapterStatusBadge(chapter.publication_status || "draft")}</span>`;
+      card.appendChild(info);
+
+      const actions = document.createElement("div");
+      actions.className = "manager-card-actions";
+
+      if (chapter.deleted_at) {
+        actions.append(chapterAction("Restore", () => restoreChapter(chapter)));
+        actions.append(chapterAction("Delete permanently", () => permanentlyDeleteChapter(chapter)));
+      } else {
+        actions.append(chapterAction("Edit", () => editChapter(chapter)));
+        const canReorder = chapterFilter === "all";
+        actions.append(chapterAction("↑", () => moveChapter(chapter, -1), !canReorder || index === 0));
+        actions.append(chapterAction("↓", () => moveChapter(chapter, 1), !canReorder || index === visible.length - 1));
+        actions.append(chapterAction("Move to trash", () => trashChapter(chapter)));
+      }
+      card.appendChild(actions);
+      list.appendChild(card);
+    });
+  }
+
+  async function loadChapters() {
+    const bookId = chapter$("chapterBook")?.value;
+    if (!bookId) {
+      chapterRows = [];
+      renderChapters();
+      return;
+    }
+    chapterMessage("Loading chapters...");
+    const { data, error } = await db.from("chapters").select("*")
+      .eq("book_id", bookId)
+      .order("display_order", { ascending: true })
+      .order("chapter_number", { ascending: true });
+    if (error) {
+      chapterMessage("Could not load chapters: " + error.message);
+      return;
+    }
+    chapterRows = data || [];
+    chapterMessage(`${chapterRows.filter(item => !item.deleted_at).length} active chapter(s).`);
+    renderChapters();
+  }
+  window.loadChapters = loadChapters;
+
+  function openChapterEditor(chapter = null) {
+    const form = chapter$("chapterForm");
+    form.reset();
+    chapter$("chapterId").value = chapter?.id || "";
+    chapter$("chapterEditorHeading").textContent = chapter ? "Edit chapter" : "New chapter";
+    chapter$("chapterNumber").value = chapter?.chapter_number ?? (chapterRows.filter(item => !item.deleted_at).length + 1);
+    chapter$("chapterTitle").value = chapter?.title || "";
+    chapter$("chapterStatus").value = chapter?.publication_status || "draft";
+    chapter$("chapterOrder").value = chapter?.display_order ?? chapterRows.length;
+    chapter$("chapterContent").innerHTML = chapter?.content || "";
+    chapter$("chapterEditor").classList.remove("hidden");
+    chapter$("chapterEditor").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function editChapter(chapter) {
+    openChapterEditor(chapter);
+  }
+
+  async function saveChapter(event) {
+    event.preventDefault();
+    const bookId = chapter$("chapterBook").value;
+    const chapterId = chapter$("chapterId").value;
+    const number = Number(chapter$("chapterNumber").value);
+    const title = chapter$("chapterTitle").value.trim();
+    const content = cleanRichHTML(chapter$("chapterContent").innerHTML);
+    const status = chapter$("chapterStatus").value;
+
+    if (!bookId) return chapterMessage("Choose a book first.");
+    if (!number || !title || !content.trim()) return chapterMessage("Chapter number, title and content are required.");
+
+    const existing = chapterRows.find(item => item.id === chapterId);
+    const now = new Date().toISOString();
+    const payload = {
+      book_id: bookId,
+      chapter_number: number,
+      title,
+      content,
+      publication_status: status,
+      display_order: Number(chapter$("chapterOrder").value || 0),
+      updated_at: now,
+      published_at: status === "published" ? (existing?.published_at || now) : null,
+      deleted_at: null
+    };
+
+    const button = chapter$("saveChapter");
+    button.disabled = true;
+    button.textContent = "Saving...";
+    chapterMessage("Saving chapter...");
+    try {
+      const result = chapterId
+        ? await db.from("chapters").update(payload).eq("id", chapterId)
+        : await db.from("chapters").insert(payload);
+      if (result.error) throw result.error;
+      chapter$("chapterEditor").classList.add("hidden");
+      chapterMessage("Chapter saved successfully.");
+      await loadChapters();
+    } catch (error) {
+      chapterMessage("Could not save chapter: " + error.message);
+    } finally {
+      button.disabled = false;
+      button.textContent = "Save Chapter";
+    }
+  }
+
+  async function moveChapter(chapter, direction) {
+    const active = chapterRows.filter(item => !item.deleted_at)
+      .sort((a, b) => Number(a.display_order || 0) - Number(b.display_order || 0) || Number(a.chapter_number) - Number(b.chapter_number));
+    const index = active.findIndex(item => item.id === chapter.id);
+    const other = active[index + direction];
+    if (!other) return;
+
+    const firstOrder = Number(chapter.display_order || 0);
+    const secondOrder = Number(other.display_order || 0);
+    const temporary = Math.max(...active.map(item => Number(item.display_order || 0)), 0) + 1000;
+
+    const first = await db.from("chapters").update({ display_order: temporary }).eq("id", chapter.id);
+    if (first.error) return chapterMessage(first.error.message);
+    const second = await db.from("chapters").update({ display_order: firstOrder }).eq("id", other.id);
+    if (second.error) return chapterMessage(second.error.message);
+    const third = await db.from("chapters").update({ display_order: secondOrder }).eq("id", chapter.id);
+    if (third.error) return chapterMessage(third.error.message);
+    await loadChapters();
+  }
+
+  async function trashChapter(chapter) {
+    if (!confirm(`Move "${chapter.title}" to trash?`)) return;
+    const { error } = await db.from("chapters").update({ deleted_at: new Date().toISOString() }).eq("id", chapter.id);
+    if (error) return chapterMessage("Could not move chapter to trash: " + error.message);
+    await loadChapters();
+  }
+
+  async function restoreChapter(chapter) {
+    const { error } = await db.from("chapters").update({ deleted_at: null }).eq("id", chapter.id);
+    if (error) return chapterMessage("Could not restore chapter: " + error.message);
+    await loadChapters();
+  }
+
+  async function permanentlyDeleteChapter(chapter) {
+    if (!confirm(`Permanently delete "${chapter.title}"? This cannot be undone.`)) return;
+    const { error } = await db.from("chapters").delete().eq("id", chapter.id);
+    if (error) return chapterMessage("Permanent deletion failed: " + error.message);
+    await loadChapters();
+  }
+
+  function initChapterManager() {
+    loadSavedFontFaces();
+    chapter$("chapterBook")?.addEventListener("change", loadChapters);
+    chapter$("chapterForm")?.addEventListener("submit", saveChapter);
+    chapter$("addChapter")?.addEventListener("click", () => openChapterEditor());
+    chapter$("cancelChapter")?.addEventListener("click", () => chapter$("chapterEditor").classList.add("hidden"));
+
+    chapter$("chapterStatusTabs")?.addEventListener("click", event => {
+      const button = event.target.closest("[data-chapter-filter]");
+      if (button) setChapterFilter(button.dataset.chapterFilter);
+    });
+
+    document.querySelectorAll("#chapterEditor [data-command]").forEach(button => {
+      button.addEventListener("click", () => editorCommand(button.dataset.command, button.dataset.value || null));
+    });
+
+    chapter$("chapterFontFamily")?.addEventListener("change", event => {
+      applyFontToSelection("fontFamily", `"${event.target.value}"`);
+    });
+    chapter$("chapterFontSize")?.addEventListener("change", event => {
+      applyFontToSelection("fontSize", event.target.value);
+    });
+    chapter$("chapterTextColor")?.addEventListener("input", event => {
+      applyFontToSelection("color", event.target.value);
+    });
+
+    chapter$("insertChapterImage")?.addEventListener("click", () => chapter$("chapterImageFile").click());
+    chapter$("chapterImageFile")?.addEventListener("change", async event => {
+      try { await insertChapterImage(event.target.files[0]); }
+      catch (error) { chapterMessage("Image upload failed: " + error.message); }
+      event.target.value = "";
+    });
+
+    chapter$("uploadChapterFont")?.addEventListener("click", () => chapter$("chapterFontFile").click());
+    chapter$("chapterFontFile")?.addEventListener("change", async event => {
+      try { await uploadChapterFont(event.target.files[0]); }
+      catch (error) { chapterMessage("Font upload failed: " + error.message); }
+      event.target.value = "";
+    });
+
+    fillChapterBookSelect();
+    renderChapters();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initChapterManager, { once: true });
+  } else {
+    initChapterManager();
+  }
+})();
+</script>
+    
+<!-- =========================================================
+     REQUIRED CSS
+     Add these rules to the existing admin <style> section.
+========================================================= -->
+<style>
+.page-heading,.editor-heading,.editor-footer,.manager-toolbar,.manager-card,.manager-card-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.page-heading{margin-bottom:20px}.page-heading h2,.editor-heading h3{margin:3px 0}
+.eyebrow{font-size:11px;letter-spacing:2px;color:#d4af37;font-weight:700;margin:0}
+.muted{color:#999}.small{font-size:12px}.manager-toolbar{flex-wrap:wrap;margin:18px 0}
+.field{display:flex;flex-direction:column;gap:7px;min-width:150px;flex:1}
+.field input,.field select,.tool-row select{background:#111116;color:#f5f3ed;border:1px solid #34343c;border-radius:8px;padding:11px}
+.status-tabs,.tool-row{display:flex;flex-wrap:wrap;gap:7px}
+.status-tabs button,.tool-row button,.quiet-button{background:#191920;color:#eee;border:1px solid #34343c;border-radius:7px;padding:9px 12px;cursor:pointer}
+.status-tabs button.active{background:#d4af37;color:#111;border-color:#d4af37}
+.manager-message{min-height:22px;color:#d4af37}
+.manager-list{display:grid;gap:10px}
+.manager-card,.editor-panel{background:#15151b;border:1px solid #303039;border-radius:12px;padding:15px}
+.manager-card-info{display:grid;gap:7px;min-width:0}.manager-card-actions{flex-wrap:wrap}
+.manager-card-actions button{background:#22222a;color:#eee;border:1px solid #41414a;border-radius:7px;padding:8px 10px;cursor:pointer}
+.manager-card-actions button:disabled{opacity:.35;cursor:not-allowed}
+.status-badge{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px}
+.status-draft{background:#4a3b19;color:#f4d27b}.status-published{background:#173d2b;color:#9ce0b4}
+.editor-panel{margin-top:22px}.editor-heading{margin-bottom:18px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-bottom:18px}
+.writing-tools{background:#101015;border:1px solid #34343c;border-radius:10px;padding:10px;margin:14px 0 0}
+.tool-row{align-items:center}.tool-row button:hover,.manager-card-actions button:hover{border-color:#d4af37}
+.tool-row select{max-width:190px}.secondary-tools{margin-top:9px}
+.color-tool{display:flex;align-items:center;gap:5px;color:#eee;padding:4px}
+.color-tool input{width:30px;height:28px;border:0;background:transparent}
+.editor-note{font-size:12px;line-height:1.5;color:#b5a77e;padding:10px 2px}
+.rich-writing-area{min-height:520px;background:#fff;color:#222;border-radius:9px;padding:24px;outline:none;line-height:1.7;font-family:Georgia,serif;font-size:14px;overflow-wrap:anywhere}
+.rich-writing-area:empty:before{content:attr(data-placeholder);color:#999;pointer-events:none}
+.rich-writing-area img{max-width:100%;height:auto}
+.rich-writing-area blockquote{border-left:3px solid #c5a34a;margin:1.2em 0;padding:.5em 1em;color:#555}
+.editor-footer{margin-top:14px;flex-wrap:wrap}
+.primary-button{background:#d4af37;color:#111;border:0;border-radius:8px;padding:11px 16px;font-weight:700;cursor:pointer}
+.empty-state{padding:25px;text-align:center;color:#999;background:#15151b;border-radius:10px}
+@media(max-width:650px){.form-grid{grid-template-columns:1fr}.manager-card{align-items:flex-start;flex-direction:column}.manager-card-actions{width:100%}.rich-writing-area{padding:15px;min-height:420px}.tool-row select{max-width:145px}}
+</style>
+    
 
   <!-- 06. FRONT MATTER HTML -->
   <section id="frontMatterPage" class="admin-page hidden"><div class="page-head"><div><h2>Front Matter</h2><p class="muted">Manage opening and closing pages for each book.</p></div><button id="addFrontMatter" class="primary">+ Add Section</button></div>
