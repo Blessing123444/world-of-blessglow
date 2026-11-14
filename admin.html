@@ -1,536 +1,297 @@
- 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>World of BlessGlow Admin</title>
-
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>World of BlessGlow — Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-:root{
-  --bg:#09090c;
-  --panel:#15151b;
-  --gold:#d4af37;
-  --text:#f5f3ed;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font:15px Arial,sans-serif;
-}
-button,input,select,textarea{font:inherit}
-button{
-  padding:11px 15px;border:0;border-radius:7px;
-  background:var(--gold);color:#111;font-weight:bold;
-  cursor:pointer;
-}
-button:disabled{opacity:.5;cursor:not-allowed}
-.secondary{background:#292932;color:white}
-.danger{background:#963a3a;color:white}
-.hidden{display:none!important}
-input,select,textarea{
-  width:100%;padding:12px;margin:7px 0 15px;
-  background:#0d0d12;color:white;
-  border:1px solid #393943;border-radius:7px;
-}
-label{display:block}
-#login{
-  max-width:400px;margin:12vh auto;padding:25px;
-  background:var(--panel);border:1px solid #333;
-  border-radius:12px;
-}
-#app{display:flex;min-height:100vh}
-aside{
-  width:230px;flex-shrink:0;background:#101014;padding:18px;
-}
-.brand{color:var(--gold);font-weight:bold;margin-bottom:20px}
-nav button{
-  display:block;width:100%;text-align:left;
-  background:none;color:#ddd;margin:4px 0;
-}
-nav button.active{background:#29251a;color:var(--gold)}
-main{flex:1;min-width:0;padding:24px}
-header,.toolbar,.actions{
-  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-}
-header{justify-content:space-between;margin-bottom:25px}
-h1{font-size:23px}
-h2{margin-top:0}
-.panel,.book{
-  background:var(--panel);padding:18px;
-  border:1px solid #303039;border-radius:12px;
-  margin-bottom:15px;
-}
-.book{display:flex;gap:14px;align-items:center}
-.cover{
-  width:70px;height:95px;object-fit:cover;
-  background:#25252b;
-}
-.book-info{flex:1;min-width:0}
-.book-info h3{margin:0 0 8px}
-.actions button{padding:8px 10px;font-size:12px}
-.status{
-  display:inline-block;padding:5px 9px;
-  border-radius:20px;font-size:11px;
-}
-.status-published{background:#164c30;color:#85e6a9}
-.status-ongoing{background:#153f65;color:#8bcaff}
-.status-completed{background:#49316c;color:#d5b4ff}
-.status-coming_soon{background:#624716;color:#ffda83}
-.status-draft{background:#55451c;color:#ffda83}
-.status-archived{background:#642d32;color:#ffaaaa}
-.note{color:#aaa;font-size:13px}
-#editor{max-width:750px}
-.form-grid{
-  display:grid;grid-template-columns:1fr 1fr;gap:0 14px;
-}
-.checks{
-  display:flex;gap:15px;flex-wrap:wrap;margin:10px 0 20px;
-}
-.checks label{display:flex;align-items:center;gap:7px}
-.checks input{width:auto;margin:0}
-#coverPreview{
-  display:none;width:110px;height:145px;
-  object-fit:cover;margin-top:12px;
-}
-#coverFile{display:none}
-#coverFileName{margin:12px 0;color:var(--gold)}
-#loginMessage,#message{color:var(--gold);margin:12px 0}
-.chapter-card,.homepage-book-card,.notification-book-card{
-  background:#101014;border:1px solid #303039;
-  border-radius:9px;padding:14px;margin:10px 0;
-}
-.chapter-card h3{margin:0 0 9px}
-#chapterContent{min-height:300px;line-height:1.7}
-.homepage-section{margin:20px 0}
-.homepage-book-grid,.settings-stats-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:12px;
-}
-.settings-stat-card{
-  background:#101014;border:1px solid #303039;
-  border-radius:9px;padding:16px;
-}
-.settings-stat-card p{
-  color:var(--gold);font-size:25px;font-weight:bold;
-}
-@media(max-width:700px){
-  #app{display:block}
-  aside{width:100%;padding:12px}
-  nav{display:flex;overflow-x:auto}
-  nav button{white-space:nowrap;width:auto}
-  main{padding:14px}
-  .form-grid{grid-template-columns:1fr}
-  .book{align-items:flex-start}
-  .cover{width:60px;height:85px}
-}
+/* =========================================================
+   01. SHARED ADMIN STYLES — keep this section for global UI
+   ========================================================= */
+:root{--bg:#09090c;--panel:#15151b;--panel2:#1c1c24;--gold:#d4af37;--gold2:#f0d878;--text:#f5f3eb;--muted:#a7a5ad;--line:#303039;--green:#36b37e;--blue:#579bdb;--red:#df6262;--amber:#e5ad45;--purple:#a78bfa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:9px;background:#24242d;color:var(--text);padding:9px 13px}button:hover{border-color:var(--gold);color:var(--gold2)}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--gold);color:#17130a;border-color:var(--gold);font-weight:700}.danger{border-color:#713d42;color:#ffaaaa}.small{padding:5px 9px;font-size:12px}.hidden{display:none!important}.muted,.hint{color:var(--muted)}.hint{font-size:12px}.gold{color:var(--gold2)}
+input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{min-height:110px;resize:vertical}label{display:block;color:#d8d5cc;font-size:12px;margin:10px 0 5px}.checkline{display:flex;align-items:center;gap:8px;margin:9px 0}.checkline input{width:auto}.checkline label{margin:0;font-size:13px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field-grid .wide{grid-column:1/-1}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}.toolbar input,.toolbar select{max-width:230px}.status-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.tab{border-radius:30px;padding:7px 12px;font-size:12px}.tab.active{background:var(--gold);color:#17130a;border-color:var(--gold);font-weight:700}.status{display:inline-block;border-radius:30px;padding:3px 9px;font-size:11px;font-weight:700;background:#34343d;color:#ddd}.status-draft{background:#51421e;color:#ffe09a}.status-coming_soon{background:#60411d;color:#ffd08a}.status-ongoing{background:#183d5b;color:#a9d8ff}.status-completed{background:#49336b;color:#ddc6ff}.status-published,.status-approved{background:#174a36;color:#a5f0c9}.status-archived,.status-trash{background:#3a3a42;color:#ccc}.status-pending{background:#59451b;color:#ffe09a}.status-rejected{background:#5a292d;color:#ffb5b5}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}.item-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}.item-card h3{margin:0 0 5px;font-size:15px}.item-card p{margin:6px 0;color:var(--muted);overflow-wrap:anywhere}.item-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.cover{width:66px;height:88px;object-fit:cover;border-radius:7px;background:#25252d;float:left;margin:0 12px 8px 0}.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.message{padding:9px 12px;color:var(--gold2);min-height:20px}.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.page-head h2{margin:0}.admin-shell{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:100vh}.sidebar{background:#101015;border-right:1px solid var(--line);padding:18px 12px;position:sticky;top:0;height:100vh;overflow:auto}.brand{font-family:Georgia,serif;color:var(--gold2);font-size:19px;margin:3px 8px 20px}.sidebar nav{display:grid;gap:5px}.nav-btn{text-align:left;background:transparent;border-color:transparent;padding:10px 12px}.nav-btn.active{background:#29251a;border-color:#655326;color:var(--gold2)}.main{padding:22px;min-width:0}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}.topbar h1{font-size:20px;margin:0}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}.login-card{width:min(420px,100%);background:var(--panel);border:1px solid var(--line);padding:25px;border-radius:16px}.login-card h1{font:25px Georgia,serif;color:var(--gold2);margin-top:0}.login-card button{width:100%;margin-top:14px}.preview{max-width:150px;max-height:190px;object-fit:contain;display:block;margin-top:10px;border-radius:8px}.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.stat{background:var(--panel2);padding:15px;border-radius:11px;border:1px solid var(--line)}.stat strong{display:block;font-size:24px;color:var(--gold2)}.stat span{color:var(--muted);font-size:12px}.review-answer{padding:9px;background:#101016;border-radius:8px;margin:7px 0;white-space:pre-wrap}.section-row{display:flex;justify-content:space-between;gap:10px;align-items:center}.inline-checks{display:flex;gap:14px;flex-wrap:wrap}.inline-checks label{display:flex;align-items:center;gap:6px}.inline-checks input{width:auto}
+@media(max-width:800px){.admin-shell{grid-template-columns:1fr}.sidebar{height:auto;position:relative;padding:10px;border-right:0;border-bottom:1px solid var(--line)}.brand{margin:5px 8px 10px}.sidebar nav{display:flex;overflow:auto;padding-bottom:4px}.nav-btn{white-space:nowrap}.main{padding:14px}.topbar{align-items:flex-start}.field-grid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<section id="login">
-  <h2>World of BlessGlow</h2>
-  <p class="note">Admin Control Centre</p>
-
-<form id="loginForm" onsubmit="event.preventDefault(); window.handleAdminLogin(event);">
-    <label>Email</label>
-    <input id="email" type="email" autocomplete="username" required>
-
-    <label>Password</label>
-    <input id="password" type="password" autocomplete="current-password" required>
-
-    <button id="loginButton" type="submit">Sign In</button>
+<!-- =========================================================
+     02. LOGIN HTML — replace this section + LOGIN JAVASCRIPT
+     ========================================================= -->
+<section id="loginSection" class="login-wrap">
+  <form id="loginForm" class="login-card">
+    <h1>World of BlessGlow</h1><p class="muted">Administrator sign in</p>
+    <label for="email">Email</label><input id="email" type="email" autocomplete="username" required>
+    <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
+    <button id="loginButton" class="primary" type="submit">Sign In</button>
+    <div id="loginMessage" class="message" aria-live="polite"></div>
   </form>
-
-  <p id="loginMessage"></p>
 </section>
 
-<!-- ADMIN APP -->
-<div id="app" class="hidden">
-
-<aside>
-  <div class="brand">WORLD OF BLESSGLOW</div>
-
-  <nav>
-    <button class="active" data-page="books">▤ Books & Stories</button>
-    <button data-page="chapters">▣ Chapter Studio</button>
-    <button data-page="frontmatter">▧ Front Matter</button>
-    <button data-page="media">▧ Media Library</button>
-    <button data-page="reviews">☆ Review Centre</button>
-    <button data-page="homepage">⌂ Homepage Manager</button>
-    <button data-page="genres">◈ Genres & Categories</button>
-    <button data-page="notifications">♧ Notifications</button>
-    <button data-page="settings">⚙ Website Settings</button>
-    <button data-page="security">◇ Admin Security</button>
+<!-- =========================================================
+     03. ADMIN SHELL HTML — shared navigation + manager slots
+     ========================================================= -->
+<div id="adminApp" class="admin-shell hidden">
+ <aside class="sidebar">
+  <div class="brand">World of BlessGlow</div>
+  <nav id="adminNavigation">
+   <button class="nav-btn active" data-page="books">Books</button><button class="nav-btn" data-page="chapters">Chapters</button>
+   <button class="nav-btn" data-page="frontmatter">Front Matter</button><button class="nav-btn" data-page="media">Media</button>
+   <button class="nav-btn" data-page="reviews">Reviews</button><button class="nav-btn" data-page="homepage">Homepage</button>
+   <button class="nav-btn" data-page="genres">Genres</button><button class="nav-btn" data-page="notifications">Notifications</button>
+   <button class="nav-btn" data-page="settings">Settings</button><button class="nav-btn" data-page="security">Security</button>
   </nav>
-</aside>
+ </aside>
+ <main class="main">
+  <header class="topbar"><h1 id="pageTitle">Books</h1><button id="logoutButton" class="small">Sign Out</button></header>
 
-<main>
-
-<header>
-  <div>
-    <h1 id="pageTitle">Books & Stories</h1>
-    <p class="note">Manage your story library.</p>
-  </div>
-  <button class="secondary" id="logout">Sign Out</button>
-</header>
-
-<!-- BOOKS -->
-<section id="booksPage">
-
-  <div class="toolbar">
-    <button id="addBook">+ Add Book</button>
-
-    <select id="statusFilter">
-      <option value="all">All statuses</option>
-      <option value="draft">Draft</option>
-      <option value="coming_soon">Coming Soon</option>
-      <option value="ongoing">Ongoing</option>
-      <option value="completed">Completed</option>
-      <option value="published">Published</option>
-      <option value="archived">Archived</option>
-    </select>
-
-    <button class="secondary" id="showTrash">Trash</button>
-  </div>
-
-  <p id="message"></p>
-  <div id="bookList"></div>
-
-  <!-- BOOK EDITOR -->
-  <section id="editor" class="panel hidden">
-    <h2 id="editorTitle">Add Book</h2>
-
-    <form id="bookForm">
-      <input type="hidden" id="bookId">
-
-      <div class="form-grid">
-        <div>
-          <label>Book Title</label>
-          <input id="title" required>
-        </div>
-
-        <div>
-          <label>Book Slug</label>
-          <input id="slug" required>
-        </div>
-
-        <div>
-          <label>Main Genre</label>
-          <select id="genre" required>
-            <option value="">Select genre</option>
-            <option>Romance</option>
-            <option>Revenge & Comebacks</option>
-            <option>Dark Romance</option>
-            <option>Royal Stories</option>
-            <option>Fantasy & Magic</option>
-            <option>Werewolf & Shifter</option>
-            <option>Mystery & Secrets</option>
-            <option>Thriller & Suspense</option>
-            <option>Drama & Scandals</option>
-            <option>Young Adult & Coming-of-Age</option>
-            <option>Healing & Second Chances</option>
-            <option>Vampires & Immortals</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Subgenre</label>
-          <select id="subgenre" required disabled>
-            <option value="">Select main genre first</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Status</label>
-          <select id="publicationStatus">
-            <option value="draft">Draft</option>
-            <option value="coming_soon">Coming Soon</option>
-            <option value="ongoing">Ongoing</option>
-            <option value="completed">Completed</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Release Date</label>
-          <input id="releaseDate" type="date">
-        </div>
-
-        <div>
-          <label>Display Order</label>
-          <input id="displayOrder" type="number" min="1">
-        </div>
-      </div>
-
-      <label>Description</label>
-      <textarea id="description" rows="4"></textarea>
-
-      <label>Book Cover</label>
-      <input id="coverFile" type="file" accept="image/*">
-
-      <button type="button" class="secondary" id="chooseCover">
-        Choose Cover Image
-      </button>
-
-      <p id="coverFileName" class="note">No image selected.</p>
-      <img id="coverPreview" alt="Cover preview">
-      <p class="note">Maximum image size: 20 MB.</p>
-
-      <div class="checks">
-        <label><input id="featured" type="checkbox"> Featured</label>
-        <label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
-        <label><input id="freeInterest" type="checkbox"> Notify Me</label>
-        <label><input id="preorder" type="checkbox"> Pre-order</label>
-      </div>
-
-      <button id="saveBook" type="submit">Save Book</button>
-      <button id="cancelEdit" type="button" class="secondary">Cancel</button>
-    </form>
+  <!-- 04. BOOKS HTML — replace this section with the BOOKS JS section -->
+  <section id="booksPage" class="admin-page">
+   <div class="page-head"><div><h2>Book Management</h2><p class="muted">Create, update, publish, reorder and archive your books.</p></div><button id="addBook" class="primary">+ Add Book</button></div>
+   <div class="status-tabs" id="bookStatusTabs"></div><div class="toolbar"><button id="toggleBookTrash">Show Trash</button><span id="bookMessage" class="message"></span></div>
+   <form id="bookEditor" class="panel hidden">
+    <div class="page-head"><h3 id="bookEditorTitle">Add Book</h3><button type="button" id="cancelBook">Close</button></div>
+    <input id="bookId" type="hidden"><div class="field-grid">
+     <div><label>Book title *</label><input id="bookTitle" required></div><div><label>Slug *</label><input id="bookSlug" required></div>
+     <div><label>Main genre</label><select id="bookGenre"></select></div><div><label>Subgenre</label><select id="bookSubgenre"></select></div>
+     <div><label>Publication status</label><select id="bookStatus"><option value="draft">Draft</option><option value="coming_soon">Coming Soon</option><option value="ongoing">Ongoing</option><option value="completed">Completed</option><option value="published">Published</option><option value="archived">Archived</option></select></div>
+     <div><label>Release date</label><input id="bookReleaseDate" type="date"></div><div><label>Display order</label><input id="bookOrder" type="number" value="0"></div>
+     <div class="wide"><label>Description</label><textarea id="bookDescription"></textarea></div>
+     <div class="wide"><label>Book cover (image, max 20 MB)</label><input id="bookCoverFile" type="file" accept="image/*"><div id="bookCoverName" class="hint">No new image selected</div><img id="bookCoverPreview" class="preview hidden" alt="Cover preview"></div>
+    </div>
+    <div class="inline-checks"><label><input id="bookFeatured" type="checkbox"> Featured</label><label><input id="bookEditorsPick" type="checkbox"> Editor's Pick</label><label><input id="bookFreeInterest" type="checkbox"> Allow Notify Me / free interest</label><label><input id="bookPreorder" type="checkbox"> Allow Pre-order</label></div>
+    <div class="toolbar"><button class="primary" type="submit">Save Book</button><button type="button" id="cancelBook2">Cancel</button></div>
+   </form>
+   <div id="bookList" class="card-grid"></div>
   </section>
-</section>
 
-<!-- CHAPTER STUDIO -->
-<section id="chaptersPage" class="hidden">
+  <!-- 05. CHAPTERS HTML -->
+  <section id="chaptersPage" class="admin-page hidden">
+   <div class="page-head"><div><h2>Chapter Studio</h2><p class="muted">Manage chapter content and reading order.</p></div><button id="addChapter" class="primary">+ Add Chapter</button></div>
+   <div class="toolbar"><select id="chapterBook"><option value="">Choose a book</option></select></div><div id="chapterStatusTabs" class="status-tabs"></div><div id="chapterMessage" class="message"></div>
+   <form id="chapterEditor" class="panel hidden"><h3 id="chapterEditorTitle">Add Chapter</h3><input id="chapterId" type="hidden"><div class="field-grid"><div><label>Chapter number *</label><input id="chapterNumber" type="number" min="1" required></div><div><label>Title *</label><input id="chapterTitle" required></div><div><label>Status</label><select id="chapterPublicationStatus"><option value="draft">Draft</option><option value="published">Published</option></select></div><div><label>Display order</label><input id="chapterOrder" type="number" value="0"></div><div class="wide"><label>Chapter content *</label><textarea id="chapterContent" rows="12" required></textarea></div></div><div class="toolbar"><button class="primary" type="submit">Save Chapter</button><button type="button" id="cancelChapter">Cancel</button></div></form>
+   <div id="chapterList" class="card-grid"></div>
+  </section>
 
-  <div class="panel">
-    <h2>Chapter Studio</h2>
-    <p class="note">Manage and publish your story chapters.</p>
+  <!-- 06. FRONT MATTER HTML -->
+  <section id="frontMatterPage" class="admin-page hidden"><div class="page-head"><div><h2>Front Matter</h2><p class="muted">Manage opening and closing pages for each book.</p></div><button id="addFrontMatter" class="primary">+ Add Section</button></div>
+   <div class="toolbar"><select id="frontMatterBook"><option value="">Choose a book</option></select></div><div id="frontMatterMessage" class="message"></div>
+   <form id="frontMatterEditor" class="panel hidden"><h3 id="frontMatterEditorTitle">Add Front Matter</h3><input id="frontMatterId" type="hidden"><div class="field-grid"><div><label>Section type</label><select id="frontMatterType"></select></div><div><label>Display title</label><input id="frontMatterTitle"></div><div><label>Status</label><select id="frontMatterStatus"><option value="published">Published</option><option value="draft">Draft</option></select></div><div class="wide"><label>Content</label><textarea id="frontMatterContent" rows="10"></textarea></div></div><div class="toolbar"><button class="primary" type="submit">Save Section</button><button type="button" id="cancelFrontMatter">Cancel</button></div></form>
+   <div id="frontMatterList" class="card-grid"></div>
+  </section>
 
-    <label>Select Book</label>
-    <select id="chapterBook">
-      <option value="">Choose a book</option>
-    </select>
+  <!-- 07. MEDIA HTML -->
+  <section id="mediaPage" class="admin-page hidden"><h2>Media Library</h2><p class="muted">Manage images stored in the book-covers bucket.</p><div class="panel"><div class="field-grid"><div><label>Upload image (max 20 MB)</label><input id="mediaFile" type="file" accept="image/*"></div><div class="toolbar" style="align-self:end"><button id="uploadMedia" class="primary">Upload</button><button id="refreshMedia">Refresh</button></div></div><label>Filter by filename</label><input id="mediaSearch" placeholder="Search images..."><div id="mediaMessage" class="message"></div></div><div id="mediaList" class="card-grid"></div></section>
 
-    <div class="toolbar">
-      <select id="chapterFilter">
-        <option value="all">All Chapters</option>
-        <option value="draft">Drafts</option>
-        <option value="published">Published</option>
-      </select>
+  <!-- 08. REVIEWS HTML -->
+  <section id="reviewsPage" class="admin-page hidden"><h2>Reader Reviews</h2><p class="muted">Moderate submitted reviews and reader discussion answers.</p><div id="reviewStatusTabs" class="status-tabs"></div><div id="reviewMessage" class="message"></div><div id="reviewsList" class="card-grid"></div></section>
 
-      <button id="addChapter">+ New Chapter</button>
-    </div>
+  <!-- 09. HOMEPAGE HTML -->
+  <section id="homepagePage" class="admin-page hidden"><h2>Homepage Sections</h2><p class="muted">Preview which books appear in each homepage collection. Use the arrows to change section order.</p><div class="toolbar"><button id="refreshHomepage">Refresh Homepage</button><button id="resetHomepageOrder">Reset Section Order</button></div><p class="hint">Homepage section order is saved in this browser only. Book order is saved in Supabase through the Books manager.</p><div id="homepageMessage" class="message"></div><div id="homepageContent"></div></section>
 
-    <p id="chapterMessage" class="note"></p>
-  </div>
+  <!-- 10. GENRES HTML -->
+  <section id="genresPage" class="admin-page hidden"><h2>Genre Library</h2><p class="muted">The genre and subgenre choices used in Book Management.</p><div id="genresContent" class="card-grid"></div></section>
 
-  <div id="chapterList"></div>
+  <!-- 11. NOTIFICATIONS HTML -->
+  <section id="notificationsPage" class="admin-page hidden"><h2>Notification & Interest Settings</h2><p class="muted">Control which books display Notify Me / free-interest and Pre-order options. These are display settings; delivery integrations are separate.</p><div class="toolbar"><button id="refreshNotifications">Refresh</button></div><div id="notificationsMessage" class="message"></div><div id="notificationsContent" class="card-grid"></div></section>
 
-  <div id="chapterEditor" class="panel hidden">
-    <h2 id="chapterEditorTitle">New Chapter</h2>
+  <!-- 12. SETTINGS HTML -->
+  <section id="settingsPage" class="admin-page hidden"><h2>Site Overview</h2><p class="muted">A quick summary of your publishing dashboard.</p><div class="toolbar"><button id="refreshSettings">Refresh Overview</button></div><div id="settingsMessage" class="message"></div><div id="settingsContent"></div></section>
 
-    <form id="chapterForm">
-      <input type="hidden" id="chapterId">
-
-      <div class="form-grid">
-        <div>
-          <label>Chapter Number</label>
-          <input id="chapterNumber" type="number" min="1" required>
-        </div>
-
-        <div>
-          <label>Chapter Title</label>
-          <input id="chapterTitle" required>
-        </div>
-
-        <div>
-          <label>Status</label>
-          <select id="chapterStatus">
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Display Order</label>
-          <input id="chapterOrder" type="number" min="0">
-        </div>
-      </div>
-
-      <label>Chapter Content</label>
-      <textarea id="chapterContent" rows="18" required
-        placeholder="Write or paste your chapter here..."></textarea>
-
-      <button id="saveChapter" type="submit">Save Chapter</button>
-      <button id="cancelChapter" type="button" class="secondary">Cancel</button>
-    </form>
-  </div>
-</section>
-
-<!-- FRONT MATTER -->
-<section id="frontMatterPage" class="hidden">
-  <div class="panel">
-    <h2>Front Matter Manager</h2>
-    <p class="note">Manage opening and closing sections for each book.</p>
-
-    <label>Select Book</label>
-    <select id="frontMatterBook">
-      <option value="">Choose a book</option>
-    </select>
-
-    <p id="frontMatterMessage" class="note"></p>
-    <div id="frontMatterList"></div>
-
-    <button id="addFrontMatter">+ Add Section</button>
-  </div>
-
-  <div id="frontMatterEditor" class="panel hidden">
-    <h3 id="frontMatterEditorTitle">Add Front Matter</h3>
-
-    <form id="frontMatterForm">
-      <label>Section Type</label>
-      <select id="frontMatterType">
-        <option value="title_page">Title Page</option>
-        <option value="introduction">Introduction</option>
-        <option value="copyright">Copyright Notice</option>
-        <option value="disclaimer">Disclaimer</option>
-        <option value="dedication">Dedication</option>
-        <option value="author_note">Author's Note</option>
-        <option value="prologue">Prologue</option>
-        <option value="epilogue">Epilogue</option>
-        <option value="acknowledgements">Acknowledgements</option>
-        <option value="about_author">About the Author</option>
-        <option value="author_bio">Author Biography</option>
-        <option value="afterword">Afterword</option>
-        <option value="other_books">Other Books by the Author</option>
-        <option value="readers_note">Reader's Note</option>
-        <option value="connect">Connect with the Author</option>
-        <option value="author_tips">Author Tips</option>
-        <option value="table_contents">Table of Contents</option>
-        <option value="glossary">Glossary</option>
-        <option value="appendix">Appendix</option>
-        <option value="reading_guide">Reading Guide</option>
-      </select>
-
-      <label>Section Title</label>
-      <input id="frontMatterTitle">
-
-      <label>Content</label>
-      <textarea id="frontMatterContent" rows="12"></textarea>
-
-      <label>Status</label>
-      <select id="frontMatterStatus">
-        <option value="draft">Draft</option>
-        <option value="published">Published</option>
-      </select>
-
-      <button id="saveFrontMatter" type="submit">Save Section</button>
-      <button id="cancelFrontMatter" type="button" class="secondary">Cancel</button>
-    </form>
-  </div>
-</section>
-
-<!-- MEDIA LIBRARY -->
-<section id="mediaPage" class="hidden">
-  <div class="panel">
-    <h2>Media Library</h2>
-    <p class="note">Manage images stored in your book-covers bucket.</p>
-
-    <label>Upload Image</label>
-    <input id="mediaFile" type="file" accept="image/*">
-
-    <div class="toolbar">
-      <button id="uploadMedia">Upload Image</button>
-      <button id="refreshMedia" class="secondary">Refresh</button>
-    </div>
-
-    <select id="mediaFilter">
-      <option value="all">All Images</option>
-    </select>
-
-    <p id="mediaMessage" class="note"></p>
-    <div id="mediaList"></div>
-  </div>
-</section>
-
-<!-- REVIEWS -->
-<section id="reviewsPage" class="hidden">
-  <div class="panel">
-    <h2>Reader Review Centre</h2>
-    <p class="note">Review and manage reader submissions.</p>
-    <div id="reviewsList"></div>
-  </div>
-</section>
-
-<!-- HOMEPAGE -->
-<section id="homepagePage" class="hidden">
-  <div class="panel">
-    <h2>Homepage Manager</h2>
-    <p class="note">
-      Choose which books appear in homepage sections.
-    </p>
-    <div id="homepageContent"></div>
-  </div>
-</section>
-
-<!-- GENRES -->
-<section id="genresPage" class="hidden">
-  <div class="panel">
-    <h2>Genres & Categories</h2>
-    <p class="note">
-      Your 12 main genres and their subgenres are managed through the
-      Book Editor. Choose a main genre to display its subgenres.
-    </p>
-    <div id="genresContent"></div>
-  </div>
-</section>
-
-<!-- NOTIFICATIONS -->
-<section id="notificationsPage" class="hidden">
-  <div class="panel">
-    <h2>Notification Settings</h2>
-    <p class="note">
-      Control Notify Me and pre-order availability for each book.
-    </p>
-    <div id="notificationsContent"></div>
-  </div>
-</section>
-
-<!-- SETTINGS -->
-<section id="settingsPage" class="hidden">
-  <div class="panel">
-    <h2>Website Settings & Overview</h2>
-    <div id="settingsContent"></div>
-  </div>
-</section>
-
-<!-- SECURITY -->
-<section id="securityPage" class="hidden">
-  <div class="panel">
-    <h2>Admin Security</h2>
-    <p class="note">
-      Administrator access is checked through Supabase authentication.
-      Only accounts with the required administrator role should access
-      this dashboard.
-    </p>
-    <p class="note">
-      Manage administrator roles and account security in your Supabase
-      project settings.
-    </p>
-  </div>
-</section>
-
-</main>
+  <!-- 13. SECURITY HTML -->
+  <section id="securityPage" class="admin-page hidden"><h2>Account & Security</h2><div id="securityContent" class="panel"></div><form id="passwordForm" class="panel"><h3>Change Password</h3><label>New password</label><input id="newPassword" type="password" minlength="8" autocomplete="new-password" required><label>Confirm new password</label><input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required><div class="toolbar"><button class="primary" type="submit">Update Password</button></div><div id="securityMessage" class="message"></div></form></section>
+ </main>
 </div>
 
-<!-- JAVASCRIPT FILES -->
+<!-- =========================================================
+     14. SHARED ADMIN CORE — Supabase, helpers and navigation
+     Do not replace this when changing one manager.
+     ========================================================= -->
+<script>
+(() => {
+'use strict';
+const SUPABASE_URL='https://zngagaolaiidgyxoldsh.supabase.co';
+const SUPABASE_KEY='sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F';
+if(!window.supabase) throw new Error('Supabase library did not load. Check your internet connection.');
+window.db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+window.$=id=>document.getElementById(id);
+window.escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+window.slugify=value=>String(value||'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+window.setMessage=(id,text)=>{const el=$(id);if(el)el.textContent=text||''};
+window.statusBadge=value=>`<span class="status status-${escapeHTML(value)}">${escapeHTML((value||'').replaceAll('_',' '))}</span>`;
+window.makeButton=(label,action,extra='')=>`<button type="button" class="small ${extra}" data-action="${escapeHTML(action)}">${escapeHTML(label)}</button>`;
+window.adminBooks=[];
+window.adminPages={books:'booksPage',chapters:'chaptersPage',frontmatter:'frontMatterPage',media:'mediaPage',reviews:'reviewsPage',homepage:'homepagePage',genres:'genresPage',notifications:'notificationsPage',settings:'settingsPage',security:'securityPage'};
+window.verifyAdminUser=async user=>{const meta=user?.app_metadata||{};return meta.role==='admin'||(Array.isArray(meta.roles)&&meta.roles.includes('admin'));};
+window.showAdminPage=async page=>{
+ Object.values(adminPages).forEach(id=>$(id)?.classList.add('hidden'));
+ $(adminPages[page])?.classList.remove('hidden');
+ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+ const btn=document.querySelector(`.nav-btn[data-page="${page}"]`);$('pageTitle').textContent=btn?.textContent||page;
+ const loaders={books:()=>AdminBooks.load(),chapters:()=>AdminChapters.load(),frontmatter:()=>AdminFrontMatter.load(),media:()=>AdminMedia.load(),reviews:()=>AdminReviews.load(),homepage:()=>AdminHomepage.load(),genres:()=>AdminGenres.load(),notifications:()=>AdminNotifications.load(),settings:()=>AdminSettings.load(),security:()=>AdminSecurity.load()};
+ try{await loaders[page]?.()}catch(e){console.error(e);alert('Could not load '+page+': '+e.message)}
+};
+document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>showAdminPage(b.dataset.page)));
+window.openAdmin=async user=>{if(!(await verifyAdminUser(user))){await db.auth.signOut();$('adminApp').classList.add('hidden');$('loginSection').classList.remove('hidden');setMessage('loginMessage','This account does not have the administrator role in Supabase.');return;} $('loginSection').classList.add('hidden');$('adminApp').classList.remove('hidden');await showAdminPage('books');};
+window.addEventListener('DOMContentLoaded',async()=>{const {data,error}=await db.auth.getSession();if(error){setMessage('loginMessage',error.message);return;}if(data.session?.user)await openAdmin(data.session.user);});
+})();
+</script>
 
-<script src="js/admin.js"></script>
-<script src="js/genres.js"></script>
-<script src="js/books.js"></script>
-<script src="js/chapters.js"></script>
-<script src="js/frontmatter.js"></script>
-<script src="js/media.js"></script>
-<script src="js/reviews.js"></script>
-<script src="js/homepage.js"></script>
-<script src="js/notifications.js"></script>
-<script src="js/settings.js"></script>
-<script src="js/auth.js"></script>
+<!-- =========================================================
+     15. LOGIN JAVASCRIPT — replace only this script for login
+     ========================================================= -->
+<script>
+(() => {
+'use strict';
+$('loginForm').addEventListener('submit',async event=>{event.preventDefault();const btn=$('loginButton');if(btn.disabled)return;btn.disabled=true;btn.textContent='Signing In...';setMessage('loginMessage','Connecting securely...');
+ try{const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;if(!data.user)throw new Error('Login was not confirmed.');if(!(await verifyAdminUser(data.user))){await db.auth.signOut();throw new Error('Administrator role is missing in Supabase app_metadata.');}setMessage('loginMessage','');await openAdmin(data.user);}
+ catch(e){setMessage('loginMessage','Login error: '+e.message);}finally{btn.disabled=false;btn.textContent='Sign In';}
+});
+$('logoutButton').addEventListener('click',async()=>{const {error}=await db.auth.signOut();if(error){alert(error.message);return;}location.reload();});
+})();
+</script>
+
+<!-- =========================================================
+     16. BOOKS MANAGER JAVASCRIPT — replace only BOOKS HTML + JS
+     ========================================================= -->
+<script>
+const AdminBooks=(()=>{
+let rows=[],trash=false,filter='all',coverFile=null,currentCover='';
+const statuses=['all','draft','coming_soon','ongoing','completed','published','archived'];
+const genres={
+ 'Romance':['Campus Romance','Slow-Burn Romance','Enemies to Lovers','Friends to Lovers','Second-Chance Love','Forbidden Love','Unrequited Love','Billionaire Romance','Fake Dating','Love Triangle'],
+ 'Revenge & Comebacks':['Betrayed Heiress','Revenge Against an Ex','Family Revenge','Revenge After Rejection','Secret Identity','The Ultimate Comeback','Revenge and Redemption','From Underdog to Powerful','The Heiress Returns','The Revenge Plan'],
+ 'Dark Romance':['Obsession and Attraction','Forbidden Dark Love','Gothic Romance','Mafia Romance','Morally Grey Love Interests','Rivals with Chemistry','Dangerous Secrets','Twisted Relationships','Possessive Love','The Dangerous Deal'],
+ 'Royal Stories':['Secret Princess','Hidden Heir','Royal Romance','Arranged Royal Marriage','Lost Princess','Palace Intrigue','Crown and Succession','Exiled Royal','Royal Bodyguard Romance','The Secret Royal Wedding'],
+ 'Fantasy & Magic':['Dark Fantasy','Magical Academy','Witches and Wizards','Cursed Kingdoms','Mythical Creatures','Brutal Fantasy','Elemental Powers','Epic Fantasy Quests','Dragon Riders','Enchanted Realms'],
+ 'Werewolf & Shifter':['Alpha and Luna','Rejected Mates','Fated Mates','Forbidden Mates','Royal Werewolves','Rogue Wolves','Hidden Shifter','Human and Werewolf',"The Alpha's Secret",'War of the Wolf Packs'],
+ 'Mystery & Secrets':['Murder Mystery','The Missing Heiress','Hidden Identity','Family Secrets','Secret Societies','Locked-Room Mystery','Supernatural Mystery','Detective Investigations','The Secret Nobody Knows','The Inheritance Mystery'],
+ 'Thriller & Suspense':['Psychological Thriller','Crime Thriller','Conspiracy','Survival Thriller','Cat and Mouse','Domestic Suspense','High-Stakes Pursuits','Political Thriller','The Stalker Next Door','The Dangerous Witness'],
+ 'Drama & Scandals':['Family Drama','Betrayal and Lies','Friendship Conflicts','Love Triangles','Marriage Drama','Social-Class Conflict','Secrets and Scandals','Sibling Rivalry','Celebrity Scandals','The Secret Inheritance'],
+ 'Young Adult & Coming-of-Age':['First Love','School Life','University Life','Academic Rivals','Friendship and Loyalty','Identity and Self-Discovery','Family Expectations','Young Adult Fantasy','Dark Academia','The New Girl'],
+ 'Healing & Second Chances':['Healing After Heartbreak','Starting Over','Redemption','Forgiveness and Healing','Rebuilding Trust','Finding Yourself','Fresh Beginnings','Learning to Let Go','Life After Betrayal','Recovering from Loss'],
+ 'Vampires & Immortals':['Vampire Romance','Ancient Vampires','Vampire Royalty','Immortal Love','Human and Vampire','Vampire Hunters','Cursed Immortals','Supernatural Clans','Vampire Academy','The Forbidden Bloodline']
+};
+function setupGenres(selected=''){const g=$('bookGenre'),s=$('bookSubgenre');g.innerHTML='<option value="">Choose genre</option>'+Object.keys(genres).map(x=>`<option>${escapeHTML(x)}</option>`).join('');g.value=selected;fillSubgenres();}
+function fillSubgenres(selected=''){const list=genres[$('bookGenre').value]||[];$('bookSubgenre').innerHTML='<option value="">Choose subgenre</option>'+list.map(x=>`<option>${escapeHTML(x)}</option>`).join('');$('bookSubgenre').value=selected;}
+function tabs(){ $('bookStatusTabs').innerHTML=statuses.map(s=>`<button class="tab ${filter===s?'active':''}" data-filter="${s}">${s==='all'?'All':s.replaceAll('_',' ')}</button>`).join('');}
+async function load(){setMessage('bookMessage','Loading books...');let q=db.from('books').select('*').order('display_order',{ascending:true}).order('created_at',{ascending:true});q=trash?q.not('deleted_at','is',null):q.is('deleted_at',null);const {data,error}=await q;if(error)throw error;rows=data||[];window.adminBooks=rows;tabs();render();}
+function render(){const list=$('bookList');let shown=rows.filter(b=>trash||filter==='all'||b.publication_status===filter);list.innerHTML=shown.length?shown.map(b=>`<article class="item-card" data-id="${b.id}"><img class="cover" src="${escapeHTML(b.cover_url||'')}" alt="" onerror="this.style.display='none'"><h3>${escapeHTML(b.title)}</h3><p>${escapeHTML(b.main_genre||'')} ${b.subgenre?'· '+escapeHTML(b.subgenre):''}</p>${statusBadge(b.publication_status)}<p class="hint">Order: ${Number(b.display_order)||0}</p><div class="item-actions">${trash?makeButton('Restore','restore')+makeButton('Delete forever','purge','danger'):makeButton('Edit','edit')+makeButton('↑','up')+makeButton('↓','down')+makeButton('Trash','trash','danger')}</div></article>`).join(''):'<div class="empty">No books in this view yet.</div>';list.querySelectorAll('.item-card').forEach(card=>card.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>act(btn.dataset.action,rows.find(x=>x.id===card.dataset.id)))));}
+function editor(book=null){$('bookEditor').classList.remove('hidden');$('bookEditor').reset();coverFile=null;currentCover=book?.cover_url||'';$('bookId').value=book?.id||'';$('bookTitle').value=book?.title||'';$('bookSlug').value=book?.slug||'';$('bookGenre').value=book?.main_genre||'';fillSubgenres(book?.subgenre||'');$('bookStatus').value=book?.publication_status||'draft';$('bookReleaseDate').value=book?.release_date||'';$('bookOrder').value=book?.display_order??rows.length+1;$('bookDescription').value=book?.description||'';$('bookFeatured').checked=!!book?.is_featured;$('bookEditorsPick').checked=!!book?.is_editors_pick;$('bookFreeInterest').checked=!!book?.allow_free_interest;$('bookPreorder').checked=!!book?.allow_pre_order;$('bookCoverPreview').src=currentCover;$('bookCoverPreview').classList.toggle('hidden',!currentCover);$('bookCoverName').textContent=currentCover?'Current cover will be kept unless replaced.':'No new image selected';$('bookEditorTitle').textContent=book?'Edit Book':'Add Book';$('bookEditor').scrollIntoView({behavior:'smooth',block:'start'});}
+async function uploadCover(){if(!coverFile)return currentCover;if(!coverFile.type.startsWith('image/'))throw new Error('Please select an image file.');if(coverFile.size>20*1024*1024)throw new Error('Image must be 20 MB or smaller.');const safe=coverFile.name.replace(/[^a-zA-Z0-9._-]/g,'-');const path=`covers/${Date.now()}-${safe}`;const {error}=await db.storage.from('book-covers').upload(path,coverFile,{upsert:false,contentType:coverFile.type});if(error)throw error;return db.storage.from('book-covers').getPublicUrl(path).data.publicUrl;}
+async function save(e){e.preventDefault();const id=$('bookId').value;try{setMessage('bookMessage','Saving book...');const cover_url=await uploadCover();const payload={title:$('bookTitle').value.trim(),slug:slugify($('bookSlug').value||$('bookTitle').value),description:$('bookDescription').value.trim(),main_genre:$('bookGenre').value,subgenre:$('bookSubgenre').value,publication_status:$('bookStatus').value,release_date:$('bookReleaseDate').value||null,display_order:Number($('bookOrder').value)||0,cover_url,is_featured:$('bookFeatured').checked,is_editors_pick:$('bookEditorsPick').checked,allow_free_interest:$('bookFreeInterest').checked,allow_pre_order:$('bookPreorder').checked,updated_at:new Date().toISOString()};if(!payload.title||!payload.slug)throw new Error('Title and slug are required.');const result=id?await db.from('books').update(payload).eq('id',id):await db.from('books').insert(payload);if(result.error)throw result.error;$('bookEditor').classList.add('hidden');setMessage('bookMessage','Book saved.');await load();}catch(err){setMessage('bookMessage','Save failed: '+err.message);}}
+async function move(book,dir){const i=rows.findIndex(x=>x.id===book.id),j=i+dir;if(i<0||j<0||j>=rows.length)return;const a=rows[i],b=rows[j],ao=a.display_order||0,bo=b.display_order||0;try{let r=await db.from('books').update({display_order:-999999}).eq('id',a.id);if(r.error)throw r.error;r=await db.from('books').update({display_order:ao}).eq('id',b.id);if(r.error)throw r.error;r=await db.from('books').update({display_order:bo}).eq('id',a.id);if(r.error)throw r.error;await load();}catch(e){setMessage('bookMessage','Reorder failed: '+e.message);}}
+async function act(action,b){if(!b)return;try{if(action==='edit')return editor(b);if(action==='up'||action==='down'){if(filter!=='all'){setMessage('bookMessage','Choose All to reorder books.');return;}return move(b,action==='up'?-1:1);}if(action==='trash'||action==='restore'){const {error}=await db.from('books').update({deleted_at:action==='trash'?new Date().toISOString():null,updated_at:new Date().toISOString()}).eq('id',b.id);if(error)throw error;}if(action==='purge'){if(!confirm('Permanently delete this book? This cannot be undone.'))return;const {error}=await db.from('books').delete().eq('id',b.id);if(error)throw error;}await load();}catch(e){setMessage('bookMessage',e.message);}}
+$('bookGenre').addEventListener('change',()=>fillSubgenres());$('bookTitle').addEventListener('input',()=>{if(!$('bookId').value)$('bookSlug').value=slugify($('bookTitle').value)});$('bookCoverFile').addEventListener('change',e=>{coverFile=e.target.files?.[0]||null;$('bookCoverName').textContent=coverFile?.name||'No new image selected';if(coverFile){const reader=new FileReader();reader.onload=()=>{$('bookCoverPreview').src=reader.result;$('bookCoverPreview').classList.remove('hidden')};reader.readAsDataURL(coverFile);}});
+$('bookEditor').addEventListener('submit',save);$('addBook').addEventListener('click',()=>editor());$('cancelBook').addEventListener('click',()=>$('bookEditor').classList.add('hidden'));$('cancelBook2').addEventListener('click',()=>$('bookEditor').classList.add('hidden'));$('toggleBookTrash').addEventListener('click',async()=>{trash=!trash;filter='all';$('toggleBookTrash').textContent=trash?'Show Active Books':'Show Trash';await load();});$('bookStatusTabs').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;tabs();render();});
+setupGenres();return{load,genres,editById:id=>{const book=rows.find(x=>x.id===id);if(book)editor(book);}};
+})();
+</script>
+<!-- =========================================================
+     17. CHAPTERS MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminChapters=(()=>{
+let rows=[],filter='all';const statuses=['all','draft','published'];
+function tabs(){$('chapterStatusTabs').innerHTML=statuses.map(s=>`<button class="tab ${filter===s?'active':''}" data-filter="${s}">${s==='all'?'All':s}</button>`).join('');}
+async function load(){const bookId=$('chapterBook').value;if(!window.adminBooks.length){const {data}=await db.from('books').select('*').is('deleted_at',null).order('display_order');window.adminBooks=data||[];}const previous=bookId;$('chapterBook').innerHTML='<option value="">Choose a book</option>'+adminBooks.map(b=>`<option value="${b.id}">${escapeHTML(b.title)}</option>`).join('');if(previous)$('chapterBook').value=previous;if(!$('chapterBook').value&&adminBooks[0])$('chapterBook').value=adminBooks[0].id;const id=$('chapterBook').value;if(!id){rows=[];render();return;}setMessage('chapterMessage','Loading chapters...');const {data,error}=await db.from('chapters').select('*').eq('book_id',id).is('deleted_at',null).order('display_order',{ascending:true}).order('chapter_number',{ascending:true});if(error)throw error;rows=data||[];tabs();render();}
+function render(){const shown=rows.filter(x=>filter==='all'||x.publication_status===filter);$('chapterList').innerHTML=shown.length?shown.map(c=>`<article class="item-card" data-id="${c.id}"><h3>Chapter ${c.chapter_number}: ${escapeHTML(c.title)}</h3>${statusBadge(c.publication_status)}<p class="hint">Order: ${c.display_order??0}</p><div class="item-actions">${makeButton('Edit','edit')}${makeButton('↑','up')}${makeButton('↓','down')}${makeButton('Delete','delete','danger')}</div></article>`).join(''):'<div class="empty">No chapters found for this book.</div>';$('chapterList').querySelectorAll('.item-card').forEach(card=>card.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>act(btn.dataset.action,rows.find(x=>x.id===card.dataset.id)))));}
+function editor(c=null){$('chapterEditor').classList.remove('hidden');$('chapterEditor').reset();$('chapterId').value=c?.id||'';$('chapterNumber').value=c?.chapter_number||rows.length+1;$('chapterTitle').value=c?.title||'';$('chapterPublicationStatus').value=c?.publication_status||'draft';$('chapterOrder').value=c?.display_order??rows.length+1;$('chapterContent').value=c?.content||'';$('chapterEditorTitle').textContent=c?'Edit Chapter':'Add Chapter';}
+async function save(e){e.preventDefault();const id=$('chapterId').value;const payload={book_id:$('chapterBook').value,chapter_number:Number($('chapterNumber').value),title:$('chapterTitle').value.trim(),content:$('chapterContent').value,publication_status:$('chapterPublicationStatus').value,display_order:Number($('chapterOrder').value)||0,updated_at:new Date().toISOString()};if(!payload.book_id||!payload.title||!payload.content.trim()){setMessage('chapterMessage','Choose a book and complete the required fields.');return;}if(payload.publication_status==='published'&&!id)payload.published_at=new Date().toISOString();try{const r=id?await db.from('chapters').update(payload).eq('id',id):await db.from('chapters').insert(payload);if(r.error)throw r.error;$('chapterEditor').classList.add('hidden');setMessage('chapterMessage','Chapter saved.');await load();}catch(e){setMessage('chapterMessage','Save failed: '+e.message);}}
+async function act(action,c){try{if(action==='edit')return editor(c);if(action==='delete'){if(!confirm('Move this chapter to trash?'))return;const {error}=await db.from('chapters').update({deleted_at:new Date().toISOString()}).eq('id',c.id);if(error)throw error;}if(action==='up'||action==='down'){if(filter!=='all'){setMessage('chapterMessage','Choose All to reorder chapters.');return;}const i=rows.findIndex(x=>x.id===c.id),j=i+(action==='up'?-1:1);if(j<0||j>=rows.length)return;const a=rows[i],b=rows[j],ao=a.display_order||0,bo=b.display_order||0;let r=await db.from('chapters').update({display_order:-999999}).eq('id',a.id);if(r.error)throw r.error;r=await db.from('chapters').update({display_order:ao}).eq('id',b.id);if(r.error)throw r.error;r=await db.from('chapters').update({display_order:bo}).eq('id',a.id);if(r.error)throw r.error;}await load();}catch(e){setMessage('chapterMessage',e.message);}}
+$('chapterBook').addEventListener('change',load);$('chapterStatusTabs').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b){filter=b.dataset.filter;tabs();render();}});$('addChapter').addEventListener('click',()=>{if(!$('chapterBook').value){setMessage('chapterMessage','Choose a book first.');return;}editor();});$('chapterEditor').addEventListener('submit',save);$('cancelChapter').addEventListener('click',()=>$('chapterEditor').classList.add('hidden'));return{load};
+})();
+</script>
+
+<!-- =========================================================
+     18. FRONT MATTER MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminFrontMatter=(()=>{
+let sections=[],activeBook='';const types=['Title Page','Introduction','Copyright Notice','Disclaimer','Dedication','Acknowledgements','Author’s Note','Prologue','Author Tips','Table of Contents','Foreword','Preface','About the Author','Epilogue','Afterword','Reading Guide'];
+function fillBooks(){const old=$('frontMatterBook').value;$('frontMatterBook').innerHTML='<option value="">Choose a book</option>'+adminBooks.filter(b=>!b.deleted_at).map(b=>`<option value="${b.id}">${escapeHTML(b.title)}</option>`).join('');if(old)$('frontMatterBook').value=old;}
+async function load(){if(!adminBooks.length){const {data,error}=await db.from('books').select('*').is('deleted_at',null).order('display_order');if(error)throw error;adminBooks=data||[];}fillBooks();activeBook=$('frontMatterBook').value;if(!activeBook&&adminBooks[0]){$('frontMatterBook').value=adminBooks[0].id;activeBook=adminBooks[0].id;}if(!activeBook){sections=[];render();return;}const {data,error}=await db.from('book_front_matter').select('sections').eq('book_id',activeBook).maybeSingle();if(error)throw error;sections=Array.isArray(data?.sections)?data.sections:[];sections.sort((a,b)=>(a.display_order||0)-(b.display_order||0));$('frontMatterType').innerHTML=types.map(t=>`<option>${escapeHTML(t)}</option>`).join('');render();}
+function render(){$('frontMatterList').innerHTML=sections.length?sections.map(s=>`<article class="item-card" data-id="${s.id}"><h3>${escapeHTML(s.title||s.type)}</h3><p>${escapeHTML(s.type||'')}</p>${statusBadge(s.status||'draft')}<div class="item-actions">${makeButton('Edit','edit')}${makeButton('↑','up')}${makeButton('↓','down')}${makeButton('Delete','delete','danger')}</div></article>`).join(''):'<div class="empty">No front matter sections have been added.</div>';$('frontMatterList').querySelectorAll('.item-card').forEach(card=>card.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>act(btn.dataset.action,sections.find(x=>x.id===card.dataset.id)))));}
+function editor(s=null){$('frontMatterEditor').classList.remove('hidden');$('frontMatterEditor').reset();$('frontMatterId').value=s?.id||'';$('frontMatterType').value=s?.type||types[0];$('frontMatterTitle').value=s?.title||s?.type||'';$('frontMatterStatus').value=s?.status||'published';$('frontMatterContent').value=s?.content||'';$('frontMatterEditorTitle').textContent=s?'Edit Section':'Add Section';}
+async function persist(){const {error}=await db.from('book_front_matter').upsert({book_id:activeBook,sections,updated_at:new Date().toISOString()},{onConflict:'book_id'});if(error)throw error;}
+async function save(e){e.preventDefault();const id=$('frontMatterId').value;const item={id:id||crypto.randomUUID(),type:$('frontMatterType').value,title:$('frontMatterTitle').value.trim()||$('frontMatterType').value,content:$('frontMatterContent').value,status:$('frontMatterStatus').value,display_order:id?(sections.find(x=>x.id===id)?.display_order??sections.length):sections.length};if(!activeBook){setMessage('frontMatterMessage','Choose a book first.');return;}if(id)sections=sections.map(s=>s.id===id?item:s);else sections.push(item);try{await persist();$('frontMatterEditor').classList.add('hidden');setMessage('frontMatterMessage','Front matter saved.');render();}catch(e){setMessage('frontMatterMessage',e.message);}}
+async function act(action,s){try{if(action==='edit')return editor(s);if(action==='delete'){if(!confirm('Delete this section?'))return;sections=sections.filter(x=>x.id!==s.id);}else{const i=sections.findIndex(x=>x.id===s.id),j=i+(action==='up'?-1:1);if(j<0||j>=sections.length)return;[sections[i],sections[j]]=[sections[j],sections[i]];sections.forEach((x,n)=>x.display_order=n);}await persist();render();}catch(e){setMessage('frontMatterMessage',e.message);}}
+$('frontMatterBook').addEventListener('change',load);$('addFrontMatter').addEventListener('click',()=>activeBook?editor():setMessage('frontMatterMessage','Choose a book first.'));$('frontMatterEditor').addEventListener('submit',save);$('cancelFrontMatter').addEventListener('click',()=>$('frontMatterEditor').classList.add('hidden'));return{load};
+})();
+</script>
+
+<!-- =========================================================
+     19. MEDIA MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminMedia=(()=>{
+let files=[];async function load(){setMessage('mediaMessage','Loading media...');const {data,error}=await db.storage.from('book-covers').list('covers',{limit:100,sortBy:{column:'created_at',order:'desc'}});if(error)throw error;files=(data||[]).filter(x=>x.name);render();setMessage('mediaMessage',`${files.length} image(s) found.`);}
+function render(){const term=$('mediaSearch').value.toLowerCase();const shown=files.filter(f=>f.name.toLowerCase().includes(term));$('mediaList').innerHTML=shown.length?shown.map(f=>{const path='covers/'+f.name,url=db.storage.from('book-covers').getPublicUrl(path).data.publicUrl;return `<article class="item-card"><img src="${escapeHTML(url)}" alt="" style="width:100%;height:170px;object-fit:contain;background:#0d0d12;border-radius:8px"><h3>${escapeHTML(f.name)}</h3><p class="hint">${f.metadata?.size?Math.round(f.metadata.size/1024)+' KB':''}</p><div class="item-actions"><button class="small" data-copy="${escapeHTML(url)}">Copy URL</button><button class="small danger" data-delete="${escapeHTML(f.name)}">Delete</button></div></article>`}).join(''):'<div class="empty">No matching images.</div>';}
+$('mediaList').addEventListener('click',async e=>{const c=e.target.closest('[data-copy]'),d=e.target.closest('[data-delete]');if(c){try{await navigator.clipboard.writeText(c.dataset.copy);setMessage('mediaMessage','Image URL copied.');}catch{setMessage('mediaMessage','Could not copy automatically. URL: '+c.dataset.copy);}}if(d){if(!confirm('Delete this image from storage?'))return;const {error}=await db.storage.from('book-covers').remove(['covers/'+d.dataset.delete]);if(error){setMessage('mediaMessage',error.message);return;}await load();}});
+$('uploadMedia').addEventListener('click',async()=>{const f=$('mediaFile').files?.[0];if(!f){setMessage('mediaMessage','Choose an image first.');return;}if(!f.type.startsWith('image/')||f.size>20*1024*1024){setMessage('mediaMessage','Choose an image no larger than 20 MB.');return;}const path='covers/'+Date.now()+'-'+f.name.replace(/[^a-zA-Z0-9._-]/g,'-');setMessage('mediaMessage','Uploading...');const {error}=await db.storage.from('book-covers').upload(path,f,{contentType:f.type});if(error){setMessage('mediaMessage','Upload failed: '+error.message);return;}$('mediaFile').value='';await load();});$('refreshMedia').addEventListener('click',load);$('mediaSearch').addEventListener('input',render);return{load};
+})();
+</script>
+
+<!-- =========================================================
+     20. REVIEWS MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminReviews=(()=>{
+let rows=[],filter='pending';const filters=['all','pending','approved','rejected','trash'];const bookNames={'a-love-written-in-silence':'A Love Written in Silence','behind-her-smile':'Behind Her Smile: The Girl They Framed'};
+function tabs(){$('reviewStatusTabs').innerHTML=filters.map(f=>`<button class="tab ${filter===f?'active':''}" data-filter="${f}">${f==='all'?'All':f[0].toUpperCase()+f.slice(1)}</button>`).join('');}
+async function load(){setMessage('reviewMessage','Loading reviews...');const {data,error}=await db.from('book_reviews').select('*').order('created_at',{ascending:false});if(error)throw error;rows=data||[];tabs();render();}
+function render(){const shown=rows.filter(r=>filter==='trash'?!!r.deleted_at:!r.deleted_at&&(filter==='all'||r.status===filter));$('reviewsList').innerHTML=shown.length?shown.map(r=>{let answers=r.discussion_answers||{};if(typeof answers==='string'){try{answers=JSON.parse(answers)}catch{}}const answerHTML=answers&&typeof answers==='object'?Object.entries(answers).map(([k,v])=>`<div class="review-answer"><b>${escapeHTML(k.replaceAll('_',' '))}</b><br>${escapeHTML(typeof v==='string'?v:JSON.stringify(v))}</div>`).join(''):'';const date=r.created_at?new Date(r.created_at).toLocaleDateString():'';return `<article class="item-card" data-id="${r.id}"><h3>${escapeHTML(r.display_name||'Reader')}</h3><p>${escapeHTML(bookNames[r.book_slug]||r.book_slug||'Unknown book')}</p><p class="gold">${'★'.repeat(Math.max(0,Math.min(5,Number(r.rating)||0)))}${'☆'.repeat(5-Math.max(0,Math.min(5,Number(r.rating)||0)))}</p>${statusBadge(r.deleted_at?'trash':r.status)} <span class="hint">${escapeHTML(date)}</span><div class="review-answer">${escapeHTML(r.review_text||'No written review.')}</div>${answerHTML}<div class="item-actions">${r.deleted_at?makeButton('Restore','restore')+makeButton('Delete permanently','purge','danger'):makeButton('Approve','approve')+makeButton('Reject','reject','danger')+makeButton('Move to Trash','trash')}</div></article>`}).join(''):'<div class="empty">No reviews in this category.</div>';$('reviewsList').querySelectorAll('.item-card').forEach(card=>card.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>act(btn.dataset.action,rows.find(x=>x.id===card.dataset.id)))));}
+async function act(action,r){try{let result;if(action==='purge'){if(!confirm('Permanently delete this review?'))return;result=await db.from('book_reviews').delete().eq('id',r.id);}else{const patch=action==='approve'?{status:'approved',deleted_at:null}:action==='reject'?{status:'rejected',deleted_at:null}:action==='trash'?{deleted_at:new Date().toISOString()}:{deleted_at:null};result=await db.from('book_reviews').update(patch).eq('id',r.id);}if(result.error)throw result.error;await load();}catch(e){setMessage('reviewMessage','Action failed: '+e.message);}}
+$('reviewStatusTabs').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b){filter=b.dataset.filter;tabs();render();}});return{load};
+})();
+</script>
+<!-- =========================================================
+     21. HOMEPAGE MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminHomepage=(()=>{
+const defaults=['Featured Books','New Releases','Coming Soon','Editor’s Picks','Recently Updated'];let order=[...defaults];
+function readOrder(){try{const saved=JSON.parse(localStorage.getItem('blessglow_homepage_section_order')||'null');if(Array.isArray(saved))order=[...saved.filter(x=>defaults.includes(x)),...defaults.filter(x=>!saved.includes(x))];}catch{order=[...defaults];}}
+function booksFor(section){const active=adminBooks.filter(b=>!b.deleted_at);if(section==='Featured Books')return active.filter(b=>b.is_featured);if(section==='New Releases')return [...active].filter(b=>b.publication_status==='published').sort((a,b)=>new Date(b.release_date||b.created_at)-new Date(a.release_date||a.created_at)).slice(0,8);if(section==='Coming Soon')return active.filter(b=>b.publication_status==='coming_soon');if(section==='Editor’s Picks')return active.filter(b=>b.is_editors_pick);return [...active].sort((a,b)=>new Date(b.updated_at||b.created_at)-new Date(a.updated_at||a.created_at)).slice(0,8);}
+function render(){const root=$('homepageContent');root.innerHTML=order.map((s,i)=>{const list=booksFor(s);return `<div class="panel"><div class="section-row"><div><h3>${escapeHTML(s)}</h3><span class="hint">${list.length} book(s)</span></div><div>${makeButton('↑','up')}${makeButton('↓','down')}</div></div><div class="card-grid">${list.length?list.map(b=>`<article class="item-card"><h3>${escapeHTML(b.title)}</h3><p>${escapeHTML(b.main_genre||'')} · ${escapeHTML(b.subgenre||'')}</p>${statusBadge(b.publication_status)}<div class="inline-checks"><label><input type="checkbox" data-book="${b.id}" data-field="is_featured" ${b.is_featured?'checked':''}> Featured</label><label><input type="checkbox" data-book="${b.id}" data-field="is_editors_pick" ${b.is_editors_pick?'checked':''}> Editor’s Pick</label></div><div class="item-actions"><button class="small" data-editbook="${b.id}">Edit in Books</button></div></article>`).join(''):'<div class="empty">No books currently appear in this section.</div>'}</div></div>`}).join('');[...root.querySelectorAll('[data-action]')].forEach((b,i)=>b.addEventListener('click',()=>{const panel=b.closest('.panel'),idx=Array.from(root.children).indexOf(panel),next=idx+(b.dataset.action==='up'?-1:1);if(next<0||next>=order.length)return;[order[idx],order[next]]=[order[next],order[idx]];try{localStorage.setItem('blessglow_homepage_section_order',JSON.stringify(order));}catch{}render();}));root.querySelectorAll('[data-book][data-field]').forEach(c=>c.addEventListener('change',async()=>{const {error}=await db.from('books').update({[c.dataset.field]:c.checked,updated_at:new Date().toISOString()}).eq('id',c.dataset.book);if(error){c.checked=!c.checked;setMessage('homepageMessage',error.message);return;}const book=adminBooks.find(x=>x.id===c.dataset.book);if(book)book[c.dataset.field]=c.checked;render();}));root.querySelectorAll('[data-editbook]').forEach(b=>b.addEventListener('click',async()=>{await showAdminPage('books');AdminBooks.editById(b.dataset.editbook);}));}
+async function load(){setMessage('homepageMessage','Loading homepage collections...');const {data,error}=await db.from('books').select('*').is('deleted_at',null).order('display_order');if(error)throw error;adminBooks=data||[];readOrder();render();setMessage('homepageMessage','Homepage preview updated.');}
+$('refreshHomepage').addEventListener('click',load);$('resetHomepageOrder').addEventListener('click',()=>{order=[...defaults];try{localStorage.removeItem('blessglow_homepage_section_order')}catch{}render();});return{load};
+})();
+</script>
+
+<!-- =========================================================
+     22. GENRES MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminGenres=(()=>{function load(){const genres=AdminBooks.genres;$('genresContent').innerHTML=Object.entries(genres).map(([g,items])=>`<article class="item-card"><h3>${escapeHTML(g)}</h3><p>${items.length} subgenres</p><ul>${items.map(x=>`<li>${escapeHTML(x)}</li>`).join('')}</ul></article>`).join('');}return{load};})();
+</script>
+
+<!-- =========================================================
+     23. NOTIFICATIONS MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminNotifications=(()=>{let rows=[];async function load(){setMessage('notificationsMessage','Loading settings...');const {data,error}=await db.from('books').select('id,title,slug,publication_status,allow_free_interest,allow_pre_order,deleted_at,display_order').is('deleted_at',null).order('display_order');if(error)throw error;rows=data||[];render();setMessage('notificationsMessage','Settings loaded.');}
+function render(){$('notificationsContent').innerHTML=rows.length?rows.map(b=>`<article class="item-card"><h3>${escapeHTML(b.title)}</h3>${statusBadge(b.publication_status)}<label class="checkline"><input type="checkbox" data-id="${b.id}" data-field="allow_free_interest" ${b.allow_free_interest?'checked':''}> Allow Notify Me / Free Interest</label><label class="checkline"><input type="checkbox" data-id="${b.id}" data-field="allow_pre_order" ${b.allow_pre_order?'checked':''}> Allow Pre-order</label></article>`).join(''):'<div class="empty">No active books found.</div>';$('notificationsContent').querySelectorAll('input').forEach(c=>c.addEventListener('change',async()=>{const {error}=await db.from('books').update({[c.dataset.field]:c.checked,updated_at:new Date().toISOString()}).eq('id',c.dataset.id);if(error){c.checked=!c.checked;setMessage('notificationsMessage',error.message);}else setMessage('notificationsMessage','Setting saved.');}));}
+$('refreshNotifications').addEventListener('click',load);return{load};})();
+</script>
+
+<!-- =========================================================
+     24. SETTINGS MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminSettings=(()=>{async function count(table,filters=[]){let q=db.from(table).select('*',{count:'exact',head:true});for(const [method,col,val] of filters)q=q[method](col,val);const {count,error}=await q;if(error)throw error;return count||0;}
+async function load(){setMessage('settingsMessage','Calculating dashboard totals...');const values=await Promise.all([count('books',[['is','deleted_at',null]]),count('books',[['eq','publication_status','published'],['is','deleted_at',null]]),count('books',[['eq','publication_status','coming_soon'],['is','deleted_at',null]]),count('chapters',[['is','deleted_at',null]]),count('book_reviews',[['eq','status','pending'],['is','deleted_at',null]]),count('book_reviews',[['eq','status','approved'],['is','deleted_at',null]]),count('book_front_matter')]);const labels=['Active Books','Published Books','Coming Soon','Active Chapters','Pending Reviews','Approved Reviews','Front Matter Records'];$('settingsContent').innerHTML='<div class="stat-grid">'+values.map((v,i)=>`<div class="stat"><strong>${v}</strong><span>${labels[i]}</span></div>`).join('')+'</div><div class="panel"><h3>Admin workspace</h3><p class="muted">Use the sidebar to manage books, chapters, front matter, media, reader reviews and homepage collections. Your public website still needs its own frontend code to display these settings.</p></div>';setMessage('settingsMessage','Overview updated.');}
+$('refreshSettings').addEventListener('click',load);return{load};})();
+</script>
+
+<!-- =========================================================
+     25. SECURITY MANAGER JAVASCRIPT — independent module
+     ========================================================= -->
+<script>
+const AdminSecurity=(()=>{async function load(){const {data,error}=await db.auth.getUser();if(error)throw error;const user=data.user,meta=user?.app_metadata||{};$('securityContent').innerHTML=`<h3>Signed-in administrator</h3><p><b>Email:</b> ${escapeHTML(user?.email||'Not available')}</p><p><b>Role:</b> ${escapeHTML(meta.role||(meta.roles||[]).join(', ')||'No role shown')}</p><p><b>User ID:</b> <span class="hint">${escapeHTML(user?.id||'')}</span></p><p class="hint">Your administrator access is checked using Supabase app_metadata. Do not place a service-role key in this file.</p>`;}
+$('passwordForm').addEventListener('submit',async e=>{e.preventDefault();const p=$('newPassword').value,c=$('confirmPassword').value;if(p.length<8){setMessage('securityMessage','Use at least 8 characters.');return;}if(p!==c){setMessage('securityMessage','The passwords do not match.');return;}setMessage('securityMessage','Updating password...');const {error}=await db.auth.updateUser({password:p});if(error){setMessage('securityMessage','Update failed: '+error.message);return;}$('passwordForm').reset();setMessage('securityMessage','Password updated successfully.');});return{load};})();
+</script>
 </body>
 </html>
