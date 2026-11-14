@@ -196,8 +196,8 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
       </div>
     </form>
   </div>
-                                           </section>
-   <!-- =========================================================
+</section>
+    <!-- =========================================================
      05. CHAPTERS — JAVASCRIPT
      Uses the existing `db` Supabase client, `books` collection,
      `chapters` table and `book-covers` public storage bucket.
@@ -350,8 +350,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     sel.addRange(savedRange);
     return true;
   }
-
-  function showFloatingTools() {
+    function showFloatingTools() {
     const tools = $c("chapterFloatingTools");
     const sel = window.getSelection();
     if (!tools || !sel || !sel.rangeCount || sel.isCollapsed) return;
@@ -374,28 +373,59 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
 
   function applyInlineStyle(property, value) {
     const ed = editor();
-    if (!restoreSelection()) {
+    if (!ed || !restoreSelection()) {
       message("Select the text you want to format first.");
       return;
     }
+
     const sel = window.getSelection();
-    const range = sel.getRangeAt(0);
-    if (range.collapsed) return;
-    const span = document.createElement("span");
-    span.style[property] = value;
-    try {
-      range.surroundContents(span);
-    } catch {
-      const fragment = range.extractContents();
-      span.appendChild(fragment);
-      range.insertNode(span);
+    if (!sel || !sel.rangeCount || sel.getRangeAt(0).collapsed) return;
+    const range = sel.getRangeAt(0).cloneRange();
+
+    // Wrap selected text nodes individually. This also works when a selection
+    // crosses paragraphs or existing formatting, unlike surroundContents().
+    const walker = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      try { if (range.intersectsNode(node)) textNodes.push(node); } catch (_) {}
     }
-    const next = document.createRange();
-    next.selectNodeContents(span);
+
+    let firstSpan = null;
+    let lastSpan = null;
+    for (let i = textNodes.length - 1; i >= 0; i--) {
+      const textNode = textNodes[i];
+      let start = textNode === range.startContainer ? range.startOffset : 0;
+      let end = textNode === range.endContainer ? range.endOffset : textNode.length;
+      start = Math.max(0, Math.min(start, textNode.length));
+      end = Math.max(0, Math.min(end, textNode.length));
+      if (end <= start) continue;
+
+      if (end < textNode.length) textNode.splitText(end);
+      let selectedNode = textNode;
+      if (start > 0) selectedNode = textNode.splitText(start);
+
+      const span = document.createElement("span");
+      span.style[property] = property === "fontFamily" ? `"${String(value).replace(/["\\]/g, "")}"` : value;
+      selectedNode.parentNode.insertBefore(span, selectedNode);
+      span.appendChild(selectedNode);
+      firstSpan = span;
+      if (!lastSpan) lastSpan = span;
+    }
+
+    if (!firstSpan || !lastSpan) {
+      message("Select some text in the writing area before choosing a font or size.");
+      return;
+    }
+
+    const nextRange = document.createRange();
+    nextRange.setStartBefore(firstSpan);
+    nextRange.setEndAfter(lastSpan);
     sel.removeAllRanges();
-    sel.addRange(next);
-    savedRange = next.cloneRange();
+    sel.addRange(nextRange);
+    savedRange = nextRange.cloneRange();
     ed.focus({ preventScroll: true });
+    message("Formatting applied.");
   }
 
   function runCommand(command, value = null) {
@@ -422,7 +452,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
         });
         if (error) throw error;
         const { data } = db.storage.from(BUCKET).getPublicUrl(path);
-        const img = document.createElement("img");
+          const img = document.createElement("img");
         img.src = data.publicUrl;
         img.alt = file.name.replace(/\.[^.]+$/, "");
         img.loading = "lazy";
@@ -451,14 +481,35 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     });
   }
 
-  function refreshBookSelect() {
+  async function refreshBookSelect() {
     const select = $c("chapterBook");
     if (!select) return;
     const previous = select.value;
-    const source = typeof books !== "undefined" && Array.isArray(books) ? books : [];
-    select.innerHTML = '<option value="">Choose a book</option>';
-    source.filter(book => !book.deleted_at).forEach(book => select.add(new Option(book.title, book.id)));
-    if ([...select.options].some(option => option.value === previous)) select.value = previous;
+    select.innerHTML = '<option value="">Loading books...</option>';
+    try {
+      // Load directly from Supabase instead of relying on another script's
+      // local `books` variable, which may not be globally accessible.
+      const { data, error } = await db.from("books")
+        .select("id,title,deleted_at")
+        .is("deleted_at", null)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      const availableBooks = data || [];
+      select.replaceChildren(new Option("Choose a book", ""));
+      availableBooks.forEach(book => select.add(new Option(book.title, book.id)));
+      if ([...select.options].some(option => option.value === previous)) select.value = previous;
+      if (!availableBooks.length) {
+        select.add(new Option("No active books found", ""));
+        message("No active books were found. Check that your books exist and are not in the Books trash.");
+      } else {
+        if (!previous || ![...select.options].some(option => option.value === previous)) {
+          message(`Loaded ${availableBooks.length} book(s). Choose a book to see its chapters.`);
+        }
+      }
+    } catch (error) {
+      select.innerHTML = '<option value="">Could not load books</option>';
+      message("Could not load books: " + error.message);
+    }
   }
   window.refreshChapterBookSelect = refreshBookSelect;
 
@@ -479,12 +530,12 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
       return;
     }
     visible.forEach((chapter, index) => {
-       const card = document.createElement("article");
+      const card = document.createElement("article");
       card.className = "manager-card";
       const info = document.createElement("div");
       info.className = "manager-card-info";
       const title = document.createElement("strong");
-      title.textContent = `Chapter ${Number(chapter.chapter_number)}: ${chapter.title}`;
+      title.textContent = `${chapter.heading_emoji ? chapter.heading_emoji + " " : ""}Chapter ${Number(chapter.chapter_number)}: ${chapter.title}`;
       const meta = document.createElement("span");
       meta.className = "muted small";
       meta.textContent = chapter.deleted_at ? "In trash" : `${chapter.publication_status === "published" ? "Published" : "Draft"} · Order ${Number(chapter.display_order || 0)}`;
@@ -505,12 +556,13 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
         addAction("↑", () => moveChapter(chapter, -1), filter !== "all" || index === 0);
         addAction("↓", () => moveChapter(chapter, 1), filter !== "all" || index === visible.length - 1);
         addAction("Move to trash", () => trashChapter(chapter));
+        addAction("Delete permanently", () => permanentlyDeleteChapter(chapter));
       }
       card.appendChild(actions);
       list.appendChild(card);
     });
-  }
-
+     }
+   
   async function loadChapters() {
     const bookId = $c("chapterBook")?.value;
     if (!bookId) { rows = []; render(); message(""); return; }
@@ -611,13 +663,15 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
       if (error) { message("Could not reorder chapters: " + error.message); return; }
     }
     await loadChapters();
-  }
-
-  async function trashChapter(chapter) {
+       }
+     async function trashChapter(chapter) {
     if (!confirm(`Move "${chapter.title}" to trash?`)) return;
     const { error } = await db.from("chapters").update({ deleted_at: new Date().toISOString() }).eq("id", chapter.id);
     if (error) return message("Could not move chapter to trash: " + error.message);
+    filter = "trash";
+    $c("chapterStatusTabs")?.querySelectorAll("[data-chapter-filter]").forEach(b => b.classList.toggle("active", b.dataset.chapterFilter === "trash"));
     await loadChapters();
+    message(`"${chapter.title}" is in Trash. You can restore it or permanently delete it here.`);
   }
   async function restoreChapter(chapter) {
     const { error } = await db.from("chapters").update({ deleted_at: null }).eq("id", chapter.id);
@@ -629,12 +683,15 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     const { error } = await db.from("chapters").delete().eq("id", chapter.id);
     if (error) return message("Could not permanently delete chapter: " + error.message);
     await loadChapters();
-         }
-           function init() {
+    message(`"${chapter.title}" was permanently deleted. Chapter ${chapter.chapter_number} is now available to add again.`);
+  }
+
+  function init() {
     if (!$c("chaptersPage")) return;
     loadFontMetadata();
     refreshBookSelect();
     $c("chapterBook")?.addEventListener("focus", refreshBookSelect);
+    $c("chapterBook")?.addEventListener("click", refreshBookSelect);
     $c("chapterBook")?.addEventListener("change", loadChapters);
     $c("chapterForm")?.addEventListener("submit", saveChapter);
     $c("addChapter")?.addEventListener("click", () => openEditor());
@@ -660,11 +717,11 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     tools?.addEventListener("pointerdown", event => {
       saveSelection();
       if (event.target.closest("button")) event.preventDefault();
-    });
+    }, true);
     tools?.addEventListener("mousedown", event => {
       saveSelection();
       if (event.target.closest("button")) event.preventDefault();
-    });
+    }, true);
     tools?.querySelectorAll("[data-command]").forEach(button => {
       button.addEventListener("click", () => runCommand(button.dataset.command, button.dataset.value || null));
     });
@@ -677,6 +734,10 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
     editor()?.addEventListener("touchend", () => setTimeout(showFloatingTools, 80));
     editor()?.addEventListener("input", saveSelection);
     document.addEventListener("selectionchange", () => {
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount && !sel.isCollapsed && editor()?.contains(sel.anchorNode)) showFloatingTools();
+    });
+   document.addEventListener("selectionchange", () => {
       const sel = window.getSelection();
       if (sel && sel.rangeCount && !sel.isCollapsed && editor()?.contains(sel.anchorNode)) showFloatingTools();
     });
@@ -706,7 +767,8 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   else init();
 })();
 </script>
-    <!-- =========================================================
+
+<!-- =========================================================
      05. CHAPTERS — CSS
      Add to the existing admin stylesheet, or keep this style block
      with Section 05 if your admin file permits section-local styles.
@@ -764,8 +826,10 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
 }
 #chaptersPage .chapter-floating-tools[hidden]{display:none}
 #chaptersPage .chapter-floating-tools select{
-  max-width:155px;background:#111116;color:#f5f3ed;border:1px solid #444;border-radius:7px;padding:8px
+  position:relative;z-index:100001;pointer-events:auto;appearance:auto;max-width:155px;
+  min-height:38px;background:#111116;color:#f5f3ed;border:1px solid #777;border-radius:7px;padding:8px
 }
+#chaptersPage .chapter-floating-tools select option{background:#111116;color:#f5f3ed}
 #chaptersPage .chapter-floating-tools button:hover,#chaptersPage .manager-card-actions button:hover,
 #chaptersPage .chapter-fixed-tools button:hover{border-color:#d4af37}
 #chaptersPage .chapter-color-tool{display:flex;align-items:center;gap:5px;color:#eee;padding:3px 5px}
@@ -790,6 +854,7 @@ input,select,textarea{width:100%;background:#0e0e13;color:var(--text);border:1px
   #chaptersPage .chapter-floating-tools select{max-width:125px}
 }
 </style>
+    
     
     
   <!-- 06. FRONT MATTER HTML -->
