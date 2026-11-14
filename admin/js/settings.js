@@ -19,7 +19,7 @@ async function getCount(table, filters = []) {
   return count || 0;
 }
 
-/* CREATE OVERVIEW */
+/* STAT CARD */
 function settingsCard(label, value) {
   const card = document.createElement("article");
   card.className = "settings-stat-card";
@@ -28,22 +28,18 @@ function settingsCard(label, value) {
   heading.textContent = label;
 
   const number = document.createElement("p");
-  number.textContent = value;
+  number.textContent = String(value);
 
   card.append(heading, number);
   return card;
 }
 
-/* LOAD SETTINGS */
+/* LOAD OVERVIEW */
 async function loadSettings() {
   const area = $("settingsContent");
   if (!area) return;
 
-  area.replaceChildren();
-
-  const message = document.createElement("p");
-  message.textContent = "Loading admin overview...";
-  area.append(message);
+  area.textContent = "Loading admin overview...";
 
   try {
     const [
@@ -83,7 +79,6 @@ async function loadSettings() {
 
     const heading = document.createElement("h2");
     heading.textContent = "World of BlessGlow Overview";
-    area.append(heading);
 
     const grid = document.createElement("div");
     grid.className = "settings-stats-grid";
@@ -97,49 +92,44 @@ async function loadSettings() {
       ["Approved Reviews", approvedReviews],
       ["Front Matter Records", frontMatter]
     ].forEach(([label, value]) => {
-      grid.append(settingsCard(label, String(value)));
+      grid.append(settingsCard(label, value));
     });
-
-    area.append(grid);
 
     const account = document.createElement("p");
     account.textContent =
       "Signed in as: " + (data.user?.email || "Administrator");
 
-    area.append(account);
-
     const note = document.createElement("p");
     note.textContent =
-      "Your overview uses the existing Supabase database. No additional settings table is required.";
+      "Overview uses your existing Supabase database. No additional settings table is required.";
 
-    area.append(note);
+    area.append(heading, grid, account, note);
+
+    const status = $("settingsMessage");
+    if (status) status.textContent = "Overview updated successfully.";
 
   } catch (error) {
-    message.textContent =
-      "Could not load overview: " + error.message;
+    area.textContent = "Could not load overview: " + error.message;
   }
 }
 
-/* REFRESH */
+/* SETUP */
 function setupSettings() {
   const area = $("settingsContent");
   if (!area || $("refreshSettings")) return;
 
-  const button = makeButton(
-    "Refresh Overview",
-    "secondary",
-    loadSettings
-  );
-
+  const button = makeButton("Refresh Overview", "secondary", loadSettings);
   button.id = "refreshSettings";
+
+  const message = document.createElement("p");
+  message.id = "settingsMessage";
+
   area.before(button);
+  button.after(message);
 }
 
-/* OPEN SETTINGS PAGE */
+/* PAGE NAVIGATION */
 document.querySelectorAll('nav button[data-page="settings"]')
-  .forEach(button => {
-    button.addEventListener("click", loadSettings);
-  });
+  .forEach(button => button.addEventListener("click", loadSettings));
 
 setupSettings();
-        
