@@ -1,9 +1,7 @@
 
-/* WORLD OF BLESSGLOW — LOGIN */
+/* WORLD OF BLESSGLOW — AUTH */
 
-const loginForm = document.getElementById("loginForm");
-
-loginForm.addEventListener("submit", async function(event) {
+window.handleAdminLogin = async function(event) {
   event.preventDefault();
 
   const button = document.getElementById("loginButton");
@@ -22,44 +20,45 @@ loginForm.addEventListener("submit", async function(event) {
     });
 
     if (error) throw error;
-    if (!data.user) throw new Error("Login was not confirmed.");
+    if (!data.user) throw new Error("Login not confirmed.");
 
     const meta = data.user.app_metadata || {};
 
     if (
       meta.role !== "admin" &&
-      !(meta.roles || []).includes("admin")
+      !(Array.isArray(meta.roles) && meta.roles.includes("admin"))
     ) {
-      throw new Error("Administrator role is missing.");
+      throw new Error("Administrator role is missing in Supabase.");
     }
 
     document.getElementById("login").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
 
     output.textContent = "";
-    
+
     try {
       await loadBooks();
-    } catch (loadError) {
-      message("Logged in, but books could not load: " + loadError.message);
+    } catch (err) {
+      message("Logged in, but books failed to load: " + err.message);
     }
 
-  } catch (error) {
-    output.textContent = "Login error: " + error.message;
+  } catch (err) {
+    output.textContent = "Login error: " + err.message;
+    console.error(err);
   } finally {
     button.disabled = false;
     button.textContent = "Sign In";
   }
-});
+};
 
-document.getElementById("logout").addEventListener("click", async () => {
-  const { error } = await db.auth.signOut();
-
-  if (error) {
-    alert(error.message);
-    return;
+document.getElementById("logout")?.addEventListener("click", async () => {
+  try {
+    const { error } = await db.auth.signOut();
+    if (error) throw error;
+    location.reload();
+  } catch (err) {
+    alert(err.message);
   }
-
-  location.reload();
 });
 
+console.log("BlessGlow auth.js loaded.");
