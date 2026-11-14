@@ -1,43 +1,79 @@
 
-/* WORLD OF BLESSGLOW — FRONT MATTER */
+/* WORLD OF BLESSGLOW — FRONT & BACK MATTER */
 
 const frontMatterTypes = [
   "Title Page",
+  "Introduction",
   "Copyright Notice",
   "Disclaimer",
   "Dedication",
-  "Acknowledgements",
   "Author's Note",
-  "Introduction",
   "Prologue",
+  "Epilogue",
+  "Acknowledgements",
+  "About the Author",
+  "Author Biography",
+  "Afterword",
+  "Other Books by the Author",
+  "Reader's Note",
+  "Connect with the Author",
   "Author Tips",
-  "Table of Contents"
+  "Table of Contents",
+  "Glossary",
+  "Appendix",
+  "Reading Guide"
 ];
 
 let frontMatterSections = [];
 let editingFrontMatter = null;
 
+/* PREPARE SECTION TYPES */
+function prepareFrontMatterTypes() {
+  const select = $("frontMatterType");
+  if (!select) return;
+
+  select.replaceChildren();
+  select.add(new Option("Choose section type", ""));
+
+  frontMatterTypes.forEach(type => {
+    select.add(new Option(type, type));
+  });
+}
+
+/* LOAD FRONT MATTER */
 async function loadFrontMatter() {
   const select = $("frontMatterBook");
   if (!select) return;
 
-  if (!select.options.length || select.options.length === 1) {
-    select.innerHTML = '<option value="">Choose a book</option>';
+  if (!books.length) await loadBooks();
 
-    books.forEach(book => {
-      select.add(new Option(book.title, book.id));
-    });
+  const previousBook = select.value;
+  select.replaceChildren();
+  select.add(new Option("Choose a book", ""));
+
+  books.forEach(book => {
+    select.add(new Option(book.title, book.id));
+  });
+
+  if (books.some(book => book.id === previousBook)) {
+    select.value = previousBook;
   }
 
+  prepareFrontMatterTypes();
+
+  frontMatterSections = [];
+  editingFrontMatter = null;
+  $("frontMatterEditor")?.classList.add("hidden");
+  $("frontMatterList").replaceChildren();
+
   const bookId = select.value;
-  $("frontMatterList").innerHTML = "";
 
   if (!bookId) {
     $("frontMatterMessage").textContent = "Select a book first.";
     return;
   }
 
-  $("frontMatterMessage").textContent = "Loading front matter...";
+  $("frontMatterMessage").textContent = "Loading sections...";
 
   const { data, error } = await db
     .from("book_front_matter")
@@ -46,22 +82,32 @@ async function loadFrontMatter() {
     .maybeSingle();
 
   if (error) {
-    $("frontMatterMessage").textContent = error.message;
+    $("frontMatterMessage").textContent =
+      "Could not load sections: " + error.message;
     return;
   }
 
-  frontMatterSections = data?.sections || [];
-  renderFrontMatter();
+  frontMatterSections = Array.isArray(data?.sections)
+    ? data.sections
+    : [];
 
+  frontMatterSections.sort((a, b) =>
+    (a.display_order ?? 0) - (b.display_order ?? 0)
+  );
+
+  renderFrontMatter();
   $("frontMatterMessage").textContent = "";
 }
 
+/* DISPLAY SECTIONS */
 function renderFrontMatter() {
   const area = $("frontMatterList");
-  area.innerHTML = "";
+  if (!area) return;
+
+  area.replaceChildren();
 
   if (!frontMatterSections.length) {
-    area.textContent = "No front matter sections added yet.";
+    area.textContent = "No front or back matter sections added yet.";
     return;
   }
 
@@ -77,7 +123,7 @@ function renderFrontMatter() {
 
     const status = document.createElement("span");
     status.className = "status status-" + section.status;
-    status.textContent = section.status;
+    status.textContent = section.status || "draft";
 
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -94,125 +140,175 @@ function renderFrontMatter() {
   });
 }
 
+/* ADD SECTION */
 function newFrontMatter() {
+  if (!$("frontMatterBook").value) {
+    alert("Select a book first.");
+    return;
+  }
+
   editingFrontMatter = null;
   $("frontMatterForm").reset();
-  $("frontMatterEditorTitle").textContent = "Add Front Matter";
+  $("frontMatterType").disabled = false;
+
+  $("frontMatterEditorTitle").textContent = "Add Book Section";
   $("frontMatterEditor").classList.remove("hidden");
+  $("frontMatterEditor").scrollIntoView({ behavior: "smooth" });
 }
 
+/* EDIT SECTION */
 function editFrontMatter(index) {
   const section = frontMatterSections[index];
+  if (!section) return;
+
   editingFrontMatter = index;
 
   $("frontMatterType").value = section.type;
+  $("frontMatterType").disabled = false;
   $("frontMatterTitle").value = section.title || "";
   $("frontMatterContent").value = section.content || "";
   $("frontMatterStatus").value = section.status || "draft";
 
-  $("frontMatterEditorTitle").textContent = "Edit " + section.type;
+  $("frontMatterEditorTitle").textContent =
+    "Edit " + section.type;
+
   $("frontMatterEditor").classList.remove("hidden");
+  $("frontMatterEditor").scrollIntoView({ behavior: "smooth" });
 }
 
+/* SAVE SECTIONS TO SUPABASE */
+async function persistFrontMatter(sections) {
+  const bookId = $("frontMatterBook").value;
+  if (!bookId) throw Error("Select a book first.");
+
+  const { error } = await db
+    .from("book_front_matter")
+    .upsert({
+      book_id: bookId,
+      sections,
+      updated_at: new Date().toISOString()
+    });
+
+  if (error) throw error;
+}
+
+/* SAVE SECTION */
 $("frontMatterForm")?.addEventListener("submit", async event => {
   event.preventDefault();
 
   const button = $("saveFrontMatter");
+  if (button.disabled) return;
+
   button.disabled = true;
   button.textContent = "Saving...";
 
   try {
-    const section = {
-      id: editingFrontMatter === null
-        ? (crypto.randomUUID?.() || Date.now().toString())
-        : frontMatterSections[editingFrontMatter].id,
-      type: $("frontMatterType").value,
-      title: $("frontMatterTitle").value.trim(),
-      content: $("frontMatterContent").value.trim(),
-      status: $("frontMatterStatus").value,
-      display_order: editingFrontMatter === null
-        ? frontMatterSections.length
-        : frontMatterSections[editingFrontMatter].display_order
-    };
+    const type = $("frontMatterType").value;
+    const content = $("frontMatterContent").value;
 
-    if (!section.type || !section.content) {
+    if (!type || !content.trim()) {
       throw Error("Choose a section and enter its content.");
     }
 
+    const oldSection = editingFrontMatter === null
+      ? null
+      : frontMatterSections[editingFrontMatter];
+
+    const section = {
+      id: oldSection?.id ||
+        (crypto.randomUUID
+          ? crypto.randomUUID()
+          : Date.now() + "-" + Math.random().toString(36).slice(2)),
+      type,
+      title: $("frontMatterTitle").value.trim(),
+      content,
+      status: $("frontMatterStatus").value,
+      display_order: editingFrontMatter === null
+        ? frontMatterSections.length
+        : oldSection.display_order
+    };
+
+    const updated = [...frontMatterSections];
+
     if (editingFrontMatter === null) {
-      frontMatterSections.push(section);
+      updated.push(section);
     } else {
-      frontMatterSections[editingFrontMatter] = section;
+      updated[editingFrontMatter] = section;
     }
 
-    frontMatterSections = frontMatterSections.map((item, index) => ({
+    const ordered = updated.map((item, index) => ({
       ...item,
       display_order: index
     }));
 
-    const { error } = await db
-      .from("book_front_matter")
-      .upsert({
-        book_id: $("frontMatterBook").value,
-        sections: frontMatterSections,
-        updated_at: new Date().toISOString()
-      });
+    await persistFrontMatter(ordered);
 
-    if (error) throw error;
-
-    $("frontMatterEditor").classList.add("hidden");
+    frontMatterSections = ordered;
     editingFrontMatter = null;
 
+    $("frontMatterEditor").classList.add("hidden");
     renderFrontMatter();
-    $("frontMatterMessage").textContent = "Front matter saved successfully.";
+
+    $("frontMatterMessage").textContent =
+      "Section saved successfully.";
 
   } catch (error) {
-    alert("Could not save front matter: " + error.message);
+    alert("Could not save section: " + error.message);
   } finally {
     button.disabled = false;
     button.textContent = "Save Section";
   }
 });
 
+/* REORDER SECTIONS */
 async function moveFrontMatter(index, direction) {
   const target = index + direction;
+
   if (target < 0 || target >= frontMatterSections.length) return;
 
-  [frontMatterSections[index], frontMatterSections[target]] =
-    [frontMatterSections[target], frontMatterSections[index]];
+  const updated = [...frontMatterSections];
 
-  await saveFrontMatterOrder();
-}
+  [updated[index], updated[target]] =
+    [updated[target], updated[index]];
 
-async function saveFrontMatterOrder() {
-  frontMatterSections = frontMatterSections.map((section, index) => ({
+  const ordered = updated.map((section, i) => ({
     ...section,
-    display_order: index
+    display_order: i
   }));
 
-  const { error } = await db
-    .from("book_front_matter")
-    .upsert({
-      book_id: $("frontMatterBook").value,
-      sections: frontMatterSections,
-      updated_at: new Date().toISOString()
-    });
-
-  if (error) {
+  try {
+    await persistFrontMatter(ordered);
+    frontMatterSections = ordered;
+    renderFrontMatter();
+  } catch (error) {
     alert("Could not update order: " + error.message);
-    return;
   }
-
-  renderFrontMatter();
 }
 
+/* DELETE SECTION */
 async function deleteFrontMatter(index) {
-  if (!confirm("Delete this front matter section?")) return;
+  if (!confirm("Delete this section?")) return;
 
-  frontMatterSections.splice(index, 1);
-  await saveFrontMatterOrder();
+  const updated = frontMatterSections.filter((_, i) => i !== index);
+
+  const ordered = updated.map((section, i) => ({
+    ...section,
+    display_order: i
+  }));
+
+  try {
+    await persistFrontMatter(ordered);
+    frontMatterSections = ordered;
+    renderFrontMatter();
+
+    $("frontMatterMessage").textContent =
+      "Section deleted successfully.";
+  } catch (error) {
+    alert("Could not delete section: " + error.message);
+  }
 }
 
+/* EVENTS */
 $("frontMatterBook")?.addEventListener("change", loadFrontMatter);
 
 $("addFrontMatter")?.addEventListener("click", newFrontMatter);
@@ -220,5 +316,6 @@ $("addFrontMatter")?.addEventListener("click", newFrontMatter);
 $("cancelFrontMatter")?.addEventListener("click", () => {
   $("frontMatterEditor").classList.add("hidden");
   editingFrontMatter = null;
+  $("frontMatterType").disabled = false;
 });
-      
+    
