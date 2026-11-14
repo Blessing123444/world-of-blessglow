@@ -1,54 +1,78 @@
 
-/* WORLD OF BLESSGLOW — ADMIN AUTHENTICATION */
+/* WORLD OF BLESSGLOW — ADMIN AUTH */
+
+let authBusy = false;
+
+function authMessage(text) {
+  const area = $("loginMessage");
+  if (area) area.textContent = text;
+}
+
+function showLogin() {
+  $("app")?.classList.add("hidden");
+  $("login")?.classList.remove("hidden");
+}
+
+function showDashboard() {
+  $("login")?.classList.add("hidden");
+  $("app")?.classList.remove("hidden");
+}
 
 async function verifyAdmin() {
   const { data, error } = await db.auth.getUser();
   if (error) throw error;
 
   const user = data.user;
-  if (!user) throw Error("No active login session.");
+  if (!user) throw new Error("No active login session.");
 
   const meta = user.app_metadata || {};
+  const isAdmin =
+    meta.role === "admin" ||
+    (Array.isArray(meta.roles) && meta.roles.includes("admin"));
 
-  if (
-    meta.role !== "admin" &&
-    !(Array.isArray(meta.roles) && meta.roles.includes("admin"))
-  ) {
-    throw Error("Administrator access was not confirmed. Check your Supabase admin role.");
+  if (!isAdmin) {
+    throw new Error(
+      "Login successful, but this account has no admin role. Check its Supabase app_metadata."
+    );
   }
+
+  return user;
 }
 
 async function enterAdmin() {
-  if (loading) return;
-  loading = true;
+  if (authBusy) return;
+
+  authBusy = true;
+  authMessage("Checking administrator access...");
 
   try {
-    $("loginMessage").textContent = "Verifying administrator access...";
     await verifyAdmin();
-
-    $("login").classList.add("hidden");
-    $("app").classList.remove("hidden");
-
+    showDashboard();
     await loadBooks();
   } catch (error) {
-    $("loginMessage").textContent = error.message;
+    showLogin();
+    authMessage(error.message);
   } finally {
-    loading = false;
+    authBusy = false;
   }
 }
 
-/* LOGIN */
+/* LOGIN FORM */
 
 $("loginForm")?.addEventListener("submit", async event => {
   event.preventDefault();
-  if (loading) return;
 
-  loading = true;
+  if (authBusy) return;
 
   const button = $("loginButton");
-  button.disabled = true;
-  button.textContent = "Signing In...";
-  $("loginMessage").textContent = "Connecting...";
+  authBusy = true;
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Signing In...";
+  }
+
+  authMessage("Connecting to Supabase...");
 
   try {
     const { error } = await db.auth.signInWithPassword({
@@ -58,15 +82,22 @@ $("loginForm")?.addEventListener("submit", async event => {
 
     if (error) throw error;
 
-    loading = false;
-    await enterAdmin();
+    await verifyAdmin();
+
+    showDashboard();
+    authMessage("");
+    await loadBooks();
 
   } catch (error) {
-    $("loginMessage").textContent = "Login failed: " + error.message;
+    showLogin();
+    authMessage("Login failed: " + error.message);
   } finally {
-    loading = false;
-    button.disabled = false;
-    button.textContent = "Sign In";
+    authBusy = false;
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Sign In";
+    }
   }
 });
 
@@ -77,9 +108,14 @@ $("loginForm")?.addEventListener("submit", async event => {
     const { data, error } = await db.auth.getSession();
     if (error) throw error;
 
-    if (data.session) await enterAdmin();
+    if (data.session) {
+      await enterAdmin();
+    } else {
+      showLogin();
+    }
   } catch (error) {
-    $("loginMessage").textContent = error.message;
+    showLogin();
+    authMessage(error.message);
   }
 })();
 
@@ -90,9 +126,12 @@ $("logout")?.addEventListener("click", async () => {
     const { error } = await db.auth.signOut();
     if (error) throw error;
 
-    location.reload();
+    showLogin();
+    $("email").value = "";
+    $("password").value = "";
+    authMessage("You have signed out.");
   } catch (error) {
-    alert("Could not sign out: " + error.message);
+    alert("Logout failed: " + error.message);
   }
 });
 
