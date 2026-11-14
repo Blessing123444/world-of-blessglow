@@ -1,118 +1,65 @@
 
-/* WORLD OF BLESSGLOW — AUTHENTICATION */
-
-let authBusy = false;
+/* WORLD OF BLESSGLOW — LOGIN */
 
 const loginForm = document.getElementById("loginForm");
-const loginButton = document.getElementById("loginButton");
 
-function authMessage(text) {
-  const area = document.getElementById("loginMessage");
-  if (area) area.textContent = text;
-}
-
-function showLogin() {
-  $("app").classList.add("hidden");
-  $("login").classList.remove("hidden");
-}
-
-function showDashboard() {
-  $("login").classList.add("hidden");
-  $("app").classList.remove("hidden");
-}
-
-async function checkAdmin() {
-  const { data, error } = await db.auth.getUser();
-  if (error) throw error;
-
-  const user = data.user;
-  if (!user) throw new Error("No active session.");
-
-  const meta = user.app_metadata || {};
-
-  if (
-    meta.role !== "admin" &&
-    !(meta.roles || []).includes("admin")
-  ) {
-    throw new Error("Your account does not have the admin role.");
-  }
-}
-
-async function openDashboard() {
-  showDashboard();
-
-  try {
-    await loadBooks();
-  } catch (error) {
-    message("Dashboard opened, but books failed to load: " + error.message);
-  }
-}
-
-/* LOGIN */
-
-loginForm.addEventListener("submit", async event => {
+loginForm.addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  if (authBusy) return;
+  const button = document.getElementById("loginButton");
+  const output = document.getElementById("loginMessage");
 
-  authBusy = true;
-  loginButton.disabled = true;
-  loginButton.textContent = "Signing In...";
-  authMessage("Connecting...");
+  if (button.disabled) return;
+
+  button.disabled = true;
+  button.textContent = "Signing In...";
+  output.textContent = "Connecting to Supabase...";
 
   try {
-    const { error } = await db.auth.signInWithPassword({
-      email: $("email").value.trim(),
-      password: $("password").value
+    const { data, error } = await db.auth.signInWithPassword({
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("password").value
     });
 
     if (error) throw error;
+    if (!data.user) throw new Error("Login was not confirmed.");
 
-    await checkAdmin();
-    await openDashboard();
-    authMessage("");
+    const meta = data.user.app_metadata || {};
 
-  } catch (error) {
-    showLogin();
-    authMessage(error.message);
-  } finally {
-    authBusy = false;
-    loginButton.disabled = false;
-    loginButton.textContent = "Sign In";
-  }
-});
-
-/* RESTORE EXISTING SESSION */
-
-(async () => {
-  try {
-    const { data, error } = await db.auth.getSession();
-    if (error) throw error;
-
-    if (data.session) {
-      await checkAdmin();
-      await openDashboard();
-    } else {
-      showLogin();
+    if (
+      meta.role !== "admin" &&
+      !(meta.roles || []).includes("admin")
+    ) {
+      throw new Error("Administrator role is missing.");
     }
+
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+
+    output.textContent = "";
+    
+    try {
+      await loadBooks();
+    } catch (loadError) {
+      message("Logged in, but books could not load: " + loadError.message);
+    }
+
   } catch (error) {
-    showLogin();
-    authMessage(error.message);
-  }
-})();
-
-/* SIGN OUT */
-
-$("logout").addEventListener("click", async () => {
-  try {
-    const { error } = await db.auth.signOut();
-    if (error) throw error;
-
-    showLogin();
-    $("password").value = "";
-    authMessage("Signed out successfully.");
-  } catch (error) {
-    authMessage("Sign out failed: " + error.message);
+    output.textContent = "Login error: " + error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign In";
   }
 });
-                             
+
+document.getElementById("logout").addEventListener("click", async () => {
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  location.reload();
+});
+
