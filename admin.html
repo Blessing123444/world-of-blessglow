@@ -1,68 +1,130 @@
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>World of BlessGlow Admin</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root{--bg:#09090c;--panel:#15151b;--gold:#d4af37;--text:#f5f3ed}
+:root{
+  --bg:#09090c;
+  --panel:#15151b;
+  --gold:#d4af37;
+  --text:#f5f3ed;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:15px Arial}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:15px Arial,sans-serif;
+}
 button,input,select,textarea{font:inherit}
-button{padding:11px 15px;border:0;border-radius:7px;background:var(--gold);color:#111;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.5}
+button{
+  padding:11px 15px;border:0;border-radius:7px;
+  background:var(--gold);color:#111;font-weight:bold;
+  cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
 .secondary{background:#292932;color:white}
 .danger{background:#963a3a;color:white}
 .hidden{display:none!important}
-input,select,textarea{width:100%;padding:12px;margin:7px 0 15px;background:#0d0d12;color:white;border:1px solid #393943;border-radius:7px}
-#login{max-width:400px;margin:12vh auto;padding:25px;background:var(--panel);border:1px solid #333;border-radius:12px}
+input,select,textarea{
+  width:100%;padding:12px;margin:7px 0 15px;
+  background:#0d0d12;color:white;
+  border:1px solid #393943;border-radius:7px;
+}
+label{display:block}
+#login{
+  max-width:400px;margin:12vh auto;padding:25px;
+  background:var(--panel);border:1px solid #333;
+  border-radius:12px;
+}
 #app{display:flex;min-height:100vh}
-aside{width:230px;background:#101014;padding:18px;flex-shrink:0}
+aside{
+  width:230px;flex-shrink:0;background:#101014;padding:18px;
+}
 .brand{color:var(--gold);font-weight:bold;margin-bottom:20px}
-nav button{display:block;width:100%;text-align:left;background:none;color:#ddd;margin:4px 0}
+nav button{
+  display:block;width:100%;text-align:left;
+  background:none;color:#ddd;margin:4px 0;
+}
 nav button.active{background:#29251a;color:var(--gold)}
 main{flex:1;min-width:0;padding:24px}
-header,.toolbar,.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header,.toolbar,.actions{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
 header{justify-content:space-between;margin-bottom:25px}
 h1{font-size:23px}
-.panel,.book{background:var(--panel);padding:18px;border:1px solid #303039;border-radius:12px;margin-bottom:15px}
+h2{margin-top:0}
+.panel,.book{
+  background:var(--panel);padding:18px;
+  border:1px solid #303039;border-radius:12px;
+  margin-bottom:15px;
+}
 .book{display:flex;gap:14px;align-items:center}
-.cover{width:70px;height:95px;object-fit:cover;background:#25252b}
+.cover{
+  width:70px;height:95px;object-fit:cover;
+  background:#25252b;
+}
 .book-info{flex:1;min-width:0}
 .book-info h3{margin:0 0 8px}
 .actions button{padding:8px 10px;font-size:12px}
-.status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px}
+.status{
+  display:inline-block;padding:5px 9px;
+  border-radius:20px;font-size:11px;
+}
 .status-published{background:#164c30;color:#85e6a9}
 .status-ongoing{background:#153f65;color:#8bcaff}
 .status-completed{background:#49316c;color:#d5b4ff}
-.status-coming_soon,.status-draft{background:#624716;color:#ffda83}
+.status-coming_soon{background:#624716;color:#ffda83}
+.status-draft{background:#55451c;color:#ffda83}
 .status-archived{background:#642d32;color:#ffaaaa}
 .note{color:#aaa;font-size:13px}
 #editor{max-width:750px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-.checks{display:flex;gap:15px;flex-wrap:wrap;margin:10px 0 20px}
+.form-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0 14px;
+}
+.checks{
+  display:flex;gap:15px;flex-wrap:wrap;margin:10px 0 20px;
+}
 .checks label{display:flex;align-items:center;gap:7px}
 .checks input{width:auto;margin:0}
-#coverPreview{display:none;width:110px;height:145px;object-fit:cover;margin-top:12px}
+#coverPreview{
+  display:none;width:110px;height:145px;
+  object-fit:cover;margin-top:12px;
+}
 #coverFile{display:none}
 #coverFileName{margin:12px 0;color:var(--gold)}
 #loginMessage,#message{color:var(--gold);margin:12px 0}
-.chapter-card{background:#101014;border:1px solid #303039;border-radius:9px;padding:14px;margin:10px 0}
+.chapter-card,.homepage-book-card,.notification-book-card{
+  background:#101014;border:1px solid #303039;
+  border-radius:9px;padding:14px;margin:10px 0;
+}
 .chapter-card h3{margin:0 0 9px}
-#chapterContent,#frontMatterContent{min-height:250px;line-height:1.7}
-.media-item{padding:12px;border:1px solid #393943;border-radius:8px;margin:10px 0;overflow-wrap:anywhere}
+#chapterContent{min-height:300px;line-height:1.7}
+.homepage-section{margin:20px 0}
+.homepage-book-grid,.settings-stats-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+}
+.settings-stat-card{
+  background:#101014;border:1px solid #303039;
+  border-radius:9px;padding:16px;
+}
+.settings-stat-card p{
+  color:var(--gold);font-size:25px;font-weight:bold;
+}
 @media(max-width:700px){
-#app{display:block}
-aside{width:100%;padding:12px}
-nav{display:flex;overflow-x:auto}
-nav button{white-space:nowrap;width:auto}
-main{padding:14px}
-.form-grid{grid-template-columns:1fr}
-.book{align-items:flex-start}
-.cover{width:60px;height:85px}
+  #app{display:block}
+  aside{width:100%;padding:12px}
+  nav{display:flex;overflow-x:auto}
+  nav button{white-space:nowrap;width:auto}
+  main{padding:14px}
+  .form-grid{grid-template-columns:1fr}
+  .book{align-items:flex-start}
+  .cover{width:60px;height:85px}
 }
 </style>
 </head>
@@ -71,314 +133,387 @@ main{padding:14px}
 
 <!-- LOGIN -->
 <section id="login">
-<h2>World of BlessGlow</h2>
-<p class="note">Admin Control Centre</p>
-<form id="loginForm">
-<label>Email</label>
-<input id="email" type="email" autocomplete="username" required>
-<label>Password</label>
-<input id="password" type="password" autocomplete="current-password" required>
-<button id="loginButton" type="submit">Sign In</button>
-</form>
-<p id="loginMessage"></p>
+  <h2>World of BlessGlow</h2>
+  <p class="note">Admin Control Centre</p>
+
+  <form id="loginForm">
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="username" required>
+
+    <label>Password</label>
+    <input id="password" type="password" autocomplete="current-password" required>
+
+    <button id="loginButton" type="submit">Sign In</button>
+  </form>
+
+  <p id="loginMessage"></p>
 </section>
 
+<!-- ADMIN APP -->
 <div id="app" class="hidden">
 
 <aside>
-<div class="brand">WORLD OF BLESSGLOW</div>
-<nav>
-<button class="active" data-page="books">▤ Books & Stories</button>
-<button data-page="chapters">▣ Chapter Studio</button>
-<button data-page="frontmatter">▧ Front Matter</button>
-<button data-page="media">▧ Media Library</button>
-<button data-page="reviews">☆ Review Centre</button>
-<button data-page="homepage">⌂ Homepage Manager</button>
-<button data-page="genres">◈ Genres & Categories</button>
-<button data-page="notifications">♧ Notifications</button>
-<button data-page="settings">⚙ Website Settings</button>
-<button data-page="security">◇ Admin Security</button>
-</nav>
+  <div class="brand">WORLD OF BLESSGLOW</div>
+
+  <nav>
+    <button class="active" data-page="books">▤ Books & Stories</button>
+    <button data-page="chapters">▣ Chapter Studio</button>
+    <button data-page="frontmatter">▧ Front Matter</button>
+    <button data-page="media">▧ Media Library</button>
+    <button data-page="reviews">☆ Review Centre</button>
+    <button data-page="homepage">⌂ Homepage Manager</button>
+    <button data-page="genres">◈ Genres & Categories</button>
+    <button data-page="notifications">♧ Notifications</button>
+    <button data-page="settings">⚙ Website Settings</button>
+    <button data-page="security">◇ Admin Security</button>
+  </nav>
 </aside>
 
 <main>
 
 <header>
-<div>
-<h1 id="pageTitle">Books & Stories</h1>
-<p class="note">Manage your World of BlessGlow website.</p>
-</div>
-<button class="secondary" id="logout">Sign Out</button>
+  <div>
+    <h1 id="pageTitle">Books & Stories</h1>
+    <p class="note">Manage your story library.</p>
+  </div>
+  <button class="secondary" id="logout">Sign Out</button>
 </header>
 
 <!-- BOOKS -->
 <section id="booksPage">
-<div class="toolbar">
-<button id="addBook">+ Add Book</button>
-<select id="statusFilter">
-<option value="all">All statuses</option>
-<option value="draft">Draft</option>
-<option value="coming_soon">Coming Soon</option>
-<option value="ongoing">Ongoing</option>
-<option value="completed">Completed</option>
-<option value="published">Published</option>
-<option value="archived">Archived</option>
-</select>
-<button class="secondary" id="showTrash">Trash</button>
-</div>
-<p id="message"></p>
-<div id="bookList"></div>
-</section>
 
-<!-- BOOK EDITOR -->
-<section id="editor" class="panel hidden">
-<h2 id="editorTitle">Add Book</h2>
-<form id="bookForm">
-<input type="hidden" id="bookId">
+  <div class="toolbar">
+    <button id="addBook">+ Add Book</button>
 
-<div class="form-grid">
-<div>
-<label>Book Title</label>
-<input id="title" required>
-</div>
-<div>
-<label>Book Slug</label>
-<input id="slug" required>
-</div>
-<div>
-<label>Main Genre</label>
-<select id="genre" required>
-<option value="">Select genre</option>
-<option>Romance</option>
-<option>Revenge & Comebacks</option>
-<option>Dark Romance</option>
-<option>Royal Stories</option>
-<option>Fantasy & Magic</option>
-<option>Werewolf & Shifter</option>
-<option>Mystery & Secrets</option>
-<option>Thriller & Suspense</option>
-<option>Drama & Scandals</option>
-<option>Young Adult & Coming-of-Age</option>
-<option>Healing & Second Chances</option>
-<option>Vampires & Immortals</option>
-</select>
-</div>
-<div>
-<label>Subgenre</label>
-<select id="subgenre" required disabled>
-<option value="">Select main genre first</option>
-</select>
-</div>
-<div>
-<label>Status</label>
-<select id="publicationStatus">
-<option value="draft">Draft</option>
-<option value="coming_soon">Coming Soon</option>
-<option value="ongoing">Ongoing</option>
-<option value="completed">Completed</option>
-<option value="published">Published</option>
-<option value="archived">Archived</option>
-</select>
-</div>
-<div>
-<label>Release Date</label>
-<input id="releaseDate" type="date">
-</div>
-<div>
-<label>Display Order</label>
-<input id="displayOrder" type="number" min="1">
-</div>
-</div>
+    <select id="statusFilter">
+      <option value="all">All statuses</option>
+      <option value="draft">Draft</option>
+      <option value="coming_soon">Coming Soon</option>
+      <option value="ongoing">Ongoing</option>
+      <option value="completed">Completed</option>
+      <option value="published">Published</option>
+      <option value="archived">Archived</option>
+    </select>
 
-<label>Description</label>
-<textarea id="description" rows="4"></textarea>
+    <button class="secondary" id="showTrash">Trash</button>
+  </div>
 
-<label>Book Cover</label>
-<input id="coverFile" type="file" accept="image/*">
-<button type="button" class="secondary" id="chooseCover">Choose Cover Image</button>
-<p id="coverFileName" class="note">No image selected.</p>
-<img id="coverPreview" alt="Cover preview">
-<p class="note">Maximum image size: 20 MB.</p>
+  <p id="message"></p>
+  <div id="bookList"></div>
 
-<div class="checks">
-<label><input id="featured" type="checkbox"> Featured</label>
-<label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
-<label><input id="freeInterest" type="checkbox"> Notify Me</label>
-<label><input id="preorder" type="checkbox"> Preorder</label>
-</div>
+  <!-- BOOK EDITOR -->
+  <section id="editor" class="panel hidden">
+    <h2 id="editorTitle">Add Book</h2>
 
-<button id="saveBook" type="submit">Save Book</button>
-<button id="cancelEdit" type="button" class="secondary">Cancel</button>
-</form>
+    <form id="bookForm">
+      <input type="hidden" id="bookId">
+
+      <div class="form-grid">
+        <div>
+          <label>Book Title</label>
+          <input id="title" required>
+        </div>
+
+        <div>
+          <label>Book Slug</label>
+          <input id="slug" required>
+        </div>
+
+        <div>
+          <label>Main Genre</label>
+          <select id="genre" required>
+            <option value="">Select genre</option>
+            <option>Romance</option>
+            <option>Revenge & Comebacks</option>
+            <option>Dark Romance</option>
+            <option>Royal Stories</option>
+            <option>Fantasy & Magic</option>
+            <option>Werewolf & Shifter</option>
+            <option>Mystery & Secrets</option>
+            <option>Thriller & Suspense</option>
+            <option>Drama & Scandals</option>
+            <option>Young Adult & Coming-of-Age</option>
+            <option>Healing & Second Chances</option>
+            <option>Vampires & Immortals</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Subgenre</label>
+          <select id="subgenre" required disabled>
+            <option value="">Select main genre first</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Status</label>
+          <select id="publicationStatus">
+            <option value="draft">Draft</option>
+            <option value="coming_soon">Coming Soon</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Release Date</label>
+          <input id="releaseDate" type="date">
+        </div>
+
+        <div>
+          <label>Display Order</label>
+          <input id="displayOrder" type="number" min="1">
+        </div>
+      </div>
+
+      <label>Description</label>
+      <textarea id="description" rows="4"></textarea>
+
+      <label>Book Cover</label>
+      <input id="coverFile" type="file" accept="image/*">
+
+      <button type="button" class="secondary" id="chooseCover">
+        Choose Cover Image
+      </button>
+
+      <p id="coverFileName" class="note">No image selected.</p>
+      <img id="coverPreview" alt="Cover preview">
+      <p class="note">Maximum image size: 20 MB.</p>
+
+      <div class="checks">
+        <label><input id="featured" type="checkbox"> Featured</label>
+        <label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
+        <label><input id="freeInterest" type="checkbox"> Notify Me</label>
+        <label><input id="preorder" type="checkbox"> Pre-order</label>
+      </div>
+
+      <button id="saveBook" type="submit">Save Book</button>
+      <button id="cancelEdit" type="button" class="secondary">Cancel</button>
+    </form>
+  </section>
 </section>
 
 <!-- CHAPTER STUDIO -->
 <section id="chaptersPage" class="hidden">
-<div class="panel">
-<h2>Chapter Studio</h2>
-<p class="note">Manage and publish your story chapters.</p>
-<label>Select Book</label>
-<select id="chapterBook">
-<option value="">Choose a book</option>
-</select>
-<div class="toolbar">
-<select id="chapterFilter">
-<option value="all">All Chapters</option>
-<option value="draft">Drafts</option>
-<option value="published">Published</option>
-</select>
-<button id="addChapter">+ New Chapter</button>
-</div>
-<p id="chapterMessage" class="note"></p>
-</div>
 
-<div id="chapterList"></div>
+  <div class="panel">
+    <h2>Chapter Studio</h2>
+    <p class="note">Manage and publish your story chapters.</p>
 
-<div id="chapterEditor" class="panel hidden">
-<h2 id="chapterEditorTitle">New Chapter</h2>
-<form id="chapterForm">
-<input type="hidden" id="chapterId">
-<div class="form-grid">
-<div>
-<label>Chapter Number</label>
-<input id="chapterNumber" type="number" min="1" required>
-</div>
-<div>
-<label>Chapter Title</label>
-<input id="chapterTitle" required>
-</div>
-<div>
-<label>Status</label>
-<select id="chapterStatus">
-<option value="draft">Draft</option>
-<option value="published">Published</option>
-</select>
-</div>
-<div>
-<label>Display Order</label>
-<input id="chapterOrder" type="number" min="0">
-</div>
-</div>
-<label>Chapter Content</label>
-<textarea id="chapterContent" rows="18" required placeholder="Write or paste your chapter here..."></textarea>
-<button id="saveChapter" type="submit">Save Chapter</button>
-<button id="cancelChapter" type="button" class="secondary">Cancel</button>
-</form>
-</div>
+    <label>Select Book</label>
+    <select id="chapterBook">
+      <option value="">Choose a book</option>
+    </select>
+
+    <div class="toolbar">
+      <select id="chapterFilter">
+        <option value="all">All Chapters</option>
+        <option value="draft">Drafts</option>
+        <option value="published">Published</option>
+      </select>
+
+      <button id="addChapter">+ New Chapter</button>
+    </div>
+
+    <p id="chapterMessage" class="note"></p>
+  </div>
+
+  <div id="chapterList"></div>
+
+  <div id="chapterEditor" class="panel hidden">
+    <h2 id="chapterEditorTitle">New Chapter</h2>
+
+    <form id="chapterForm">
+      <input type="hidden" id="chapterId">
+
+      <div class="form-grid">
+        <div>
+          <label>Chapter Number</label>
+          <input id="chapterNumber" type="number" min="1" required>
+        </div>
+
+        <div>
+          <label>Chapter Title</label>
+          <input id="chapterTitle" required>
+        </div>
+
+        <div>
+          <label>Status</label>
+          <select id="chapterStatus">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Display Order</label>
+          <input id="chapterOrder" type="number" min="0">
+        </div>
+      </div>
+
+      <label>Chapter Content</label>
+      <textarea id="chapterContent" rows="18" required
+        placeholder="Write or paste your chapter here..."></textarea>
+
+      <button id="saveChapter" type="submit">Save Chapter</button>
+      <button id="cancelChapter" type="button" class="secondary">Cancel</button>
+    </form>
+  </div>
 </section>
 
 <!-- FRONT MATTER -->
 <section id="frontMatterPage" class="hidden">
-<div class="panel">
-<h2>Front Matter Manager</h2>
-<p class="note">Manage the opening and supporting sections of each book.</p>
-<label>Select Book</label>
-<select id="frontMatterBook">
-<option value="">Choose a book</option>
-</select>
-<button id="addFrontMatter">+ Add Section</button>
-<p id="frontMatterMessage" class="note"></p>
-</div>
+  <div class="panel">
+    <h2>Front Matter Manager</h2>
+    <p class="note">Manage opening and closing sections for each book.</p>
 
-<div id="frontMatterList"></div>
+    <label>Select Book</label>
+    <select id="frontMatterBook">
+      <option value="">Choose a book</option>
+    </select>
 
-<div id="frontMatterEditor" class="panel hidden">
-<h2 id="frontMatterEditorTitle">Add Front Matter</h2>
-<form id="frontMatterForm">
-<label>Section Type</label>
-<select id="frontMatterType" required>
-<option value="">Choose section</option>
-<option>Title Page</option>
-<option>Introduction</option>
-<option>Copyright Notice</option>
-<option>Disclaimer</option>
-<option>Dedication</option>
-<option>Acknowledgements</option>
-<option>Author's Note</option>
-<option>Prologue</option>
-<option>Author Tips</option>
-<option>Table of Contents</option>
-</select>
-<label>Section Title</label>
-<input id="frontMatterTitle">
-<label>Content</label>
-<textarea id="frontMatterContent" rows="14"></textarea>
-<label>Status</label>
-<select id="frontMatterStatus">
-<option value="draft">Draft</option>
-<option value="published">Published</option>
-</select>
-<button id="saveFrontMatter" type="submit">Save Section</button>
-<button id="cancelFrontMatter" type="button" class="secondary">Cancel</button>
-</form>
-</div>
+    <p id="frontMatterMessage" class="note"></p>
+    <div id="frontMatterList"></div>
+
+    <button id="addFrontMatter">+ Add Section</button>
+  </div>
+
+  <div id="frontMatterEditor" class="panel hidden">
+    <h3 id="frontMatterEditorTitle">Add Front Matter</h3>
+
+    <form id="frontMatterForm">
+      <label>Section Type</label>
+      <select id="frontMatterType">
+        <option value="title_page">Title Page</option>
+        <option value="introduction">Introduction</option>
+        <option value="copyright">Copyright Notice</option>
+        <option value="disclaimer">Disclaimer</option>
+        <option value="dedication">Dedication</option>
+        <option value="author_note">Author's Note</option>
+        <option value="prologue">Prologue</option>
+        <option value="epilogue">Epilogue</option>
+        <option value="acknowledgements">Acknowledgements</option>
+        <option value="about_author">About the Author</option>
+        <option value="author_bio">Author Biography</option>
+        <option value="afterword">Afterword</option>
+        <option value="other_books">Other Books by the Author</option>
+        <option value="readers_note">Reader's Note</option>
+        <option value="connect">Connect with the Author</option>
+        <option value="author_tips">Author Tips</option>
+        <option value="table_contents">Table of Contents</option>
+        <option value="glossary">Glossary</option>
+        <option value="appendix">Appendix</option>
+        <option value="reading_guide">Reading Guide</option>
+      </select>
+
+      <label>Section Title</label>
+      <input id="frontMatterTitle">
+
+      <label>Content</label>
+      <textarea id="frontMatterContent" rows="12"></textarea>
+
+      <label>Status</label>
+      <select id="frontMatterStatus">
+        <option value="draft">Draft</option>
+        <option value="published">Published</option>
+      </select>
+
+      <button id="saveFrontMatter" type="submit">Save Section</button>
+      <button id="cancelFrontMatter" type="button" class="secondary">Cancel</button>
+    </form>
+  </div>
 </section>
 
 <!-- MEDIA LIBRARY -->
 <section id="mediaPage" class="hidden">
-<div class="panel">
-<h2>Media Library</h2>
-<p class="note">Manage images, videos and documents for your website.</p>
-<label>Upload Media</label>
-<input id="mediaFile" type="file" accept="image/*,video/*,.pdf,.doc,.docx">
-<button id="uploadMedia" type="button">Upload File</button>
-<p id="mediaMessage" class="note"></p>
-</div>
-<div class="panel">
-<div class="toolbar">
-<h2>Uploaded Files</h2>
-<select id="mediaFilter">
-<option value="all">All Files</option>
-<option value="image">Images</option>
-<option value="video">Videos</option>
-<option value="document">Documents</option>
-</select>
-<button id="refreshMedia" class="secondary" type="button">Refresh</button>
-</div>
-<div id="mediaList"></div>
-</div>
+  <div class="panel">
+    <h2>Media Library</h2>
+    <p class="note">Manage images stored in your book-covers bucket.</p>
+
+    <label>Upload Image</label>
+    <input id="mediaFile" type="file" accept="image/*">
+
+    <div class="toolbar">
+      <button id="uploadMedia">Upload Image</button>
+      <button id="refreshMedia" class="secondary">Refresh</button>
+    </div>
+
+    <select id="mediaFilter">
+      <option value="all">All Images</option>
+    </select>
+
+    <p id="mediaMessage" class="note"></p>
+    <div id="mediaList"></div>
+  </div>
 </section>
 
 <!-- REVIEWS -->
-<section id="reviewsPage" class="panel hidden">
-<h2>Review Centre</h2>
-<p class="note">Manage pending, approved, rejected and trashed reader reviews.</p>
-<div id="reviewsList"></div>
+<section id="reviewsPage" class="hidden">
+  <div class="panel">
+    <h2>Reader Review Centre</h2>
+    <p class="note">Review and manage reader submissions.</p>
+    <div id="reviewsList"></div>
+  </div>
 </section>
 
 <!-- HOMEPAGE -->
-<section id="homepagePage" class="panel hidden">
-<h2>Homepage Manager</h2>
-<p class="note">Manage homepage sections and featured stories.</p>
-<div id="homepageContent"></div>
+<section id="homepagePage" class="hidden">
+  <div class="panel">
+    <h2>Homepage Manager</h2>
+    <p class="note">
+      Choose which books appear in homepage sections.
+    </p>
+    <div id="homepageContent"></div>
+  </div>
 </section>
 
 <!-- GENRES -->
-<section id="genresPage" class="panel hidden">
-<h2>Genres & Categories</h2>
-<p class="note">Manage your website's story genres and subgenres.</p>
-<div id="genresContent"></div>
+<section id="genresPage" class="hidden">
+  <div class="panel">
+    <h2>Genres & Categories</h2>
+    <p class="note">
+      Your 12 main genres and their subgenres are managed through the
+      Book Editor. Choose a main genre to display its subgenres.
+    </p>
+    <div id="genresContent"></div>
+  </div>
 </section>
 
 <!-- NOTIFICATIONS -->
-<section id="notificationsPage" class="panel hidden">
-<h2>Notifications</h2>
-<p class="note">Manage reader notifications and announcements.</p>
-<div id="notificationsContent"></div>
+<section id="notificationsPage" class="hidden">
+  <div class="panel">
+    <h2>Notification Settings</h2>
+    <p class="note">
+      Control Notify Me and pre-order availability for each book.
+    </p>
+    <div id="notificationsContent"></div>
+  </div>
 </section>
 
 <!-- SETTINGS -->
-<section id="settingsPage" class="panel hidden">
-<h2>Website Settings</h2>
-<p class="note">Manage your website settings.</p>
-<div id="settingsContent"></div>
+<section id="settingsPage" class="hidden">
+  <div class="panel">
+    <h2>Website Settings & Overview</h2>
+    <div id="settingsContent"></div>
+  </div>
 </section>
 
 <!-- SECURITY -->
-<section id="securityPage" class="panel hidden">
-<h2>Admin Security</h2>
-<p class="note">Administrator account and access settings.</p>
-<div id="securityContent"></div>
+<section id="securityPage" class="hidden">
+  <div class="panel">
+    <h2>Admin Security</h2>
+    <p class="note">
+      Administrator access is checked through Supabase authentication.
+      Only accounts with the required administrator role should access
+      this dashboard.
+    </p>
+    <p class="note">
+      Manage administrator roles and account security in your Supabase
+      project settings.
+    </p>
+  </div>
 </section>
 
 </main>
@@ -386,6 +521,7 @@ main{padding:14px}
 
 <!-- JAVASCRIPT FILES -->
 <script src="js/admin.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/genres.js"></script>
 <script src="js/books.js"></script>
 <script src="js/chapters.js"></script>
@@ -395,9 +531,7 @@ main{padding:14px}
 <script src="js/homepage.js"></script>
 <script src="js/notifications.js"></script>
 <script src="js/settings.js"></script>
-<script src="js/auth.js"></script>
 
 </body>
-  </html>
+          </html>
   
-
