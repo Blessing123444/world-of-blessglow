@@ -4,6 +4,10 @@
 const SUPABASE_URL = "https://zngagaolaiidgyxoldsh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
 
+if (!window.supabase) {
+  throw new Error("Supabase library did not load.");
+}
+
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 
@@ -25,7 +29,8 @@ const labels = {
 };
 
 function message(text) {
-  $("message").textContent = text;
+  const element = $("message");
+  if (element) element.textContent = text;
 }
 
 function slugify(text) {
@@ -38,51 +43,74 @@ function makeButton(text, cls, fn) {
   const button = document.createElement("button");
   button.textContent = text;
   button.className = cls;
+  button.type = "button";
   button.onclick = fn;
   return button;
 }
 
 /* ADMIN NAVIGATION */
-document.querySelectorAll("nav button").forEach(button => {
-  button.onclick = async () => {
-    document.querySelectorAll("nav button")
-      .forEach(item => item.classList.remove("active"));
 
-    button.classList.add("active");
+const adminPages = {
+  books: "booksPage",
+  chapters: "chaptersPage",
+  frontmatter: "frontMatterPage",
+  media: "mediaPage",
+  reviews: "reviewsPage",
+  homepage: "homepagePage",
+  genres: "genresPage",
+  notifications: "notificationsPage",
+  settings: "settingsPage",
+  security: "securityPage"
+};
 
-    const page = button.dataset.page;
-    const isBooks = page === "books";
-    const isChapters = page === "chapters";
-    const isFrontMatter = page === "frontmatter";
+async function showAdminPage(page, button) {
+  Object.values(adminPages).forEach(id => {
+    const section = $(id);
+    if (section) section.classList.add("hidden");
+  });
 
-    $("booksPage").classList.toggle("hidden", !isBooks);
-    $("editor").classList.add("hidden");
-    $("chaptersPage").classList.toggle("hidden", !isChapters);
+  $("editor")?.classList.add("hidden");
 
-    $("frontMatterPage")?.classList.toggle("hidden", !isFrontMatter);
+  document.querySelectorAll("nav button").forEach(item => {
+    item.classList.remove("active");
+  });
 
-    $("placeholder").classList.toggle(
-      "hidden", isBooks || isChapters || isFrontMatter
-    );
+  button?.classList.add("active");
 
-    $("pageTitle").textContent = button.textContent.trim();
-    $("placeholderTitle").textContent = button.textContent.trim();
+  const pageId = adminPages[page];
+  if (pageId) $(pageId)?.classList.remove("hidden");
 
-    if (isBooks) await loadBooks();
+  const title = button?.textContent.trim() || page;
+  if ($("pageTitle")) $("pageTitle").textContent = title;
 
-    if (isChapters) {
-      $("chapterBook").innerHTML =
-        '<option value="">Choose a book</option>';
+  if (page === "books") {
+    await loadBooks();
+  }
+
+  if (page === "chapters") {
+    if (!books.length) await loadBooks();
+
+    const select = $("chapterBook");
+    if (select) {
+      select.innerHTML = '<option value="">Choose a book</option>';
 
       books.forEach(book => {
-        const option = new Option(book.title, book.id);
-        $("chapterBook").add(option);
+        select.add(new Option(book.title, book.id));
       });
-
-      await loadChapters();
     }
 
-    if (isFrontMatter) await loadFrontMatter();
-  };
+    await loadChapters();
+  }
+
+  if (page === "frontmatter") {
+    await loadFrontMatter();
+  }
+}
+
+document.querySelectorAll("nav button[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    showAdminPage(button.dataset.page, button);
+  });
 });
+    
     
