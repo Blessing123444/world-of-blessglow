@@ -5,7 +5,6 @@
 async function loadChapters() {
   const bookId = $("chapterBook")?.value;
   const area = $("chapterList");
-
   if (!area) return;
 
   area.replaceChildren();
@@ -13,12 +12,13 @@ async function loadChapters() {
 
   if (!bookId) {
     chapters = [];
-    $("chapterMessage").textContent =
-      "Select a book to view its chapters.";
+    if ($("chapterMessage")) {
+      $("chapterMessage").textContent = "Select a book to view its chapters.";
+    }
     return;
   }
 
-  $("chapterMessage").textContent = "Loading chapters...";
+  if ($("chapterMessage")) $("chapterMessage").textContent = "Loading chapters...";
 
   const { data, error } = await db.from("chapters")
     .select("*")
@@ -28,14 +28,15 @@ async function loadChapters() {
     .order("chapter_number", { ascending: true });
 
   if (error) {
-    $("chapterMessage").textContent =
-      "Could not load chapters: " + error.message;
+    if ($("chapterMessage")) {
+      $("chapterMessage").textContent = "Could not load chapters: " + error.message;
+    }
     return;
   }
 
   chapters = data || [];
   renderChapters();
-  $("chapterMessage").textContent = "";
+  if ($("chapterMessage")) $("chapterMessage").textContent = "";
 }
 
 /* DISPLAY CHAPTERS */
@@ -60,17 +61,14 @@ function renderChapters() {
     card.className = "chapter-card";
 
     const heading = document.createElement("h3");
-    heading.textContent =
-      "Chapter " + ch.chapter_number + " — " + ch.title;
+    heading.textContent = `Chapter ${ch.chapter_number} — ${ch.title}`;
 
     const badge = document.createElement("span");
     badge.className = "status status-" + ch.publication_status;
-    badge.textContent =
-      ch.publication_status === "published" ? "Published" : "Draft";
+    badge.textContent = ch.publication_status === "published" ? "Published" : "Draft";
 
     const actions = document.createElement("div");
     actions.className = "actions";
-
     actions.append(
       makeButton("Edit", "secondary", () => editChapter(ch)),
       makeButton("Delete", "danger", () => deleteChapter(ch))
@@ -83,7 +81,7 @@ function renderChapters() {
 
 /* NEW CHAPTER */
 function newChapter() {
-  if (!$("chapterBook").value) {
+  if (!$("chapterBook")?.value) {
     alert("Select a book first.");
     return;
   }
@@ -92,15 +90,13 @@ function newChapter() {
   $("chapterForm").reset();
   $("chapterId").value = "";
 
-  const nextNumber = chapters.length
-    ? Math.max(...chapters.map(ch =>
-        Number(ch.chapter_number) || 0
-      )) + 1
+  const next = chapters.length
+    ? Math.max(...chapters.map(ch => Number(ch.chapter_number) || 0)) + 1
     : 1;
 
   $("chapterEditorTitle").textContent = "New Chapter";
-  $("chapterNumber").value = nextNumber;
-  $("chapterOrder").value = nextNumber;
+  $("chapterNumber").value = next;
+  $("chapterOrder").value = next;
   $("chapterStatus").value = "draft";
 
   $("chapterEditor").classList.remove("hidden");
@@ -128,7 +124,7 @@ $("chapterForm")?.addEventListener("submit", async event => {
   event.preventDefault();
 
   const button = $("saveChapter");
-  if (button.disabled) return;
+  if (!button || button.disabled) return;
 
   button.disabled = true;
   button.textContent = "Saving...";
@@ -147,6 +143,9 @@ $("chapterForm")?.addEventListener("submit", async event => {
     if (!title || !content.trim()) {
       throw Error("Enter a chapter title and content.");
     }
+    if (!["draft", "published"].includes(status)) {
+      throw Error("Choose a valid chapter status.");
+    }
 
     const payload = {
       book_id: bookId,
@@ -157,16 +156,15 @@ $("chapterForm")?.addEventListener("submit", async event => {
       published_at: status === "published"
         ? (currentChapter?.published_at || new Date().toISOString())
         : null,
-      display_order: Math.max(
-        1, Number($("chapterOrder").value) || number
-      ),
+      display_order: Math.max(1, Number($("chapterOrder").value) || number),
       updated_at: new Date().toISOString()
     };
 
     const id = $("chapterId").value;
 
     const result = id
-      ? await db.from("chapters").update(payload).eq("id", id)
+      ? await db.from("chapters").update(payload)
+          .eq("id", id).eq("book_id", bookId)
       : await db.from("chapters").insert(payload);
 
     if (result.error) throw result.error;
@@ -175,8 +173,9 @@ $("chapterForm")?.addEventListener("submit", async event => {
     currentChapter = null;
 
     await loadChapters();
-    $("chapterMessage").textContent =
-      "Chapter saved successfully.";
+    if ($("chapterMessage")) {
+      $("chapterMessage").textContent = "Chapter saved successfully.";
+    }
 
   } catch (error) {
     alert("Could not save chapter: " + error.message);
@@ -200,7 +199,9 @@ async function deleteChapter(ch) {
   }
 
   await loadChapters();
-  $("chapterMessage").textContent = "Chapter moved to Trash.";
+  if ($("chapterMessage")) {
+    $("chapterMessage").textContent = "Chapter moved to Trash.";
+  }
 }
 
 /* CHAPTER EVENTS */
@@ -214,7 +215,7 @@ $("chapterFilter")?.addEventListener("change", renderChapters);
 $("addChapter")?.addEventListener("click", newChapter);
 
 $("cancelChapter")?.addEventListener("click", () => {
-  $("chapterEditor").classList.add("hidden");
+  $("chapterEditor")?.classList.add("hidden");
   currentChapter = null;
 });
-    
+
