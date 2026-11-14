@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>World of BlessGlow Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{--bg:#09090c;--panel:#15151b;--gold:#d4af37;--text:#f5f3ed}
 *{box-sizing:border-box}
@@ -19,7 +20,7 @@ button:disabled{opacity:.5}
 input,select,textarea{width:100%;padding:12px;margin:7px 0 15px;background:#0d0d12;color:white;border:1px solid #393943;border-radius:7px}
 #login{max-width:400px;margin:12vh auto;padding:25px;background:var(--panel);border:1px solid #333;border-radius:12px}
 #app{display:flex;min-height:100vh}
-aside{width:230px;background:#101014;padding:18px}
+aside{width:230px;background:#101014;padding:18px;flex-shrink:0}
 .brand{color:var(--gold);font-weight:bold;margin-bottom:20px}
 nav button{display:block;width:100%;text-align:left;background:none;color:#ddd;margin:4px 0}
 nav button.active{background:#29251a;color:var(--gold)}
@@ -37,8 +38,7 @@ h1{font-size:23px}
 .status-published{background:#164c30;color:#85e6a9}
 .status-ongoing{background:#153f65;color:#8bcaff}
 .status-completed{background:#49316c;color:#d5b4ff}
-.status-coming_soon{background:#624716;color:#ffda83}
-.status-draft{background:#55451c;color:#ffda83}
+.status-coming_soon,.status-draft{background:#624716;color:#ffda83}
 .status-archived{background:#642d32;color:#ffaaaa}
 .note{color:#aaa;font-size:13px}
 #editor{max-width:750px}
@@ -52,30 +52,39 @@ h1{font-size:23px}
 #loginMessage,#message{color:var(--gold);margin:12px 0}
 .chapter-card{background:#101014;border:1px solid #303039;border-radius:9px;padding:14px;margin:10px 0}
 .chapter-card h3{margin:0 0 9px}
-#chapterContent{min-height:300px;line-height:1.7}
+#chapterContent,#frontMatterContent{min-height:250px;line-height:1.7}
+.media-item{padding:12px;border:1px solid #393943;border-radius:8px;margin:10px 0;overflow-wrap:anywhere}
 @media(max-width:700px){
-#app{display:block}aside{width:100%;padding:12px}
+#app{display:block}
+aside{width:100%;padding:12px}
 nav{display:flex;overflow-x:auto}
 nav button{white-space:nowrap;width:auto}
-main{padding:14px}.form-grid{grid-template-columns:1fr}
-.book{align-items:flex-start}.cover{width:60px;height:85px}
+main{padding:14px}
+.form-grid{grid-template-columns:1fr}
+.book{align-items:flex-start}
+.cover{width:60px;height:85px}
 }
 </style>
 </head>
+
 <body>
 
+<!-- LOGIN -->
 <section id="login">
 <h2>World of BlessGlow</h2>
 <p class="note">Admin Control Centre</p>
 <form id="loginForm">
-<label>Email</label><input id="email" type="email" autocomplete="username" required>
-<label>Password</label><input id="password" type="password" autocomplete="current-password" required>
+<label>Email</label>
+<input id="email" type="email" autocomplete="username" required>
+<label>Password</label>
+<input id="password" type="password" autocomplete="current-password" required>
 <button id="loginButton" type="submit">Sign In</button>
 </form>
 <p id="loginMessage"></p>
 </section>
 
 <div id="app" class="hidden">
+
 <aside>
 <div class="brand">WORLD OF BLESSGLOW</div>
 <nav>
@@ -92,233 +101,126 @@ main{padding:14px}.form-grid{grid-template-columns:1fr}
 </nav>
 </aside>
 
-
 <main>
+
 <header>
-  <div>
-    <h1 id="pageTitle">Books & Stories</h1>
-    <p class="note">Manage your story library.</p>
-  </div>
-  <button class="secondary" id="logout">Sign Out</button>
+<div>
+<h1 id="pageTitle">Books & Stories</h1>
+<p class="note">Manage your World of BlessGlow website.</p>
+</div>
+<button class="secondary" id="logout">Sign Out</button>
 </header>
 
+<!-- BOOKS -->
 <section id="booksPage">
-  <div class="toolbar">
-    <button id="addBook">+ Add Book</button>
-    <select id="statusFilter">
-      <option value="all">All statuses</option>
-      <option value="draft">Draft</option>
-      <option value="coming_soon">Coming Soon</option>
-      <option value="ongoing">Ongoing</option>
-      <option value="completed">Completed</option>
-      <option value="published">Published</option>
-      <option value="archived">Archived</option>
-    </select>
-    <button class="secondary" id="showTrash">Trash</button>
-  </div>
-  <p id="message"></p>
-  <div id="bookList"></div>
+<div class="toolbar">
+<button id="addBook">+ Add Book</button>
+<select id="statusFilter">
+<option value="all">All statuses</option>
+<option value="draft">Draft</option>
+<option value="coming_soon">Coming Soon</option>
+<option value="ongoing">Ongoing</option>
+<option value="completed">Completed</option>
+<option value="published">Published</option>
+<option value="archived">Archived</option>
+</select>
+<button class="secondary" id="showTrash">Trash</button>
+</div>
+<p id="message"></p>
+<div id="bookList"></div>
 </section>
 
+<!-- BOOK EDITOR -->
 <section id="editor" class="panel hidden">
-  <h2 id="editorTitle">Add Book</h2>
-  <form id="bookForm">
-    <input type="hidden" id="bookId">
+<h2 id="editorTitle">Add Book</h2>
+<form id="bookForm">
+<input type="hidden" id="bookId">
 
-    <div class="form-grid">
-      <div>
-        <label>Book Title</label>
-        <input id="title" required>
-      </div>
+<div class="form-grid">
+<div>
+<label>Book Title</label>
+<input id="title" required>
+</div>
+<div>
+<label>Book Slug</label>
+<input id="slug" required>
+</div>
+<div>
+<label>Main Genre</label>
+<select id="genre" required>
+<option value="">Select genre</option>
+<option>Romance</option>
+<option>Revenge & Comebacks</option>
+<option>Dark Romance</option>
+<option>Royal Stories</option>
+<option>Fantasy & Magic</option>
+<option>Werewolf & Shifter</option>
+<option>Mystery & Secrets</option>
+<option>Thriller & Suspense</option>
+<option>Drama & Scandals</option>
+<option>Young Adult & Coming-of-Age</option>
+<option>Healing & Second Chances</option>
+<option>Vampires & Immortals</option>
+</select>
+</div>
+<div>
+<label>Subgenre</label>
+<select id="subgenre" required disabled>
+<option value="">Select main genre first</option>
+</select>
+</div>
+<div>
+<label>Status</label>
+<select id="publicationStatus">
+<option value="draft">Draft</option>
+<option value="coming_soon">Coming Soon</option>
+<option value="ongoing">Ongoing</option>
+<option value="completed">Completed</option>
+<option value="published">Published</option>
+<option value="archived">Archived</option>
+</select>
+</div>
+<div>
+<label>Release Date</label>
+<input id="releaseDate" type="date">
+</div>
+<div>
+<label>Display Order</label>
+<input id="displayOrder" type="number" min="1">
+</div>
+</div>
 
-      <div>
-        <label>Book Slug</label>
-        <input id="slug" required>
-      </div>
+<label>Description</label>
+<textarea id="description" rows="4"></textarea>
 
-      <div>
-        <label>Main Genre</label>
-        <select id="genre" required>
-          <option value="">Select genre</option>
-          <option>Romance</option>
-          <option>Revenge & Comebacks</option>
-          <option>Dark Romance</option>
-          <option>Royal Stories</option>
-          <option>Fantasy & Magic</option>
-          <option>Werewolf & Shifter</option>
-          <option>Mystery & Secrets</option>
-          <option>Thriller & Suspense</option>
-          <option>Drama & Scandals</option>
-          <option>Young Adult & Coming-of-Age</option>
-          <option>Healing & Second Chances</option>
-          <option>Vampires & Immortals</option>
-        </select>
-      </div>
+<label>Book Cover</label>
+<input id="coverFile" type="file" accept="image/*">
+<button type="button" class="secondary" id="chooseCover">Choose Cover Image</button>
+<p id="coverFileName" class="note">No image selected.</p>
+<img id="coverPreview" alt="Cover preview">
+<p class="note">Maximum image size: 20 MB.</p>
 
-      <div>
-        <label>Subgenre</label>
-        <select id="subgenre" required disabled>
-          <option value="">Select main genre first</option>
-        </select>
-      </div>
+<div class="checks">
+<label><input id="featured" type="checkbox"> Featured</label>
+<label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
+<label><input id="freeInterest" type="checkbox"> Notify Me</label>
+<label><input id="preorder" type="checkbox"> Preorder</label>
+</div>
 
-      <div>
-        <label>Status</label>
-        <select id="publicationStatus">
-          <option value="draft">Draft</option>
-          <option value="coming_soon">Coming Soon</option>
-          <option value="ongoing">Ongoing</option>
-          <option value="completed">Completed</option>
-          <option value="published">Published</option>
-          <option value="archived">Archived</option>
-        </select>
-      </div>
-
-      <div>
-        <label>Release Date</label>
-        <input id="releaseDate" type="date">
-      </div>
-
-      <div>
-        <label>Display Order</label>
-        <input id="displayOrder" type="number" min="1">
-      </div>
-    </div>
-
-    <label>Description</label>
-    <textarea id="description" rows="4"></textarea>
-
-    <label>Book Cover</label>
-    <input id="coverFile" type="file" accept="image/*">
-    <button type="button" class="secondary" id="chooseCover">
-      Choose Cover Image
-    </button>
-    <p id="coverFileName" class="note">No image selected.</p>
-    <img id="coverPreview" alt="Cover preview">
-    <p class="note">Maximum image size: 20 MB.</p>
-
-    <div class="checks">
-      <label><input id="featured" type="checkbox"> Featured</label>
-      <label><input id="editorsPick" type="checkbox"> Editor's Pick</label>
-      <label><input id="freeInterest" type="checkbox"> Notify Me</label>
-      <label><input id="preorder" type="checkbox"> Preorder</label>
-    </div>
-
-    <button id="saveBook" type="submit">Save Book</button>
-    <button id="cancelEdit" type="button" class="secondary">Cancel</button>
-  </form>
+<button id="saveBook" type="submit">Save Book</button>
+<button id="cancelEdit" type="button" class="secondary">Cancel</button>
+</form>
 </section>
-</main>
 
-<script>
-const subgenreLists = {
-  "Romance": [
-    "Campus Romance", "Slow-Burn Romance", "Enemies to Lovers",
-    "Friends to Lovers", "Second-Chance Love", "Forbidden Love",
-    "Unrequited Love", "Billionaire Romance", "Fake Dating", "Love Triangle"
-  ],
-  "Revenge & Comebacks": [
-    "Betrayed Heiress", "Revenge Against an Ex", "Family Revenge",
-    "Revenge After Rejection", "Secret Identity", "The Ultimate Comeback",
-    "Revenge and Redemption", "From Underdog to Powerful",
-    "The Heiress Returns", "The Revenge Plan"
-  ],
-  "Dark Romance": [
-    "Obsession and Attraction", "Forbidden Dark Love", "Gothic Romance",
-    "Mafia Romance", "Morally Grey Love Interests", "Rivals with Chemistry",
-    "Dangerous Secrets", "Twisted Relationships", "Possessive Love",
-    "The Dangerous Deal"
-  ],
-  "Royal Stories": [
-    "Secret Princess", "Hidden Heir", "Royal Romance",
-    "Arranged Royal Marriage", "Lost Princess", "Palace Intrigue",
-    "Crown and Succession", "Exiled Royal",
-    "Royal Bodyguard Romance", "The Secret Royal Wedding"
-  ],
-  "Fantasy & Magic": [
-    "Dark Fantasy", "Magical Academy", "Witches and Wizards",
-    "Cursed Kingdoms", "Mythical Creatures", "Brutal Fantasy",
-    "Elemental Powers", "Epic Fantasy Quests", "Dragon Riders",
-    "Enchanted Realms"
-  ],
-  "Werewolf & Shifter": [
-    "Alpha and Luna", "Rejected Mates", "Fated Mates",
-    "Forbidden Mates", "Royal Werewolves", "Rogue Wolves",
-    "Hidden Shifter", "Human and Werewolf", "The Alpha's Secret",
-    "War of the Wolf Packs"
-  ],
-  "Mystery & Secrets": [
-    "Murder Mystery", "The Missing Heiress", "Hidden Identity",
-    "Family Secrets", "Secret Societies", "Locked-Room Mystery",
-    "Supernatural Mystery", "Detective Investigations",
-    "The Secret Nobody Knows", "The Inheritance Mystery"
-  ],
-  "Thriller & Suspense": [
-    "Psychological Thriller", "Crime Thriller", "Conspiracy",
-    "Survival Thriller", "Cat and Mouse", "Domestic Suspense",
-    "High-Stakes Pursuits", "Political Thriller",
-    "The Stalker Next Door", "The Dangerous Witness"
-  ],
-  "Drama & Scandals": [
-    "Family Drama", "Betrayal and Lies", "Friendship Conflicts",
-    "Love Triangles", "Marriage Drama", "Social-Class Conflict",
-    "Secrets and Scandals", "Sibling Rivalry",
-    "Celebrity Scandals", "The Secret Inheritance"
-  ],
-  "Young Adult & Coming-of-Age": [
-    "First Love", "School Life", "University Life", "Academic Rivals",
-    "Friendship and Loyalty", "Identity and Self-Discovery",
-    "Family Expectations", "Young Adult Fantasy", "Dark Academia",
-    "The New Girl"
-  ],
-  "Healing & Second Chances": [
-    "Healing After Heartbreak", "Starting Over", "Redemption",
-    "Forgiveness and Healing", "Rebuilding Trust", "Finding Yourself",
-    "Fresh Beginnings", "Learning to Let Go", "Life After Betrayal",
-    "Recovering from Loss"
-  ],
-  "Vampires & Immortals": [
-    "Vampire Romance", "Ancient Vampires", "Vampire Royalty",
-    "Immortal Love", "Human and Vampire", "Vampire Hunters",
-    "Cursed Immortals", "Supernatural Clans", "Vampire Academy",
-    "The Forbidden Bloodline"
-  ]
-};
-
-const genreSelect = document.getElementById("genre");
-const subgenreSelect = document.getElementById("subgenre");
-
-function updateSubgenres(genre, selected = "") {
-  subgenreSelect.innerHTML = "";
-
-  const options = subgenreLists[genre] || [];
-
-  subgenreSelect.add(new Option(
-    options.length ? "Select subgenre" : "Select main genre first", ""
-  ));
-
-  options.forEach(name => {
-    subgenreSelect.add(new Option(name, name));
-  });
-
-  subgenreSelect.disabled = !options.length;
-
-  if (options.includes(selected)) {
-    subgenreSelect.value = selected;
-  }
-}
-
-genreSelect.addEventListener("change", () => {
-  updateSubgenres(genreSelect.value);
-});
-            </script>
-  
 <!-- CHAPTER STUDIO -->
 <section id="chaptersPage" class="hidden">
 <div class="panel">
 <h2>Chapter Studio</h2>
 <p class="note">Manage and publish your story chapters.</p>
-<label>Select Book</label><select id="chapterBook"><option value="">Choose a book</option></select>
+<label>Select Book</label>
+<select id="chapterBook">
+<option value="">Choose a book</option>
+</select>
 <div class="toolbar">
 <select id="chapterFilter">
 <option value="all">All Chapters</option>
@@ -329,6 +231,7 @@ genreSelect.addEventListener("change", () => {
 </div>
 <p id="chapterMessage" class="note"></p>
 </div>
+
 <div id="chapterList"></div>
 
 <div id="chapterEditor" class="panel hidden">
@@ -336,14 +239,25 @@ genreSelect.addEventListener("change", () => {
 <form id="chapterForm">
 <input type="hidden" id="chapterId">
 <div class="form-grid">
-<div><label>Chapter Number</label><input id="chapterNumber" type="number" min="1" required></div>
-<div><label>Chapter Title</label><input id="chapterTitle" required></div>
-<div><label>Status</label>
+<div>
+<label>Chapter Number</label>
+<input id="chapterNumber" type="number" min="1" required>
+</div>
+<div>
+<label>Chapter Title</label>
+<input id="chapterTitle" required>
+</div>
+<div>
+<label>Status</label>
 <select id="chapterStatus">
 <option value="draft">Draft</option>
 <option value="published">Published</option>
-</select></div>
-<div><label>Display Order</label><input id="chapterOrder" type="number" min="0"></div>
+</select>
+</div>
+<div>
+<label>Display Order</label>
+<input id="chapterOrder" type="number" min="0">
+</div>
 </div>
 <label>Chapter Content</label>
 <textarea id="chapterContent" rows="18" required placeholder="Write or paste your chapter here..."></textarea>
@@ -353,267 +267,137 @@ genreSelect.addEventListener("change", () => {
 </div>
 </section>
 
-<section id="placeholder" class="panel hidden">
-<h2 id="placeholderTitle"></h2>
-<p>This management section has not been activated yet.</p>
+<!-- FRONT MATTER -->
+<section id="frontMatterPage" class="hidden">
+<div class="panel">
+<h2>Front Matter Manager</h2>
+<p class="note">Manage the opening and supporting sections of each book.</p>
+<label>Select Book</label>
+<select id="frontMatterBook">
+<option value="">Choose a book</option>
+</select>
+<button id="addFrontMatter">+ Add Section</button>
+<p id="frontMatterMessage" class="note"></p>
+</div>
+
+<div id="frontMatterList"></div>
+
+<div id="frontMatterEditor" class="panel hidden">
+<h2 id="frontMatterEditorTitle">Add Front Matter</h2>
+<form id="frontMatterForm">
+<label>Section Type</label>
+<select id="frontMatterType" required>
+<option value="">Choose section</option>
+<option>Title Page</option>
+<option>Introduction</option>
+<option>Copyright Notice</option>
+<option>Disclaimer</option>
+<option>Dedication</option>
+<option>Acknowledgements</option>
+<option>Author's Note</option>
+<option>Prologue</option>
+<option>Author Tips</option>
+<option>Table of Contents</option>
+</select>
+<label>Section Title</label>
+<input id="frontMatterTitle">
+<label>Content</label>
+<textarea id="frontMatterContent" rows="14"></textarea>
+<label>Status</label>
+<select id="frontMatterStatus">
+<option value="draft">Draft</option>
+<option value="published">Published</option>
+</select>
+<button id="saveFrontMatter" type="submit">Save Section</button>
+<button id="cancelFrontMatter" type="button" class="secondary">Cancel</button>
+</form>
+</div>
 </section>
+
+<!-- MEDIA LIBRARY -->
+<section id="mediaPage" class="hidden">
+<div class="panel">
+<h2>Media Library</h2>
+<p class="note">Manage images, videos and documents for your website.</p>
+<label>Upload Media</label>
+<input id="mediaFile" type="file" accept="image/*,video/*,.pdf,.doc,.docx">
+<button id="uploadMedia" type="button">Upload File</button>
+<p id="mediaMessage" class="note"></p>
+</div>
+<div class="panel">
+<div class="toolbar">
+<h2>Uploaded Files</h2>
+<select id="mediaFilter">
+<option value="all">All Files</option>
+<option value="image">Images</option>
+<option value="video">Videos</option>
+<option value="document">Documents</option>
+</select>
+<button id="refreshMedia" class="secondary" type="button">Refresh</button>
+</div>
+<div id="mediaList"></div>
+</div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviewsPage" class="panel hidden">
+<h2>Review Centre</h2>
+<p class="note">Manage pending, approved, rejected and trashed reader reviews.</p>
+<div id="reviewsList"></div>
+</section>
+
+<!-- HOMEPAGE -->
+<section id="homepagePage" class="panel hidden">
+<h2>Homepage Manager</h2>
+<p class="note">Manage homepage sections and featured stories.</p>
+<div id="homepageContent"></div>
+</section>
+
+<!-- GENRES -->
+<section id="genresPage" class="panel hidden">
+<h2>Genres & Categories</h2>
+<p class="note">Manage your website's story genres and subgenres.</p>
+<div id="genresContent"></div>
+</section>
+
+<!-- NOTIFICATIONS -->
+<section id="notificationsPage" class="panel hidden">
+<h2>Notifications</h2>
+<p class="note">Manage reader notifications and announcements.</p>
+<div id="notificationsContent"></div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settingsPage" class="panel hidden">
+<h2>Website Settings</h2>
+<p class="note">Manage your website settings.</p>
+<div id="settingsContent"></div>
+</section>
+
+<!-- SECURITY -->
+<section id="securityPage" class="panel hidden">
+<h2>Admin Security</h2>
+<p class="note">Administrator account and access settings.</p>
+<div id="securityContent"></div>
+</section>
+
 </main>
 </div>
 
-<script>
-const SUPABASE_URL="https://zngagaolaiidgyxoldsh.supabase.co";
-const SUPABASE_KEY="sb_publishable_e0wd6fhM_Fr7gsKkKzT2RA_vAReV50F";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const $=id=>document.getElementById(id);
-let books=[],trashMode=false,currentCover="",selectedCoverFile=null,loading=false;
-let chapters=[],currentChapter=null;
+<!-- JAVASCRIPT FILES -->
+<script src="js/admin.js"></script>
+<script src="js/genres.js"></script>
+<script src="js/books.js"></script>
+<script src="js/chapters.js"></script>
+<script src="js/frontmatter.js"></script>
+<script src="js/media.js"></script>
+<script src="js/reviews.js"></script>
+<script src="js/homepage.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/auth.js"></script>
 
-const labels={draft:"Draft",coming_soon:"Coming Soon",ongoing:"Ongoing",completed:"Completed",published:"Published",archived:"Archived"};
-function message(t){$("message").textContent=t}
-function slugify(t){return t.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
-
-/* LOGIN */
-async function verifyAdmin(){
-const {data,error}=await db.auth.getUser();
-if(error)throw error;
-const user=data.user;
-if(!user)throw Error("No active login session.");
-const meta=user.app_metadata||{};
-if(meta.role!=="admin"&&!(Array.isArray(meta.roles)&&meta.roles.includes("admin")))
-throw Error("Login succeeded, but administrator access was not confirmed. Check your Supabase admin role.");
-}
-async function enterAdmin(){
-if(loading)return;
-loading=true;
-try{
-$("loginMessage").textContent="Verifying administrator access...";
-await verifyAdmin();
-$("login").classList.add("hidden");
-$("app").classList.remove("hidden");
-await loadBooks();
-}catch(e){$("loginMessage").textContent=e.message}
-finally{loading=false}
-}
-$("loginForm").addEventListener("submit",async e=>{
-e.preventDefault();if(loading)return;
-loading=true;
-const btn=$("loginButton");btn.disabled=true;btn.textContent="Signing In...";
-$("loginMessage").textContent="Connecting...";
-try{
-const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
-if(error)throw error;
-loading=false;await enterAdmin();
-}catch(e){$("loginMessage").textContent="Login failed: "+e.message}
-finally{loading=false;btn.disabled=false;btn.textContent="Sign In"}
-});
-(async()=>{try{const {data,error}=await db.auth.getSession();if(error)throw error;if(data.session)await enterAdmin()}catch(e){$("loginMessage").textContent=e.message}})();
-$("logout").onclick=async()=>{await db.auth.signOut();location.reload()};
-
-/* BOOKS */
-async function loadBooks(){
-message("Loading books...");
-let q=db.from("books").select("*").order("display_order",{ascending:true}).order("created_at",{ascending:true});
-q=trashMode?q.not("deleted_at","is",null):q.is("deleted_at",null);
-const {data,error}=await q;
-if(error){message("Could not load books: "+error.message);return}
-books=data||[];renderBooks();message("");
-}
-function makeButton(text,cls,fn){
-const b=document.createElement("button");b.textContent=text;b.className=cls;b.onclick=fn;return b;
-}
-function renderBooks(){
-const filter=$("statusFilter").value;
-const list=books.filter(b=>trashMode||filter==="all"||b.publication_status===filter);
-const area=$("bookList");area.innerHTML="";
-if(!list.length){area.textContent="No books found.";return}
-list.forEach(book=>{
-const card=document.createElement("article");card.className="book";
-const img=document.createElement("img");img.className="cover";img.src=book.cover_url||"";img.alt=book.title+" cover";img.onerror=()=>img.style.display="none";
-const info=document.createElement("div");info.className="book-info";
-const title=document.createElement("h3");title.textContent=book.title;
-const badge=document.createElement("span");badge.className="status status-"+book.publication_status;badge.textContent=labels[book.publication_status]||book.publication_status;
-const order=document.createElement("p");order.className="note";order.textContent="Position: "+book.display_order;
-const actions=document.createElement("div");actions.className="actions";
-if(trashMode)actions.append(makeButton("Restore","secondary",()=>restoreBook(book)));
-else actions.append(makeButton("Edit","secondary",()=>openEditor(book)),makeButton("↑","secondary",()=>moveBook(book,-1)),makeButton("↓","secondary",()=>moveBook(book,1)),makeButton("Trash","danger",()=>trashBook(book)));
-info.append(title,badge,order,actions);card.append(img,info);area.append(card);
-});
-}
-function openEditor(book=null){
-$("bookForm").reset();selectedCoverFile=null;$("bookId").value=book?.id||"";currentCover=book?.cover_url||"";
-$("editorTitle").textContent=book?"Edit Book":"Add Book";
-$("title").value=book?.title||"";$("slug").value=book?.slug||"";
-$("genre").value=book?.main_genre||"";
-updateSubgenres($("genre").value,book?.subgenre||"");
-$("description").value=book?.description||"";$("publicationStatus").value=book?.publication_status||"draft";
-$("releaseDate").value=book?.release_date||"";
-$("displayOrder").value=book?.display_order??(books.length?Math.max(...books.map(b=>Number(b.display_order)||0))+1:1);
-$("featured").checked=!!book?.is_featured;$("editorsPick").checked=!!book?.is_editors_pick;
-$("freeInterest").checked=!!book?.allow_free_interest;$("preorder").checked=!!book?.allow_preorder;
-$("coverFile").value="";$("coverFileName").textContent="No image selected.";
-$("coverPreview").src=currentCover;$("coverPreview").style.display=currentCover?"block":"none";
-$("editor").classList.remove("hidden");$("booksPage").classList.add("hidden");window.scrollTo(0,0);
-}
-$("addBook").onclick=()=>openEditor();
-$("cancelEdit").onclick=()=>{selectedCoverFile=null;$("editor").classList.add("hidden");$("booksPage").classList.remove("hidden")};
-$("title").oninput=()=>{if(!$("bookId").value)$("slug").value=slugify($("title").value)};
-
-/* COVER UPLOAD */
-$("chooseCover").onclick=()=>$("coverFile").click();
-$("coverFile").addEventListener("change",function(){
-const file=this.files?.[0];
-if(!file){selectedCoverFile=null;$("coverFileName").textContent="No image selected.";return}
-if(!file.type.startsWith("image/")||file.size>20*1024*1024){
-alert("Choose a valid image no larger than 20 MB.");this.value="";selectedCoverFile=null;$("coverFileName").textContent="No image selected.";return;
-}
-selectedCoverFile=file;$("coverFileName").textContent="Selected: "+file.name;
-const reader=new FileReader();
-reader.onload=e=>{$("coverPreview").src=e.target.result;$("coverPreview").style.display="block"};
-reader.onerror=()=>alert("Could not preview this image.");
-reader.readAsDataURL(file);
-});
-async function uploadCover(){
-if(!selectedCoverFile)return currentCover;
-const file=selectedCoverFile,path="covers/"+Date.now()+"-"+file.name.replace(/[^a-zA-Z0-9._-]/g,"-");
-const {data,error}=await db.storage.from("book-covers").upload(path,file,{upsert:false,contentType:file.type});
-if(error)throw error;
-return db.storage.from("book-covers").getPublicUrl(data.path).data.publicUrl;
-}
-
-/* SAVE BOOK */
-$("bookForm").onsubmit=async e=>{
-e.preventDefault();const btn=$("saveBook");btn.disabled=true;btn.textContent="Saving...";
-try{
-const payload={
-title:$("title").value.trim(),slug:slugify($("slug").value),description:$("description").value.trim(),
-main_genre:$("genre").value,subgenre:$("subgenre").value.trim(),
-publication_status:$("publicationStatus").value,release_date:$("releaseDate").value||null,
-cover_url:await uploadCover(),display_order:Math.max(1,Number($("displayOrder").value)||1),
-is_featured:$("featured").checked,is_editors_pick:$("editorsPick").checked,
-allow_free_interest:$("freeInterest").checked,allow_preorder:$("preorder").checked
-};
-if(!payload.title||!payload.slug||!payload.main_genre)throw Error("Complete title, slug and genre.");
-const id=$("bookId").value;
-const result=id?await db.from("books").update(payload).eq("id",id):await db.from("books").insert(payload);
-if(result.error)throw result.error;
-selectedCoverFile=null;$("editor").classList.add("hidden");$("booksPage").classList.remove("hidden");
-await loadBooks();message("Book saved successfully.");
-}catch(e){alert("Could not save: "+e.message)}
-finally{btn.disabled=false;btn.textContent="Save Book"}
-};
-
-/* BOOK ORDER AND TRASH */
-async function moveBook(book,direction){
-const index=books.findIndex(b=>b.id===book.id),other=books[index+direction];if(!other)return;
-const a=Number(book.display_order)||0,b=Number(other.display_order)||0;
-let {error}=await db.from("books").update({display_order:Math.max(...books.map(x=>Number(x.display_order)||0))+1000}).eq("id",book.id);
-if(error){alert(error.message);return}
-({error}=await db.from("books").update({display_order:a}).eq("id",other.id));
-if(error){alert(error.message);await loadBooks();return}
-({error}=await db.from("books").update({display_order:b}).eq("id",book.id));
-if(error)alert(error.message);await loadBooks();
-}
-async function trashBook(book){
-if(!confirm("Move this book to Trash?"))return;
-const {error}=await db.from("books").update({deleted_at:new Date().toISOString()}).eq("id",book.id);
-if(error){alert(error.message);return}await loadBooks();
-}
-async function restoreBook(book){
-const {error}=await db.from("books").update({deleted_at:null}).eq("id",book.id);
-if(error){alert(error.message);return}await loadBooks();
-}
-$("statusFilter").onchange=renderBooks;
-$("showTrash").onclick=async()=>{trashMode=!trashMode;$("showTrash").textContent=trashMode?"Back to Books":"Trash";$("statusFilter").disabled=trashMode;await loadBooks()};
-
-/* CHAPTER STUDIO */
-async function loadChapters(){
-const bookId=$("chapterBook").value;$("chapterList").innerHTML="";$("chapterEditor").classList.add("hidden");
-if(!bookId){$("chapterMessage").textContent="Select a book to view its chapters.";return}
-$("chapterMessage").textContent="Loading chapters...";
-const {data,error}=await db.from("chapters").select("*").eq("book_id",bookId)
-.is("deleted_at",null).order("display_order",{ascending:true}).order("chapter_number",{ascending:true});
-if(error){$("chapterMessage").textContent="Could not load chapters: "+error.message;return}
-chapters=data||[];renderChapters();
-}
-function renderChapters(){
-const area=$("chapterList");area.innerHTML="";
-const filter=$("chapterFilter").value;
-const list=chapters.filter(c=>filter==="all"||c.publication_status===filter);
-if(!list.length){area.textContent="No chapters found.";return}
-list.forEach(ch=>{
-const card=document.createElement("article");card.className="chapter-card";
-const h=document.createElement("h3");h.textContent="Chapter "+ch.chapter_number+" — "+ch.title;
-const badge=document.createElement("span");badge.className="status status-"+ch.publication_status;badge.textContent=ch.publication_status==="published"?"Published":"Draft";
-const actions=document.createElement("div");actions.className="actions";
-actions.append(makeButton("Edit","secondary",()=>editChapter(ch)),makeButton("Delete","danger",()=>deleteChapter(ch)));
-card.append(h,badge,actions);area.append(card);
-});
-}
-function newChapter(){
-if(!$("chapterBook").value){alert("Select a book first.");return}
-currentChapter=null;$("chapterForm").reset();$("chapterId").value="";
-$("chapterEditorTitle").textContent="New Chapter";
-$("chapterNumber").value=chapters.length+1;$("chapterOrder").value=chapters.length+1;
-$("chapterStatus").value="draft";$("chapterEditor").classList.remove("hidden");
-$("chapterEditor").scrollIntoView({behavior:"smooth"});
-}
-function editChapter(ch){
-currentChapter=ch;$("chapterId").value=ch.id;
-$("chapterNumber").value=ch.chapter_number;$("chapterTitle").value=ch.title;
-$("chapterContent").value=ch.content||"";$("chapterStatus").value=ch.publication_status;
-$("chapterOrder").value=ch.display_order;$("chapterEditorTitle").textContent="Edit Chapter";
-$("chapterEditor").classList.remove("hidden");$("chapterEditor").scrollIntoView({behavior:"smooth"});
-}
-$("chapterForm").onsubmit=async e=>{
-e.preventDefault();const btn=$("saveChapter");btn.disabled=true;btn.textContent="Saving...";
-try{
-const status=$("chapterStatus").value;
-const payload={
-book_id:$("chapterBook").value,chapter_number:Number($("chapterNumber").value),
-title:$("chapterTitle").value.trim(),content:$("chapterContent").value,
-publication_status:status,
-published_at:status==="published"?(currentChapter?.published_at||new Date().toISOString()):null,
-display_order:Math.max(0,Number($("chapterOrder").value)||0),updated_at:new Date().toISOString()
-};
-if(!payload.title||!payload.content.trim())throw Error("Enter a chapter title and content.");
-const id=$("chapterId").value;
-const result=id?await db.from("chapters").update(payload).eq("id",id):await db.from("chapters").insert(payload);
-if(result.error)throw result.error;
-$("chapterEditor").classList.add("hidden");currentChapter=null;
-await loadChapters();$("chapterMessage").textContent="Chapter saved successfully.";
-}catch(e){alert("Could not save chapter: "+e.message)}
-finally{btn.disabled=false;btn.textContent="Save Chapter"}
-};
-async function deleteChapter(ch){
-if(!confirm("Move this chapter to Trash?"))return;
-const {error}=await db.from("chapters").update({deleted_at:new Date().toISOString()}).eq("id",ch.id);
-if(error){alert(error.message);return}
-await loadChapters();$("chapterMessage").textContent="Chapter moved to Trash.";
-}
-$("chapterBook").onchange=loadChapters;$("chapterFilter").onchange=renderChapters;
-$("addChapter").onclick=newChapter;
-$("cancelChapter").onclick=()=>{$("chapterEditor").classList.add("hidden");currentChapter=null};
-
-/* NAVIGATION */
-document.querySelectorAll("nav button").forEach(btn=>{
-btn.onclick=async()=>{
-document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-const page=btn.dataset.page,isBooks=page==="books",isChapters=page==="chapters";
-$("booksPage").classList.toggle("hidden",!isBooks);
-$("editor").classList.add("hidden");
-$("chaptersPage").classList.toggle("hidden",!isChapters);
-$("placeholder").classList.toggle("hidden",isBooks||isChapters);
-$("pageTitle").textContent=btn.textContent.trim();
-$("placeholderTitle").textContent=btn.textContent.trim();
-if(isChapters){
-$("chapterBook").innerHTML='<option value="">Choose a book</option>';
-books.forEach(b=>{const o=document.createElement("option");o.value=b.id;o.textContent=b.title;$("chapterBook").append(o)});
-await loadChapters();
-}
-};
-});
-</script>
 </body>
-</html>
+  </html>
+  
 
