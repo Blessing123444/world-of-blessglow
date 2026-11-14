@@ -3,19 +3,15 @@
 
 let notificationBooks = [];
 
+/* LOAD SETTINGS */
 async function loadNotifications() {
   const area = $("notificationsContent");
   if (!area) return;
 
-  area.replaceChildren();
-
-  const message = document.createElement("p");
-  message.textContent = "Loading book notification settings...";
-  area.append(message);
+  area.textContent = "Loading book notification settings...";
 
   try {
-    const { data, error } = await db
-      .from("books")
+    const { data, error } = await db.from("books")
       .select("id,title,slug,publication_status,allow_free_interest,allow_pre_order,deleted_at")
       .is("deleted_at", null)
       .order("display_order", { ascending: true });
@@ -23,21 +19,19 @@ async function loadNotifications() {
     if (error) throw error;
 
     notificationBooks = data || [];
-    renderNotifications(area, message);
+    renderNotifications(area);
 
   } catch (error) {
-    message.textContent =
-      "Could not load settings: " + error.message;
+    area.textContent = "Could not load settings: " + error.message;
   }
 }
 
-/* DISPLAY BOOK SETTINGS */
-function renderNotifications(area, message) {
+/* DISPLAY SETTINGS */
+function renderNotifications(area) {
   area.replaceChildren();
 
-  message.textContent =
-    notificationBooks.length + " books found.";
-
+  const message = document.createElement("p");
+  message.textContent = notificationBooks.length + " books found.";
   area.append(message);
 
   if (!notificationBooks.length) {
@@ -53,8 +47,8 @@ function renderNotifications(area, message) {
     title.textContent = book.title;
 
     const status = document.createElement("p");
-    status.textContent =
-      "Publication status: " + (book.publication_status || "Draft");
+    status.textContent = "Publication status: " +
+      (book.publication_status || "Draft");
 
     const freeLabel = document.createElement("label");
     const free = document.createElement("input");
@@ -62,7 +56,7 @@ function renderNotifications(area, message) {
     free.checked = !!book.allow_free_interest;
 
     free.addEventListener("change", () =>
-      updateNotificationSetting(book.id, "allow_free_interest", free.checked)
+      updateNotificationSetting(book.id, "allow_free_interest", free.checked, free)
     );
 
     freeLabel.append(free, " Allow Free Interest / Notify Me");
@@ -73,7 +67,7 @@ function renderNotifications(area, message) {
     preorder.checked = !!book.allow_pre_order;
 
     preorder.addEventListener("change", () =>
-      updateNotificationSetting(book.id, "allow_pre_order", preorder.checked)
+      updateNotificationSetting(book.id, "allow_pre_order", preorder.checked, preorder)
     );
 
     preorderLabel.append(preorder, " Allow Pre-order");
@@ -84,50 +78,50 @@ function renderNotifications(area, message) {
 }
 
 /* UPDATE SETTINGS */
-async function updateNotificationSetting(id, column, value) {
-  const allowedColumns = [
-    "allow_free_interest",
-    "allow_pre_order"
-  ];
+async function updateNotificationSetting(id, column, value, checkbox) {
+  const allowed = ["allow_free_interest", "allow_pre_order"];
+  if (!allowed.includes(column) || checkbox.disabled) return;
 
-  if (!allowedColumns.includes(column)) return;
+  checkbox.disabled = true;
 
   try {
-    const { error } = await db
-      .from("books")
+    const { error } = await db.from("books")
       .update({ [column]: value })
       .eq("id", id);
 
     if (error) throw error;
 
-    await loadNotifications();
+    const book = notificationBooks.find(item => item.id === id);
+    if (book) book[column] = value;
+
+    const message = $("notificationsMessage");
+    if (message) message.textContent = "Setting saved successfully.";
 
   } catch (error) {
+    checkbox.checked = !value;
     alert("Could not update setting: " + error.message);
-    await loadNotifications();
+  } finally {
+    checkbox.disabled = false;
   }
 }
 
-/* REFRESH */
+/* SETUP */
 function setupNotifications() {
   const area = $("notificationsContent");
   if (!area || $("refreshNotifications")) return;
 
-  const button = makeButton(
-    "Refresh Settings",
-    "secondary",
-    loadNotifications
-  );
-
+  const button = makeButton("Refresh Settings", "secondary", loadNotifications);
   button.id = "refreshNotifications";
+
+  const message = document.createElement("p");
+  message.id = "notificationsMessage";
+
   area.before(button);
+  button.after(message);
 }
 
-/* OPEN NOTIFICATIONS PAGE */
+/* PAGE NAVIGATION */
 document.querySelectorAll('nav button[data-page="notifications"]')
-  .forEach(button => {
-    button.addEventListener("click", loadNotifications);
-  });
+  .forEach(button => button.addEventListener("click", loadNotifications));
 
 setupNotifications();
-      
