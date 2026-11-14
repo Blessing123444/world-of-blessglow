@@ -1,6 +1,12 @@
 
 /* WORLD OF BLESSGLOW — HOMEPAGE MANAGER */
 
+function homepageMessage(text) {
+  const box = $("homepageMessage");
+  if (box) box.textContent = text;
+}
+
+/* BOOK CARD */
 function homepageBookCard(book) {
   const card = document.createElement("article");
   card.className = "homepage-book-card";
@@ -9,7 +15,7 @@ function homepageBookCard(book) {
   title.textContent = book.title;
 
   const genre = document.createElement("p");
-  genre.textContent = `${book.genre || ""} / ${book.subgenre || ""}`;
+  genre.textContent = `${book.main_genre || ""} / ${book.subgenre || ""}`;
 
   const status = document.createElement("p");
   status.textContent = "Status: " + (book.publication_status || "draft");
@@ -17,24 +23,22 @@ function homepageBookCard(book) {
   const featuredLabel = document.createElement("label");
   const featured = document.createElement("input");
   featured.type = "checkbox";
-  featured.checked = !!book.featured;
+  featured.checked = !!book.is_featured;
   featured.addEventListener("change", () =>
-    updateHomepageBook(book.id, { featured: featured.checked })
+    updateHomepageBook(book.id, { is_featured: featured.checked })
   );
   featuredLabel.append(featured, " Featured");
 
   const editorLabel = document.createElement("label");
   const editor = document.createElement("input");
   editor.type = "checkbox";
-  editor.checked = !!book.editors_pick;
+  editor.checked = !!book.is_editors_pick;
   editor.addEventListener("change", () =>
-    updateHomepageBook(book.id, { editors_pick: editor.checked })
+    updateHomepageBook(book.id, { is_editors_pick: editor.checked })
   );
   editorLabel.append(editor, " Editor's Pick");
 
-  const edit = makeButton("Edit Book", "secondary", () => {
-    openEditor(book.id);
-  });
+  const edit = makeButton("Edit Book", "secondary", () => openEditor(book.id));
 
   const controls = document.createElement("div");
   controls.className = "actions";
@@ -47,8 +51,7 @@ function homepageBookCard(book) {
 /* UPDATE HOMEPAGE FLAGS */
 async function updateHomepageBook(id, changes) {
   try {
-    const { error } = await db
-      .from("books")
+    const { error } = await db.from("books")
       .update(changes)
       .eq("id", id);
 
@@ -64,12 +67,7 @@ async function updateHomepageBook(id, changes) {
   }
 }
 
-function homepageMessage(text) {
-  const messageBox = $("homepageMessage");
-  if (messageBox) messageBox.textContent = text;
-}
-
-/* SECTION BUILDER */
+/* BUILD SECTION */
 function addHomepageSection(container, heading, items) {
   const section = document.createElement("section");
   section.className = "homepage-section";
@@ -83,39 +81,33 @@ function addHomepageSection(container, heading, items) {
   if (!items.length) {
     content.textContent = "No books in this section yet.";
   } else {
-    items.forEach(book => {
-      content.append(homepageBookCard(book));
-    });
+    items.forEach(book => content.append(homepageBookCard(book)));
   }
 
   section.append(title, content);
   container.append(section);
 }
 
-/* RENDER HOMEPAGE SECTIONS */
+/* RENDER HOMEPAGE */
 function renderHomepage() {
   const area = $("homepageContent");
   if (!area) return;
 
   area.replaceChildren();
 
-  const activeBooks = books.filter(book => !book.deleted_at);
-
-  const sorted = [...activeBooks].sort((a, b) =>
+  const active = books.filter(book => !book.deleted_at);
+  const sorted = [...active].sort((a, b) =>
     (a.display_order ?? 0) - (b.display_order ?? 0)
   );
 
-  const featured = sorted.filter(book => book.featured);
-  const editors = sorted.filter(book => book.editors_pick);
-
+  const featured = sorted.filter(book => book.is_featured);
+  const editors = sorted.filter(book => book.is_editors_pick);
   const comingSoon = sorted.filter(book =>
     book.publication_status === "coming_soon"
   );
 
   const newReleases = [...sorted]
-    .filter(book =>
-      ["published", "completed"].includes(book.publication_status)
-    )
+    .filter(book => ["published", "completed"].includes(book.publication_status))
     .sort((a, b) =>
       new Date(b.release_date || b.created_at || 0) -
       new Date(a.release_date || a.created_at || 0)
@@ -124,9 +116,7 @@ function renderHomepage() {
 
   const recentlyUpdated = [...sorted]
     .filter(book => book.updated_at)
-    .sort((a, b) =>
-      new Date(b.updated_at) - new Date(a.updated_at)
-    )
+    .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
     .slice(0, 6);
 
   addHomepageSection(area, "Featured Books", featured);
@@ -135,10 +125,10 @@ function renderHomepage() {
   addHomepageSection(area, "Editor's Picks", editors);
   addHomepageSection(area, "Recently Updated", recentlyUpdated);
 
-  homepageMessage(activeBooks.length + " books available.");
+  homepageMessage(active.length + " books available.");
 }
 
-/* LOAD HOMEPAGE MANAGER */
+/* LOAD MANAGER */
 async function loadHomepage() {
   homepageMessage("Loading homepage...");
 
@@ -150,17 +140,12 @@ async function loadHomepage() {
   }
 }
 
-/* REFRESH */
+/* SETUP */
 function setupHomepageManager() {
   const area = $("homepageContent");
   if (!area || $("refreshHomepage")) return;
 
-  const refresh = makeButton(
-    "Refresh Homepage",
-    "secondary",
-    loadHomepage
-  );
-
+  const refresh = makeButton("Refresh Homepage", "secondary", loadHomepage);
   refresh.id = "refreshHomepage";
   area.before(refresh);
 
@@ -169,11 +154,9 @@ function setupHomepageManager() {
   refresh.after(message);
 }
 
-/* OPEN HOMEPAGE TAB */
+/* HOMEPAGE TAB */
 document.querySelectorAll('nav button[data-page="homepage"]')
-  .forEach(button => {
-    button.addEventListener("click", loadHomepage);
-  });
+  .forEach(button => button.addEventListener("click", loadHomepage));
 
 setupHomepageManager();
-
+                                  
