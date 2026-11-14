@@ -51,7 +51,7 @@ function renderBooks() {
     const img = document.createElement("img");
     img.className = "cover";
     img.src = book.cover_url || "";
-    img.alt = book.title + " cover";
+    img.alt = (book.title || "Book") + " cover";
     img.onerror = () => img.style.display = "none";
 
     const info = document.createElement("div");
@@ -62,8 +62,8 @@ function renderBooks() {
 
     const badge = document.createElement("span");
     badge.className = "status status-" + book.publication_status;
-    badge.textContent = labels[book.publication_status] ||
-      book.publication_status;
+    badge.textContent =
+      labels[book.publication_status] || book.publication_status;
 
     const order = document.createElement("p");
     order.className = "note";
@@ -92,6 +92,10 @@ function renderBooks() {
 
 /* BOOK EDITOR */
 function openEditor(book = null) {
+  if (typeof book === "string") {
+    book = books.find(item => item.id === book) || null;
+  }
+
   $("bookForm").reset();
 
   selectedCoverFile = null;
@@ -114,13 +118,15 @@ function openEditor(book = null) {
 
   $("displayOrder").value = book?.display_order ??
     (books.length
-      ? Math.max(...books.map(b => Number(b.display_order) || 0)) + 1
+      ? Math.max(...books.map(b =>
+          Number(b.display_order) || 0
+        )) + 1
       : 1);
 
   $("featured").checked = !!book?.is_featured;
   $("editorsPick").checked = !!book?.is_editors_pick;
   $("freeInterest").checked = !!book?.allow_free_interest;
-  $("preorder").checked = !!book?.allow_preorder;
+  $("preorder").checked = !!book?.allow_pre_order;
 
   $("coverFile").value = "";
   $("coverFileName").textContent = currentCover
@@ -161,7 +167,6 @@ $("chooseCover")?.addEventListener("click", event => {
 
 $("coverFile")?.addEventListener("change", event => {
   const file = event.target.files?.[0];
-
   if (!file) return;
 
   if (!file.type.startsWith("image/")) {
@@ -186,9 +191,7 @@ $("coverFile")?.addEventListener("change", event => {
     $("coverPreview").style.display = "block";
   };
 
-  reader.onerror = () => {
-    alert("Could not preview this image.");
-  };
+  reader.onerror = () => alert("Could not preview this image.");
 
   reader.readAsDataURL(file);
 });
@@ -237,12 +240,8 @@ $("bookForm")?.addEventListener("submit", async event => {
     const genre = $("genre").value;
     const subgenre = $("subgenre").value;
 
-    if (!title || !slug || !genre) {
-      throw Error("Complete the book title, slug and main genre.");
-    }
-
-    if (!subgenre) {
-      throw Error("Please select a subgenre.");
+    if (!title || !slug || !genre || !subgenre) {
+      throw Error("Complete the title, slug, main genre and subgenre.");
     }
 
     const coverUrl = await uploadCover();
@@ -256,13 +255,12 @@ $("bookForm")?.addEventListener("submit", async event => {
       publication_status: $("publicationStatus").value,
       release_date: $("releaseDate").value || null,
       cover_url: coverUrl,
-      display_order: Math.max(
-        1, Number($("displayOrder").value) || 1
-      ),
+      display_order: Math.max(1, Number($("displayOrder").value) || 1),
       is_featured: $("featured").checked,
       is_editors_pick: $("editorsPick").checked,
       allow_free_interest: $("freeInterest").checked,
-      allow_preorder: $("preorder").checked
+      allow_pre_order: $("preorder").checked,
+      updated_at: new Date().toISOString()
     };
 
     const id = $("bookId").value;
@@ -301,42 +299,41 @@ async function moveBook(book, direction) {
   const oldOtherOrder = Number(other.display_order) || 0;
 
   const temporaryOrder =
-    Math.max(...books.map(item =>
+    Math.max(0, ...books.map(item =>
       Number(item.display_order) || 0
-    )) + 1000;
+    )) + 1;
 
-  let { error } = await db.from("books")
-    .update({ display_order: temporaryOrder })
-    .eq("id", book.id);
-
-  if (error) {
-    alert("Could not change order: " + error.message);
-    return;
-  }
-
-  ({ error } = await db.from("books")
-    .update({ display_order: oldBookOrder })
-    .eq("id", other.id));
-
-  if (error) {
-    await db.from("books")
-      .update({ display_order: oldBookOrder })
+  try {
+    let result = await db.from("books")
+      .update({ display_order: temporaryOrder })
       .eq("id", book.id);
 
-    alert("Could not change order: " + error.message);
+    if (result.error) throw result.error;
+
+    result = await db.from("books")
+      .update({
+        display_order: oldBookOrder,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", other.id);
+
+    if (result.error) throw result.error;
+
+    result = await db.from("books")
+      .update({
+        display_order: oldOtherOrder,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", book.id);
+
+    if (result.error) throw result.error;
+
     await loadBooks();
-    return;
+
+  } catch (error) {
+    alert("Could not change book order: " + error.message);
+    await loadBooks();
   }
-
-  ({ error } = await db.from("books")
-    .update({ display_order: oldOtherOrder })
-    .eq("id", book.id));
-
-  if (error) {
-    alert("Could not finish changing order: " + error.message);
-  }
-
-  await loadBooks();
 }
 
 /* TRASH AND RESTORE */
@@ -384,4 +381,4 @@ $("showTrash")?.addEventListener("click", async () => {
 
   await loadBooks();
 });
-    
+      
